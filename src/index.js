@@ -42,7 +42,10 @@ app.use(async (req) => {
     if (token.includes('Bearer')) {
       token = token.split(' ')[1]
     }
-    const { user_id, email } = await jwt.verify(token, process.env.SERVER_SECRET)
+    const { user_id, email } = await jwt.verify(
+      token,
+      process.env.SERVER_SECRET
+    )
     req.user_id = user_id
     req.email = email
     return req.next()
@@ -87,7 +90,9 @@ let privateKey, certificate, ca, credentials, httpsServer, httpServer, server
 if (process.env.CITYLAB === 'ALL') {
   httpServer = http.createServer(app)
   server = httpServer.listen(HTTP_PORT, () => {
-    console.log(` Server ${chalk.green('started')} at http://localhost:${HTTP_PORT}.`)
+    console.log(
+      ` Server ${chalk.green('started')} at http://localhost:${HTTP_PORT}.`
+    )
   })
 } else {
   const folder = `/etc/letsencrypt/live/${process.env.CITYLAB.toLowerCase()}app.families-share.eu/`
@@ -101,11 +106,19 @@ if (process.env.CITYLAB === 'ALL') {
   }
   httpServer = http.createServer(app)
   server = httpServer.listen(process.env.HTTP_PORT, () => {
-    console.log(` HTTP Server ${chalk.green('started')} at https://localhost:${HTTP_PORT}.`)
+    console.log(
+      ` HTTP Server ${chalk.green(
+        'started'
+      )} at https://localhost:${HTTP_PORT}.`
+    )
   })
   httpsServer = https.createServer(credentials, app)
   httpsServer.listen(process.env.HTTPS_PORT, () => {
-    console.log(` HTTPS Server ${chalk.green('started')} at https://localhost:${HTTPS_PORT}.`)
+    console.log(
+      ` HTTPS Server ${chalk.green(
+        'started'
+      )} at https://localhost:${HTTPS_PORT}.`
+    )
   })
 }
 

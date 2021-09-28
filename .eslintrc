@@ -2,6 +2,7 @@
   "extends": "standard",
   "rules": {
     "camelcase": "off",
-    "no-useless-escape": "off"
+    "no-useless-escape": "off",
+    "space-before-function-paren": "off"
   }
 }

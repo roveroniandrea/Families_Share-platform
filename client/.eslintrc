@@ -25,6 +25,7 @@
     "no-param-reassign": "off",
     "no-case-declarations": "off",
     "jsx-a11y/no-onchange": 0,
-    "jsx-a11y/label-has-associated-control": "off"
+    "jsx-a11y/label-has-associated-control": "off",
+    "space-before-function-paren": "off"
   }
 }

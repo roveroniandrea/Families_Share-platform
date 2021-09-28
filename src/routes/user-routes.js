@@ -17,7 +17,12 @@ const { google } = require('googleapis')
 const googleEmail = config.get('google.email')
 const googleKey = config.get('google.key')
 const scopes = 'https://www.googleapis.com/auth/calendar'
-const googleToken = new google.auth.JWT(process.env[googleEmail], null, process.env[googleKey].replace(/\\n/g, '\n'), scopes)
+const googleToken = new google.auth.JWT(
+  process.env[googleEmail],
+  null,
+  process.env[googleKey].replace(/\\n/g, '\n'),
+  scopes
+)
 const calendar = google.calendar({
   version: 'v3',
   auth: googleToken
@@ -45,21 +50,41 @@ const profileStorage = multer.diskStorage({
   },
   filename(req, file, cb) {
     fr(path.join(__dirname, '../../images/profiles'), { prefix: req.params.id })
-    cb(null, `${req.params.id}-${Date.now()}.${file.mimetype.slice(file.mimetype.indexOf('/') + 1, file.mimetype.length)}`)
+    cb(
+      null,
+      `${req.params.id}-${Date.now()}.${file.mimetype.slice(
+        file.mimetype.indexOf('/') + 1,
+        file.mimetype.length
+      )}`
+    )
   }
 })
-const profileUpload = multer({ storage: profileStorage, limits: { fieldSize: 52428800 } })
+const profileUpload = multer({
+  storage: profileStorage,
+  limits: { fieldSize: 52428800 }
+})
 
 const childProfileStorage = multer.diskStorage({
   destination(req, file, cb) {
     cb(null, path.join(__dirname, '../../images/profiles'))
   },
   filename(req, file, cb) {
-    fr(path.join(__dirname, '../../images/profiles'), { prefix: req.params.childId })
-    cb(null, `${req.params.childId}-${Date.now()}.${file.mimetype.slice(file.mimetype.indexOf('/') + 1, file.mimetype.length)}`)
+    fr(path.join(__dirname, '../../images/profiles'), {
+      prefix: req.params.childId
+    })
+    cb(
+      null,
+      `${req.params.childId}-${Date.now()}.${file.mimetype.slice(
+        file.mimetype.indexOf('/') + 1,
+        file.mimetype.length
+      )}`
+    )
   }
 })
-const childProfileUpload = multer({ storage: childProfileStorage, limits: { fieldSize: 52428800 } })
+const childProfileUpload = multer({
+  storage: childProfileStorage,
+  limits: { fieldSize: 52428800 }
+})
 
 const Profile = require('../models/profile')
 const Address = require('../models/address')
@@ -80,9 +105,25 @@ const Community = require('../models/community')
 
 router.post('/', async (req, res, next) => {
   const {
-    given_name, family_name, number, email, password, visible, language, deviceToken
+    given_name,
+    family_name,
+    number,
+    email,
+    password,
+    visible,
+    language,
+    deviceToken
   } = req.body
-  if (!(given_name && family_name && email && password && visible !== undefined && language)) {
+  if (
+    !(
+      given_name &&
+      family_name &&
+      email &&
+      password &&
+      visible !== undefined &&
+      language
+    )
+  ) {
     return res.status(400).send('Bad Request')
   }
   try {
@@ -165,9 +206,7 @@ router.post('/', async (req, res, next) => {
 })
 
 router.post('/authenticate/email', async (req, res, next) => {
-  const {
-    email, password, deviceToken, language, origin
-  } = req.body
+  const { email, password, deviceToken, language, origin } = req.body
   try {
     const user = await User.findOne({ email })
     if (!user) {
@@ -177,7 +216,11 @@ router.post('/authenticate/email', async (req, res, next) => {
     if (!passwordMatch) {
       return res.status(401).send('Authentication failure')
     }
-    if (deviceToken !== 'undefined' && deviceToken !== undefined && deviceToken !== null) {
+    if (
+      deviceToken !== 'undefined' &&
+      deviceToken !== undefined &&
+      deviceToken !== null
+    ) {
       const device = await Device.findOne({ device_id: deviceToken })
       if (device) {
         device.user_id = user.user_id
@@ -197,7 +240,10 @@ router.post('/authenticate/email', async (req, res, next) => {
       await Profile.updateOne({ user_id: user.user_id }, { suspended: false })
       const usersChildren = await Parent.find({ parent_id: user.user_id })
       const childIds = usersChildren.map(usersChildren.child_id)
-      await Child.updateMany({ child_id: { $in: childIds } }, { suspended: false })
+      await Child.updateMany(
+        { child_id: { $in: childIds } },
+        { suspended: false }
+      )
     }
     const token = jwt.sign(
       { user_id: user.user_id, email },
@@ -232,7 +278,11 @@ router.post('/authenticate/google', async (req, res, next) => {
   try {
     const user = await User.findOne({ email: googleProfile.email })
     if (user) {
-      if (deviceToken !== undefined && deviceToken !== 'undefined' && deviceToken !== null) {
+      if (
+        deviceToken !== undefined &&
+        deviceToken !== 'undefined' &&
+        deviceToken !== null
+      ) {
         const device = await Device.findOne({ device_id: deviceToken })
         if (device) {
           device.user_id = user.user_id
@@ -244,14 +294,23 @@ router.post('/authenticate/google', async (req, res, next) => {
           })
         }
       }
-      const profile = await Profile.findOne({ user_id: user.user_id }).populate('image').lean().exec()
+      const profile = await Profile.findOne({ user_id: user.user_id })
+        .populate('image')
+        .lean()
+        .exec()
       if (profile.suspended) {
         await Profile.updateOne({ user_id: user.user_id }, { suspended: false })
         const usersChildren = await Parent.find({ parent_id: user.user_id })
         const childIds = usersChildren.map(usersChildren.child_id)
-        await Child.updateMany({ child_id: { $in: childIds } }, { suspended: false })
+        await Child.updateMany(
+          { child_id: { $in: childIds } },
+          { suspended: false }
+        )
       }
-      const token = jwt.sign({ user_id: user.user_id, email: googleProfile.email }, process.env.SERVER_SECRET)
+      const token = jwt.sign(
+        { user_id: user.user_id, email: googleProfile.email },
+        process.env.SERVER_SECRET
+      )
       const response = {
         id: profile.user_id,
         email: profile.email,
@@ -274,7 +333,14 @@ router.post('/authenticate/google', async (req, res, next) => {
       await user.save()
       res.json(response)
     } else {
-      if (!(googleProfile.email && googleProfile.givenName && googleProfile.familyName && googleProfile.photo)) {
+      if (
+        !(
+          googleProfile.email &&
+          googleProfile.givenName &&
+          googleProfile.familyName &&
+          googleProfile.photo
+        )
+      ) {
         return res.status(400).send('Bad request')
       }
       const user_id = objectid()
@@ -292,7 +358,10 @@ router.post('/authenticate/google', async (req, res, next) => {
       }
       const address_id = objectid()
       const image_id = objectid()
-      const token = jwt.sign({ user_id, email: googleProfile.email }, process.env.SERVER_SECRET)
+      const token = jwt.sign(
+        { user_id, email: googleProfile.email },
+        process.env.SERVER_SECRET
+      )
       const user = {
         user_id,
         provider: 'google',
@@ -365,7 +434,11 @@ router.post('/forgotpassword', async (req, res, next) => {
     if (!user) {
       return res.status(404).send("User doesn't exist")
     }
-    const token = await jwt.sign({ user_id: user.user_id, email }, process.env.SERVER_SECRET, { expiresIn: 60 * 60 * 24 })
+    const token = await jwt.sign(
+      { user_id: user.user_id, email },
+      process.env.SERVER_SECRET,
+      { expiresIn: 60 * 60 * 24 }
+    )
     const mailOptions = {
       from: process.env.SERVER_MAIL,
       to: email,
@@ -391,23 +464,30 @@ router.post('/forgotpassword', async (req, res, next) => {
 })
 
 router.get('/changepassword', (req, res, next) => {
-  if (!req.user_id) { return res.status(401).send('Invalid token') }
+  if (!req.user_id) {
+    return res.status(401).send('Invalid token')
+  }
   const { user_id } = req
-  Password_Reset.findOne({ token: req.headers.authorization }).then(reset => {
-    if (!reset) {
-      return res.status(404).send('Bad Request')
-    }
-    return Profile.findOne({ user_id }).populate('image')
-      .lean()
-      .exec()
-      .then(profile => {
-        res.json(profile)
-      })
-  }).catch(next)
+  Password_Reset.findOne({ token: req.headers.authorization })
+    .then((reset) => {
+      if (!reset) {
+        return res.status(404).send('Bad Request')
+      }
+      return Profile.findOne({ user_id })
+        .populate('image')
+        .lean()
+        .exec()
+        .then((profile) => {
+          res.json(profile)
+        })
+    })
+    .catch(next)
 })
 
 router.post('/changepassword', async (req, res, next) => {
-  if (!req.user_id) { return res.status(401).send('Not authorized') }
+  if (!req.user_id) {
+    return res.status(401).send('Not authorized')
+  }
   try {
     const { user_id, email } = req
     const reset = await Password_Reset.findOneAndDelete({ user_id })
@@ -419,7 +499,10 @@ router.post('/changepassword', async (req, res, next) => {
       await Profile.updateOne({ user_id }, { suspended: false })
       const usersChildren = await Parent.find({ parent_id: user_id })
       const childIds = usersChildren.map(usersChildren.child_id)
-      await Child.updateMany({ child_id: { $in: childIds } }, { suspended: false })
+      await Child.updateMany(
+        { child_id: { $in: childIds } },
+        { suspended: false }
+      )
     }
     const user = await User.findOne({ user_id })
     const token = await jwt.sign({ user_id, email }, process.env.SERVER_SECRET)
@@ -440,18 +523,24 @@ router.post('/changepassword', async (req, res, next) => {
 })
 
 router.get('/:id', (req, res, next) => {
-  if (req.user_id !== req.params.id) { return res.status(401).send('Unauthorized') }
+  if (req.user_id !== req.params.id) {
+    return res.status(401).send('Unauthorized')
+  }
   const { id } = req.params
-  User.findOne({ user_id: id }).then(user => {
-    if (!user) {
-      return res.status(404).send("User doesn't exist")
-    }
-    res.json(user)
-  }).catch(next)
+  User.findOne({ user_id: id })
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send("User doesn't exist")
+      }
+      res.json(user)
+    })
+    .catch(next)
 })
 
 router.delete('/:id', async (req, res, next) => {
-  if (req.user_id !== req.params.id) { return res.status(401).send('Unauthorized') }
+  if (req.user_id !== req.params.id) {
+    return res.status(401).send('Unauthorized')
+  }
   const user_id = req.params.id
   try {
     await User.deleteOne({ user_id })
@@ -462,9 +551,14 @@ router.delete('/:id', async (req, res, next) => {
     await Profile.deleteOne({ user_id })
     const childDeleteIds = []
     const parents = await Parent.find({})
-    const usersChildren = parents.filter(parent => parent.parent_id === user_id)
-    usersChildren.forEach(child => {
-      if (parents.filter(parent => parent.child_id === child.child_id).length === 1) {
+    const usersChildren = parents.filter(
+      (parent) => parent.parent_id === user_id
+    )
+    usersChildren.forEach((child) => {
+      if (
+        parents.filter((parent) => parent.child_id === child.child_id)
+          .length === 1
+      ) {
         childDeleteIds.push(child.child_id)
       }
     })
@@ -474,34 +568,61 @@ router.delete('/:id', async (req, res, next) => {
     // await Framily.deleteMany({ user_id});
     // await Framily.deleteMany({ framily_id: user_id });
     const announcements = await Announcement.find({ user_id })
-    const announcementIds = announcements.map(announcement => announcement.announcement_id)
+    const announcementIds = announcements.map(
+      (announcement) => announcement.announcement_id
+    )
     await Image.deleteMany({ owner_id: { $in: announcementIds } })
     await Announcement.deleteMany({ user_id })
     await Reply.deleteMany({ user_id })
-    const memberships = await Member.find({ user_id, group_accepted: true, user_accepted: true })
-    const groupIds = memberships.map(membership => membership.group_id)
+    const memberships = await Member.find({
+      user_id,
+      group_accepted: true,
+      user_accepted: true
+    })
+    const groupIds = memberships.map((membership) => membership.group_id)
     const groups = await Group.find({ group_id: { $in: groupIds } })
-    await Promise.all(groups.map(async (group) => {
-      const response = await calendar.events.list({ calendarId: group.calendar_id })
-      const groupEvents = response.data.items
-      await Promise.all(groupEvents.map(async (event) => {
-        const parentParticipants = JSON.parse(event.extendedProperties.shared.parents)
-        const childParticipants = JSON.parse(event.extendedProperties.shared.children)
-        const filteredParents = parentParticipants.filter(id => id !== user_id)
-        const filteredChildren = childParticipants.filter(id => childDeleteIds.indexOf(id) === -1)
-        if (filteredParents.length !== parentParticipants.length || filteredChildren.length !== childParticipants.length) {
-          const timeslotPatch = {
-            extendedProperties: {
-              shared: {
-                parents: JSON.stringify(filteredParents),
-                children: JSON.stringify(filteredChildren)
+    await Promise.all(
+      groups.map(async (group) => {
+        const response = await calendar.events.list({
+          calendarId: group.calendar_id
+        })
+        const groupEvents = response.data.items
+        await Promise.all(
+          groupEvents.map(async (event) => {
+            const parentParticipants = JSON.parse(
+              event.extendedProperties.shared.parents
+            )
+            const childParticipants = JSON.parse(
+              event.extendedProperties.shared.children
+            )
+            const filteredParents = parentParticipants.filter(
+              (id) => id !== user_id
+            )
+            const filteredChildren = childParticipants.filter(
+              (id) => childDeleteIds.indexOf(id) === -1
+            )
+            if (
+              filteredParents.length !== parentParticipants.length ||
+              filteredChildren.length !== childParticipants.length
+            ) {
+              const timeslotPatch = {
+                extendedProperties: {
+                  shared: {
+                    parents: JSON.stringify(filteredParents),
+                    children: JSON.stringify(filteredChildren)
+                  }
+                }
               }
+              await calendar.events.patch({
+                calendarId: group.calendar_id,
+                eventId: event.id,
+                resource: timeslotPatch
+              })
             }
-          }
-          await calendar.events.patch({ calendarId: group.calendar_id, eventId: event.id, resource: timeslotPatch })
-        }
-      }))
-    }))
+          })
+        )
+      })
+    )
     await Member.deleteMany({ user_id })
     res.status(200).send('account deleted')
   } catch (error) {
@@ -528,7 +649,9 @@ router.post('/:id/deviceToken', async (req, res, next) => {
 })
 
 router.post('/:id/requestlink', async (req, res, next) => {
-  if (req.user_id !== req.params.id) { return res.status(401).send('Unauthorized') }
+  if (req.user_id !== req.params.id) {
+    return res.status(401).send('Unauthorized')
+  }
   try {
     const { link } = req.body
     console.log(link)
@@ -547,11 +670,13 @@ router.post('/:id/requestlink', async (req, res, next) => {
 })
 
 router.post('/:id/suspend', async (req, res, next) => {
-  if (req.user_id !== req.params.id) { return res.status(401).send('Unauthorized') }
+  if (req.user_id !== req.params.id) {
+    return res.status(401).send('Unauthorized')
+  }
   const user_id = req.params.id
   try {
     const usersChildren = await Parent.find({ parent_id: user_id }).lean()
-    const childIds = usersChildren.map(child => child.child_id)
+    const childIds = usersChildren.map((child) => child.child_id)
     await Profile.updateOne({ user_id }, { suspended: true })
     await Child.updateMany({ child_id: { $in: childIds } }, { suspended: true })
     res.status(200).send('Profile suspended successfully')
@@ -561,35 +686,50 @@ router.post('/:id/suspend', async (req, res, next) => {
 })
 
 router.get('/:id/rating', (req, res, next) => {
-  if (req.user_id !== req.params.id) { return res.status(401).send('Unauthorized') }
-  Rating.findOne({ user_id: req.params.id }).then(rating => {
-    res.json(rating)
-  }).catch(next)
+  if (req.user_id !== req.params.id) {
+    return res.status(401).send('Unauthorized')
+  }
+  Rating.findOne({ user_id: req.params.id })
+    .then((rating) => {
+      res.json(rating)
+    })
+    .catch(next)
 })
 
 router.patch('/:id/rating', (req, res, next) => {
-  if (req.user_id !== req.params.id) { return res.status(401).send('Unauthorized') }
+  if (req.user_id !== req.params.id) {
+    return res.status(401).send('Unauthorized')
+  }
   if (!req.body.rating) {
     return res.status(400).send('Bad Request')
   }
-  Rating.updateOne({ user_id: req.params.id }, { rating: req.body.rating }).then(() => {
-    res.status(200).send('Rating updated')
-  }).catch(next)
+  Rating.updateOne({ user_id: req.params.id }, { rating: req.body.rating })
+    .then(() => {
+      res.status(200).send('Rating updated')
+    })
+    .catch(next)
 })
 
 router.get('/:id/groups', (req, res, next) => {
-  if (req.user_id !== req.params.id) { return res.status(401).send('Unauthorized') }
+  if (req.user_id !== req.params.id) {
+    return res.status(401).send('Unauthorized')
+  }
   const { user_id } = req
-  Member.find({ user_id }).sort({ 'createdAt': -1 }).then(groups => {
-    if (groups.length === 0) {
-      return res.status(404).send("User hasn't joined any groups")
-    }
-    res.json(groups)
-  }).catch(next)
+  Member.find({ user_id })
+    .sort({ createdAt: -1 })
+    .then((groups) => {
+      if (groups.length === 0) {
+        return res.status(404).send("User hasn't joined any groups")
+      }
+      res.json(groups)
+    })
+    .catch(next)
 })
 
 router.post('/:id/walkthrough', async (req, res, next) => {
-  if (!req.user_id) { return res.status(401).send('Not authenticated') }
+  if (!req.user_id) {
+    return res.status(401).send('Not authenticated')
+  }
   try {
     const { user_id, email } = req
     const profile = await Profile.findOne({ user_id })
@@ -603,7 +743,6 @@ router.post('/:id/walkthrough', async (req, res, next) => {
           filename: 'Families_Share_Walkthrough.pdf',
           path: path.join(__dirname, '../../Families_Share_Walkthrough.pdf')
         }
-
       ]
     }
     await transporter.sendMail(mailOptions)
@@ -614,7 +753,9 @@ router.post('/:id/walkthrough', async (req, res, next) => {
 })
 
 router.post('/:id/groups', (req, res, next) => {
-  if (req.user_id !== req.params.id) { return res.status(401).send('Unauthorized') }
+  if (req.user_id !== req.params.id) {
+    return res.status(401).send('Unauthorized')
+  }
   const { user_id } = req
   const { group_id } = req.body
   if (!group_id) {
@@ -627,14 +768,18 @@ router.post('/:id/groups', (req, res, next) => {
     user_accepted: true,
     group_accepted: false
   }
-  Member.create(member).then(() => {
-    nh.newRequestNotification(user_id, group_id)
-    res.status(200).send('Joined succesfully')
-  }).catch(next)
+  Member.create(member)
+    .then(() => {
+      nh.newRequestNotification(user_id, group_id)
+      res.status(200).send('Joined succesfully')
+    })
+    .catch(next)
 })
 
 router.patch('/:userId/groups/:groupId', async (req, res, next) => {
-  if (req.user_id !== req.params.userId) { return res.status(401).send('Unauthorized') }
+  if (req.user_id !== req.params.userId) {
+    return res.status(401).send('Unauthorized')
+  }
   const group_id = req.params.groupId
   const user_id = req.params.userId
   try {
@@ -642,7 +787,10 @@ router.patch('/:userId/groups/:groupId', async (req, res, next) => {
     if (!community) {
       community = await Community.create({})
     }
-    await Member.updateOne({ user_id, group_id }, { user_accepted: true, admin: community.auto_admin })
+    await Member.updateOne(
+      { user_id, group_id },
+      { user_accepted: true, admin: community.auto_admin }
+    )
     nh.newMemberNotification(group_id, user_id)
     res.status(200).send('User joined')
   } catch (err) {
@@ -651,32 +799,46 @@ router.patch('/:userId/groups/:groupId', async (req, res, next) => {
 })
 
 router.delete('/:userId/groups/:groupId', async (req, res, next) => {
-  if (req.user_id !== req.params.userId) { return res.status(401).send('Unauthorized') }
+  if (req.user_id !== req.params.userId) {
+    return res.status(401).send('Unauthorized')
+  }
   try {
     const user_id = req.params.userId
     const group_id = req.params.groupId
     const children = await Parent.find({ parent_id: user_id })
-    const usersChildrenIds = children.map(child => child.child_id)
+    const usersChildrenIds = children.map((child) => child.child_id)
     const group = await Group.findOne({ group_id })
     const resp = await calendar.events.list({ calendarId: group.calendar_id })
-    const events = resp.data.items.filter(event => event.extendedProperties.shared.status !== 'completed')
+    const events = resp.data.items.filter(
+      (event) => event.extendedProperties.shared.status !== 'completed'
+    )
     events.forEach((event) => {
       const parentIds = JSON.parse(event.extendedProperties.shared.parents)
-      event.extendedProperties.shared.parents = JSON.stringify(parentIds.filter(id => id !== user_id))
+      event.extendedProperties.shared.parents = JSON.stringify(
+        parentIds.filter((id) => id !== user_id)
+      )
       const childrenIds = JSON.parse(event.extendedProperties.shared.children)
-      event.extendedProperties.shared.children = JSON.stringify(childrenIds.filter(id => usersChildrenIds.indexOf(id) === -1))
+      event.extendedProperties.shared.children = JSON.stringify(
+        childrenIds.filter((id) => usersChildrenIds.indexOf(id) === -1)
+      )
     })
-    await Promise.all(events.map((event) => {
-      const timeslotPatch = {
-        extendedProperties: {
-          shared: {
-            parents: event.extendedProperties.shared.parents,
-            children: event.extendedProperties.shared.children
+    await Promise.all(
+      events.map((event) => {
+        const timeslotPatch = {
+          extendedProperties: {
+            shared: {
+              parents: event.extendedProperties.shared.parents,
+              children: event.extendedProperties.shared.children
+            }
           }
         }
-      }
-      calendar.events.patch({ calendarId: group.calendar_id, eventId: event.id, resource: timeslotPatch })
-    }))
+        calendar.events.patch({
+          calendarId: group.calendar_id,
+          eventId: event.id,
+          resource: timeslotPatch
+        })
+      })
+    )
     await Member.deleteOne({ user_id, group_id })
     res.status(200).send('User left group')
   } catch (error) {
@@ -685,16 +847,35 @@ router.delete('/:userId/groups/:groupId', async (req, res, next) => {
 })
 
 router.post('/:id/export', async (req, res, next) => {
-  if (req.user_id !== req.params.id) { return res.status(401).send('Unauthorized') }
+  if (req.user_id !== req.params.id) {
+    return res.status(401).send('Unauthorized')
+  }
   const { user_id, email } = req
   try {
-    const profile = await Profile.findOne({ user_id }).populate('address').populate('image').lean().exec()
-    const usersGroups = await Member.find({ user_id, user_accepted: true, group_accepted: true })
-    const groups = await Group.find({ group_id: { $in: usersGroups.map(group => group.group_id) } })
+    const profile = await Profile.findOne({ user_id })
+      .populate('address')
+      .populate('image')
+      .lean()
+      .exec()
+    const usersGroups = await Member.find({
+      user_id,
+      user_accepted: true,
+      group_accepted: true
+    })
+    const groups = await Group.find({
+      group_id: { $in: usersGroups.map((group) => group.group_id) }
+    })
     const usersChildren = await Parent.find({ parent_id: user_id })
-    const childIds = usersChildren.map(child => child.child_id)
-    const children = await Child.find({ child_id: { $in: childIds } }).populate('image').lean().exec()
-    const responses = await Promise.all(groups.map(group => uh.getUsersGroupEvents(group.calendar_id, user_id, childIds)))
+    const childIds = usersChildren.map((child) => child.child_id)
+    const children = await Child.find({ child_id: { $in: childIds } })
+      .populate('image')
+      .lean()
+      .exec()
+    const responses = await Promise.all(
+      groups.map((group) =>
+        uh.getUsersGroupEvents(group.calendar_id, user_id, childIds)
+      )
+    )
     const events = [].concat(...responses)
     uh.createPdf(profile, groups, children, events, () => {
       const mailOptions = {
@@ -705,13 +886,18 @@ router.post('/:id/export', async (req, res, next) => {
         attachments: [
           {
             filename: `${profile.given_name.toUpperCase()}_${profile.family_name.toUpperCase()}.pdf`,
-            path: path.join(__dirname, `../../${profile.given_name.toUpperCase()}_${profile.family_name.toUpperCase()}.pdf`)
+            path: path.join(
+              __dirname,
+              `../../${profile.given_name.toUpperCase()}_${profile.family_name.toUpperCase()}.pdf`
+            )
           }
         ]
       }
       transporter.sendMail(mailOptions, (err, info) => {
         if (err) next(err)
-        fr('../', { files: `${profile.given_name.toUpperCase()}_${profile.family_name.toUpperCase()}.pdf` })
+        fr('../', {
+          files: `${profile.given_name.toUpperCase()}_${profile.family_name.toUpperCase()}.pdf`
+        })
       })
       res.status(200).send('Exported data successfully')
     })
@@ -721,14 +907,26 @@ router.post('/:id/export', async (req, res, next) => {
 })
 
 router.get('/:id/events', async (req, res, next) => {
-  if (req.user_id !== req.params.id) { return res.status(401).send('Unauthorized') }
+  if (req.user_id !== req.params.id) {
+    return res.status(401).send('Unauthorized')
+  }
   try {
     const user_id = req.params.id
-    const usersGroups = await Member.find({ user_id, user_accepted: true, group_accepted: true })
-    const groups = await Group.find({ group_id: { $in: usersGroups.map(group => group.group_id) } })
+    const usersGroups = await Member.find({
+      user_id,
+      user_accepted: true,
+      group_accepted: true
+    })
+    const groups = await Group.find({
+      group_id: { $in: usersGroups.map((group) => group.group_id) }
+    })
     const children = await Parent.find({ parent_id: user_id })
-    const childIds = children.map(parent => parent.child_id)
-    const responses = await Promise.all(groups.map(group => uh.getUsersGroupEvents(group.calendar_id, user_id, childIds)))
+    const childIds = children.map((parent) => parent.child_id)
+    const responses = await Promise.all(
+      groups.map((group) =>
+        uh.getUsersGroupEvents(group.calendar_id, user_id, childIds)
+      )
+    )
     const events = [].concat(...responses)
     if (events.length === 0) {
       return res.status(404).send("User's calendar has no events")
@@ -740,71 +938,115 @@ router.get('/:id/events', async (req, res, next) => {
 })
 
 router.get('/:id/profile', (req, res, next) => {
-  if (!req.user_id) { return res.status(401).send('Unauthorized') }
+  if (!req.user_id) {
+    return res.status(401).send('Unauthorized')
+  }
   const user_id = req.params.id
   Profile.findOne({ user_id })
     .populate('image')
     .populate('address')
     .lean()
     .exec()
-    .then(profile => {
+    .then((profile) => {
       if (!profile) {
         return res.status(404).send('Profile not found')
       }
       res.json(profile)
-    }).catch(next)
+    })
+    .catch(next)
 })
 
-router.patch('/:id/profile', profileUpload.single('photo'), async (req, res, next) => {
-  if (req.user_id !== req.params.id) { return res.status(401).send('Unauthorized') }
-  const user_id = req.params.id
-  const { file } = req
-  const {
-    given_name, family_name, email, phone, phone_type, visible, street, number, city, description, contact_option
-  } = req.body
-  if (!(given_name || family_name || email || phone || phone_type || visible !== undefined || street || number || city || contact_option)) {
-    return res.status(400).send('Bad Request')
-  }
-  const profilePatch = {
-    given_name,
-    family_name,
-    email,
-    phone,
-    phone_type,
-    description,
-    visible,
-    contact_option
-  }
-  const addressPatch = {
-    street,
-    number,
-    city
-  }
-  try {
-    await Address.updateOne({ address_id: req.body.address_id }, addressPatch)
-    await Profile.updateOne({ user_id }, profilePatch)
-    if (file) {
-      const fileName = file.filename.split('.')
-      const imagePatch = {
-        path: `/images/profiles/${file.filename}`,
-        thumbnail_path: `/images/profiles/${fileName[0]}_t.${fileName[1]}`
-      }
-      await sharp(path.join(__dirname, `../../images/profiles/${file.filename}`))
-        .resize({
-          height: 200,
-          fit: sharp.fit.cover
-        })
-        .toFile(path.join(__dirname, `../../images/profiles/${fileName[0]}_t.${fileName[1]}`))
-      await Image.updateOne({ owner_type: 'user', owner_id: user_id }, imagePatch)
+router.patch(
+  '/:id/profile',
+  profileUpload.single('photo'),
+  async (req, res, next) => {
+    if (req.user_id !== req.params.id) {
+      return res.status(401).send('Unauthorized')
     }
-    res.status(200).send('Profile Updated')
-  } catch (error) {
-    next(error)
+    const user_id = req.params.id
+    const { file } = req
+    const {
+      given_name,
+      family_name,
+      email,
+      phone,
+      phone_type,
+      visible,
+      street,
+      number,
+      city,
+      description,
+      contact_option
+    } = req.body
+    if (
+      !(
+        given_name ||
+        family_name ||
+        email ||
+        phone ||
+        phone_type ||
+        visible !== undefined ||
+        street ||
+        number ||
+        city ||
+        contact_option
+      )
+    ) {
+      return res.status(400).send('Bad Request')
+    }
+    const profilePatch = {
+      given_name,
+      family_name,
+      email,
+      phone,
+      phone_type,
+      description,
+      visible,
+      contact_option
+    }
+    const addressPatch = {
+      street,
+      number,
+      city
+    }
+    try {
+      await Address.updateOne({ address_id: req.body.address_id }, addressPatch)
+      await Profile.updateOne({ user_id }, profilePatch)
+      if (file) {
+        const fileName = file.filename.split('.')
+        const imagePatch = {
+          path: `/images/profiles/${file.filename}`,
+          thumbnail_path: `/images/profiles/${fileName[0]}_t.${fileName[1]}`
+        }
+        await sharp(
+          path.join(__dirname, `../../images/profiles/${file.filename}`)
+        )
+          .resize({
+            height: 200,
+            fit: sharp.fit.cover
+          })
+          .toFile(
+            path.join(
+              __dirname,
+              `../../images/profiles/${fileName[0]}_t.${fileName[1]}`
+            )
+          )
+        await Image.updateOne(
+          { owner_type: 'user', owner_id: user_id },
+          imagePatch
+        )
+      }
+      res.status(200).send('Profile Updated')
+    } catch (error) {
+      next(error)
+    }
   }
-})
+)
 
 router.get('/:id/notifications', async (req, res, next) => {
-  if (req.user_id !== req.params.id) { return res.status(401).send('Unauthorized') }
+  if (req.user_id !== req.params.id) {
+    return res.status(401).send('Unauthorized')
+  }
   const user_id = req.params.id
   const page = req.query.page
   try {
@@ -817,9 +1059,13 @@ router.get('/:id/notifications', async (req, res, next) => {
     if (notifications.length === 0) {
       return res.status(404).send('User has no notifications')
     }
-    notifications.forEach(notification => {
-      notification.header = texts[user.language][notification.type][notification.code].header
-      notification.description = nh.getNotificationDescription(notification, user.language)
+    notifications.forEach((notification) => {
+      notification.header =
+        texts[user.language][notification.type][notification.code].header
+      notification.description = nh.getNotificationDescription(
+        notification,
+        user.language
+      )
     })
     return res.json(notifications)
   } catch (error) {
@@ -828,22 +1074,32 @@ router.get('/:id/notifications', async (req, res, next) => {
 })
 
 router.get('/:id/notifications/unread', async (req, res, next) => {
-  if (req.user_id !== req.params.id) { return res.status(401).send('Unauthorized') }
+  if (req.user_id !== req.params.id) {
+    return res.status(401).send('Unauthorized')
+  }
   const user_id = req.params.id
-  Notification.find({ owner_id: user_id, read: false }).then(unreadNotifications => {
-    if (unreadNotifications.length === 0) {
-      return res.status(404).send('User has no notifications')
-    }
-    return res.status(200).send({ unreadNotifications: unreadNotifications.length })
-  }).catch(next)
+  Notification.find({ owner_id: user_id, read: false })
+    .then((unreadNotifications) => {
+      if (unreadNotifications.length === 0) {
+        return res.status(404).send('User has no notifications')
+      }
+      return res
+        .status(200)
+        .send({ unreadNotifications: unreadNotifications.length })
+    })
+    .catch(next)
 })
 
 router.patch('/:id/notifications', (req, res, next) => {
-  if (req.user_id !== req.params.id) { return res.status(401).send('Unauthorized') }
+  if (req.user_id !== req.params.id) {
+    return res.status(401).send('Unauthorized')
+  }
   const user_id = req.params.id
-  Notification.updateMany({ owner_id: user_id, read: false }, { read: true }).then(() => {
-    res.status(200).send('Notifications updated')
-  }).catch(next)
+  Notification.updateMany({ owner_id: user_id, read: false }, { read: true })
+    .then(() => {
+      res.status(200).send('Notifications updated')
+    })
+    .catch(next)
 })
 
 router.get('/:id/framily', (req, res) => {
@@ -878,7 +1134,6 @@ router.post('/:id/framily', (req, res) => {
   //                 framily_id: user_id,
   //                 user_id: inviteId,
   //             })
-
   //         }
   //     })
   //     Framily.create(framilyMembers)
@@ -887,133 +1142,201 @@ router.post('/:id/framily', (req, res) => {
 })
 
 router.get('/:id/children', (req, res, next) => {
-  if (!req.user_id) { return res.status(401).send('Unauthorized') }
+  if (!req.user_id) {
+    return res.status(401).send('Unauthorized')
+  }
   const { id } = req.params
-  Parent.find({ parent_id: id }).then(children => {
-    if (children.length === 0) {
-      return res.status(404).send('User has no children')
-    }
-    res.json(children)
-  }).catch(next)
+  Parent.find({ parent_id: id })
+    .then((children) => {
+      if (children.length === 0) {
+        return res.status(404).send('User has no children')
+      }
+      res.json(children)
+    })
+    .catch(next)
 })
 
-router.post('/:id/children', childProfileUpload.single('photo'), async (req, res, next) => {
-  if (req.user_id !== req.params.id) { return res.status(401).send('Unauthorized') }
-  const {
-    birthdate, given_name, family_name, gender, allergies, other_info, special_needs, background, image: imagePath
-  } = req.body
-  const { file } = req
-  if (!(birthdate && given_name && family_name && gender && background)) {
-    return res.status(400).send('Bad Request')
+router.post(
+  '/:id/children',
+  childProfileUpload.single('photo'),
+  async (req, res, next) => {
+    if (req.user_id !== req.params.id) {
+      return res.status(401).send('Unauthorized')
+    }
+    const {
+      birthdate,
+      given_name,
+      family_name,
+      gender,
+      allergies,
+      other_info,
+      special_needs,
+      background,
+      image: imagePath
+    } = req.body
+    const { file } = req
+    if (!(birthdate && given_name && family_name && gender && background)) {
+      return res.status(400).send('Bad Request')
+    }
+    const parent_id = req.params.id
+    const child = {
+      birthdate,
+      given_name,
+      family_name,
+      gender,
+      allergies,
+      other_info,
+      special_needs,
+      background,
+      suspended: false
+    }
+    const image_id = objectid()
+    const child_id = objectid()
+    const image = {
+      image_id,
+      owner_type: 'child',
+      owner_id: child_id
+    }
+    if (file) {
+      const fileName = file.filename.split('.')
+      image.path = `/images/profiles/${file.filename}`
+      image.thumbnail_path = `/images/profiles/${fileName[0]}_t.${fileName[1]}`
+      await sharp(
+        path.join(__dirname, `../../images/profiles/${file.filename}`)
+      )
+        .resize({
+          height: 200,
+          fit: sharp.fit.cover
+        })
+        .toFile(
+          path.join(
+            __dirname,
+            `../../images/profiles/${fileName[0]}_t.${fileName[1]}`
+          )
+        )
+    } else {
+      image.path = imagePath
+      image.thumbnail_path = imagePath
+    }
+    child.child_id = child_id
+    child.image_id = image_id
+    const parent = {
+      parent_id,
+      child_id
+    }
+    try {
+      await Image.create(image)
+      await Child.create(child)
+      await Parent.create(parent)
+      res.status(200).send('Child created')
+    } catch (error) {
+      next(error)
+    }
   }
-  const parent_id = req.params.id
-  const child = {
-    birthdate,
-    given_name,
-    family_name,
-    gender,
-    allergies,
-    other_info,
-    special_needs,
-    background,
-    suspended: false
-  }
-  const image_id = objectid()
-  const child_id = objectid()
-  const image = {
-    image_id,
-    owner_type: 'child',
-    owner_id: child_id
-  }
-  if (file) {
-    const fileName = file.filename.split('.')
-    image.path = `/images/profiles/${file.filename}`
-    image.thumbnail_path = `/images/profiles/${fileName[0]}_t.${fileName[1]}`
-    await sharp(path.join(__dirname, `../../images/profiles/${file.filename}`))
-      .resize({
-        height: 200,
-        fit: sharp.fit.cover
-      })
-      .toFile(path.join(__dirname, `../../images/profiles/${fileName[0]}_t.${fileName[1]}`))
-  } else {
-    image.path = imagePath
-    image.thumbnail_path = imagePath
-  }
-  child.child_id = child_id
-  child.image_id = image_id
-  const parent = {
-    parent_id,
-    child_id
-  }
-  try {
-    await Image.create(image)
-    await Child.create(child)
-    await Parent.create(parent)
-    res.status(200).send('Child created')
-  } catch (error) {
-    next(error)
-  }
-})
+)
 
 router.get('/:userId/children/:childId', (req, res, next) => {
-  if (!req.user_id) { return res.status(401).send('Unauthorized') }
+  if (!req.user_id) {
+    return res.status(401).send('Unauthorized')
+  }
   const child_id = req.params.childId
   Child.findOne({ child_id })
     .populate('image')
     .lean()
     .exec()
-    .then(child => {
+    .then((child) => {
       if (!child) {
         return res.status(404).send('Child not found')
       }
       res.json(child)
-    }).catch(next)
+    })
+    .catch(next)
 })
 
-router.patch('/:userId/children/:childId', childProfileUpload.single('photo'), async (req, res, next) => {
-  if (req.user_id !== req.params.userId) { return res.status(401).send('Unauthorized') }
-  const { file } = req
-  const child_id = req.params.childId
-  const {
-    given_name, family_name, gender, birthdate, background, allergies, other_info, special_needs
-  } = req.body
-  const childPatch = {
-    ...req.body
-  }
-  if (!(given_name || family_name || gender || birthdate || background || allergies || other_info || special_needs)) {
-    return res.status(400).send('Bad Request')
-  }
-  try {
-    await Child.updateOne({ child_id }, childPatch)
-    if (file) {
-      const fileName = file.filename.split('.')
-      const imagePatch = {
-        path: `/images/profiles/${file.filename}`,
-        thumbnail_path: `/images/profiles/${fileName[0]}_t.${fileName[1]}`
-      }
-      await sharp(path.join(__dirname, `../../images/profiles/${file.filename}`))
-        .resize({
-          height: 200,
-          fit: sharp.fit.cover
-        })
-        .toFile(path.join(__dirname, `../../images/profiles/${fileName[0]}_t.${fileName[1]}`))
-      await Image.updateOne({ owner_type: 'child', owner_id: child_id }, imagePatch)
+router.patch(
+  '/:userId/children/:childId',
+  childProfileUpload.single('photo'),
+  async (req, res, next) => {
+    if (req.user_id !== req.params.userId) {
+      return res.status(401).send('Unauthorized')
     }
-    res.status(200).send(' Child Profile Updated')
-  } catch (error) {
-    next(error)
+    const { file } = req
+    const child_id = req.params.childId
+    const {
+      given_name,
+      family_name,
+      gender,
+      birthdate,
+      background,
+      allergies,
+      other_info,
+      special_needs
+    } = req.body
+    const childPatch = {
+      ...req.body
+    }
+    if (
+      !(
+        given_name ||
+        family_name ||
+        gender ||
+        birthdate ||
+        background ||
+        allergies ||
+        other_info ||
+        special_needs
+      )
+    ) {
+      return res.status(400).send('Bad Request')
+    }
+    try {
+      await Child.updateOne({ child_id }, childPatch)
+      if (file) {
+        const fileName = file.filename.split('.')
+        const imagePatch = {
+          path: `/images/profiles/${file.filename}`,
+          thumbnail_path: `/images/profiles/${fileName[0]}_t.${fileName[1]}`
+        }
+        await sharp(
+          path.join(__dirname, `../../images/profiles/${file.filename}`)
+        )
+          .resize({
+            height: 200,
+            fit: sharp.fit.cover
+          })
+          .toFile(
+            path.join(
+              __dirname,
+              `../../images/profiles/${fileName[0]}_t.${fileName[1]}`
+            )
+          )
+        await Image.updateOne(
+          { owner_type: 'child', owner_id: child_id },
+          imagePatch
+        )
+      }
+      res.status(200).send(' Child Profile Updated')
+    } catch (error) {
+      next(error)
+    }
   }
-})
+)
 
 router.delete('/:userId/children/:childId', async (req, res, next) => {
-  if (req.user_id !== req.params.userId) { return res.status(401).send('Unauthorized') }
+  if (req.user_id !== req.params.userId) {
+    return res.status(401).send('Unauthorized')
+  }
   const user_id = req.params.userId
   const child_id = req.params.childId
   try {
     const memberships = await Member.find({ user_id })
-    const groupIds = memberships.map(membership => membership.group_id)
+    const groupIds = memberships.map((membership) => membership.group_id)
     const userGroups = await Group.find({ group_id: { $in: groupIds } })
-    await Promise.all(userGroups.map((group) => { uh.unsubcribeChildFromGroupEvents(group.calendar_id, child_id) }))
+    await Promise.all(
+      userGroups.map((group) => {
+        uh.unsubcribeChildFromGroupEvents(group.calendar_id, child_id)
+      })
+    )
     await Child.deleteOne({ child_id })
     await Parent.deleteMany({ child_id })
     await Image.deleteOne({ owner_id: child_id })
@@ -1024,44 +1347,60 @@ router.delete('/:userId/children/:childId', async (req, res, next) => {
 })
 
 router.get('/:userId/children/:childId/parents', (req, res, next) => {
-  if (!req.user_id) { return res.status(401).send('Unauthorized') }
+  if (!req.user_id) {
+    return res.status(401).send('Unauthorized')
+  }
   const child_id = req.params.childId
-  Parent.find({ child_id }).then(parents => {
-    if (parents.length === 0) {
-      res.status(404).send('Parents not found')
-    }
-    const parentIds = parents.map(parent => parent.parent_id)
-    return Profile.find({ user_id: { $in: parentIds } })
-  }).then(parentProfiles => {
-    res.json(parentProfiles)
-  }).catch(next)
+  Parent.find({ child_id })
+    .then((parents) => {
+      if (parents.length === 0) {
+        res.status(404).send('Parents not found')
+      }
+      const parentIds = parents.map((parent) => parent.parent_id)
+      return Profile.find({ user_id: { $in: parentIds } })
+    })
+    .then((parentProfiles) => {
+      res.json(parentProfiles)
+    })
+    .catch(next)
 })
 
 router.post('/:userId/children/:childId/parents', (req, res, next) => {
-  if (req.user_id !== req.params.userId) { return res.status(401).send('Unauthorized') }
+  if (req.user_id !== req.params.userId) {
+    return res.status(401).send('Unauthorized')
+  }
   const { parentId } = req.body
   const child_id = req.params.childId
-  Parent.find({ child_id }).then(parents => {
-    if (parents.length >= 2 || !parentId) {
-      return res.status(400).send('Bad Request')
-    }
-    return Parent.create({
-      parent_id: parentId,
-      child_id
-    }).then(() => {
-      res.status(200).send('Parent added')
+  Parent.find({ child_id })
+    .then((parents) => {
+      if (parents.length >= 2 || !parentId) {
+        return res.status(400).send('Bad Request')
+      }
+      return Parent.create({
+        parent_id: parentId,
+        child_id
+      }).then(() => {
+        res.status(200).send('Parent added')
+      })
     })
-  }).catch(next)
+    .catch(next)
 })
 
-router.delete('/:userId/children/:childId/parents/:parentId', (req, res, next) => {
-  if (req.user_id !== req.params.userId) { return res.status(401).send('Unauthorized') }
-  const { parentId } = req.params
-  const child_id = req.params.childId
-  Parent.deleteOne({ child_id, parent_id: parentId }).then(() => {
-    res.status(200).send('Parent deleted')
-  }).catch(next)
-})
+router.delete(
+  '/:userId/children/:childId/parents/:parentId',
+  (req, res, next) => {
+    if (req.user_id !== req.params.userId) {
+      return res.status(401).send('Unauthorized')
+    }
+    const { parentId } = req.params
+    const child_id = req.params.childId
+    Parent.deleteOne({ child_id, parent_id: parentId })
+      .then(() => {
+        res.status(200).send('Parent deleted')
+      })
+      .catch(next)
+  }
+)
 
 module.exports = router
 
