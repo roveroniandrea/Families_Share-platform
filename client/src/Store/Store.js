@@ -4,13 +4,16 @@ import { createLogger } from "redux-logger";
 import authentication from "../Reducers/AuthenticationReducer";
 import language from "../Reducers/LanguageReducer";
 import registration from "../Reducers/RegistrationReducer";
+import { compose } from 'redux';
 
 const loggerMiddleware = createLogger();
 
 const rootReducer = combineReducers({ language, authentication, registration });
+
+const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 const store = createStore(
   rootReducer,
-  applyMiddleware(thunkMiddleware, loggerMiddleware)
+  composeEnhancer(applyMiddleware(thunkMiddleware, loggerMiddleware))
 );
 
 export default store;
