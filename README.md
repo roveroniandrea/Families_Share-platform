@@ -10,6 +10,10 @@
 
   Scaricare Docker e wsl. Da vscode installare le estensioni `ms-azuretools.vscode-docker` e `ms-vscode-remote.remote-containers`
 
+- Opzione 3: uso di Windows
+
+  Vai al prossimo passo
+
 ## Step 2
 
 ```bash
@@ -23,10 +27,18 @@ git clone https://github.com/roveroniandrea/Families_Share-platform.git
   Avviare docker, aprire il repository con vs code, premere `F1` oppure `ctrl+shift+p` e eseguire `Remote-Containers: Reopen in Container`.
   Ci metterà tanto e scaricerà circa 1.2 GB di dati
 
+- Solo se su Windows:
+
+  ```bash
+  npm config set msvs_version 2017
+  ```
+
 Aprire un terminale sulla cartella di `Families_Share-platform` (se si usa docker, aprirlo da vs code con `ctrl + ò` oppure `Terminale -> Nuovo terminale`)
 
 ```bash
-npm install #crasha se siete su windows senza wsl
+nvm install 10.16.3
+nvm use 10.16.3 #Necessario 1.16.3
+npm install
 cd client
 npm install
 ```
