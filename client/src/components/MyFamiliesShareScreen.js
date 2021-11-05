@@ -111,20 +111,13 @@ class MyFamiliesShareScreen extends React.Component {
 
   renderGroupSection = () => {
     const { language } = this.props;
-    const normalGroups = this.state.myGroups.filter(g => !g.is_car_sharing);
-    const myGroupsCarSharing = this.state.myGroups.filter(g => g.is_car_sharing);
+    const { myGroups } = this.state;
     const texts = Texts[language].myFamiliesShareScreen;
     return (
       <div className="myGroupsContainer">
         <div className="myGroupsContainerHeader">{texts.myGroups}</div>
-        {normalGroups.length > 0 ? (
-          <GroupList groupIds={normalGroups} />
-        ) : (
-          <div className="myGroupsContainerPrompt">{texts.myGroupsPrompt}</div>
-        )}
-        <div className="myGroupsContainerHeader">{texts.myGroupsCarSharing}</div>
-        {myGroupsCarSharing.length > 0 ? (
-          <GroupList groupIds={myGroupsCarSharing} />
+        {myGroups.length > 0 ? (
+          <GroupList groupIds={myGroups} />
         ) : (
           <div className="myGroupsContainerPrompt">{texts.myGroupsPrompt}</div>
         )}

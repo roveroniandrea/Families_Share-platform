@@ -57,7 +57,8 @@ class GroupHeader extends React.Component {
       groupName,
       groupBackground,
       language,
-      userIsAdmin
+      userIsAdmin,
+      is_car_sharing
     } = this.props;
     const { confirmDialogIsOpen } = this.state;
     const texts = Texts[language].groupHeader;
@@ -123,7 +124,7 @@ class GroupHeader extends React.Component {
               )}
             </div>
           </div>
-          <h1>{groupName}</h1>
+          <h1>{groupName}{is_car_sharing? texts.car_sharing: ''}</h1>
           <img src={groupLogo} alt="Group Logo" className="groupImage" />
         </div>
       </React.Fragment>
