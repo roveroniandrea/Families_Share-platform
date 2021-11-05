@@ -150,7 +150,9 @@ export default class GroupMainScreen extends React.Component {
             exact
             path={`${currentPath}/routes`}
             render={props => (
-              <GroupCarSharingRoutes />
+              <GroupCarSharingRoutes 
+                group={group}
+                />
             )}
           />
           <Route
