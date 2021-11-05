@@ -861,6 +861,7 @@ const en = {
   groupNavbar: {
     chatTab: "Chat",
     activitiesTab: "Activities",
+    routesTab: "Shared routes",
     membersTab: "Members",
     infoTab: "About",
     calendarTab: "Calendar"
@@ -3447,6 +3448,7 @@ const it = {
   groupNavbar: {
     chatTab: "Messaggi",
     activitiesTab: "Attività  ",
+    routesTab: "Percorsi condivisi",
     membersTab: "Membri",
     infoTab: "Info",
     calendarTab: "Calendario"
