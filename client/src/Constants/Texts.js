@@ -845,7 +845,8 @@ const en = {
     open: "Participation to the group is open.",
     closed: "Participation to the group is closed.",
     members: "Members",
-    kids: "Kids"
+    kids: "Kids",
+    car_sharing: " (Car sharing group)"
   },
   groupInfo: {
     contact: "CONTACT GROUP",
@@ -860,6 +861,7 @@ const en = {
   groupNavbar: {
     chatTab: "Chat",
     activitiesTab: "Activities",
+    routesTab: "Shared routes",
     membersTab: "Members",
     infoTab: "About",
     calendarTab: "Calendar"
@@ -968,6 +970,7 @@ const en = {
     },
     contactInfo: "Please fill your contact information",
     name: "Name",
+    is_car_sharing: "Is a car sharing group?",
     description: "Description",
     visibleGroup: "Others can find my group",
     invisibleGroup: "Others cannot find my group",
@@ -1059,7 +1062,8 @@ const en = {
     confirmDialogTitle: "Are you sure you want to delete your reply?"
   },
   groupHeader: {
-    confirmDialogTitle: "Are you sure you want to delete the group?"
+    confirmDialogTitle: "Are you sure you want to delete the group?",
+    car_sharing: " (Car Sharing group)"
   },
   announcementHeader: {
     confirmDialogTitle: "Are you sure you want to delete this?"
@@ -3428,6 +3432,7 @@ const it = {
     open: "Gruppo aperto: tutti possono richiedere di partecipare al gruppo",
     closed: "Gruppo chiuso: si può partecipare solo su invito",
     members: "Membri",
+    car_sharing: " (Gruppo di car sharing)",
     kids: "Bambini"
   },
   groupInfo: {
@@ -3443,6 +3448,7 @@ const it = {
   groupNavbar: {
     chatTab: "Messaggi",
     activitiesTab: "Attività  ",
+    routesTab: "Percorsi condivisi",
     membersTab: "Membri",
     infoTab: "Info",
     calendarTab: "Calendario"
@@ -3544,6 +3550,7 @@ const it = {
       "Invita persone"
     ],
     name: "Nome",
+    is_car_sharing: "E' un gruppo di car sharing?",
     description: "Descrizione",
     visibleGroup: "Altri utenti possono trovare il gruppo",
     invisibleGroup: "Altri utenti NON possono trovare il gruppo",
@@ -3635,7 +3642,8 @@ const it = {
     confirmDialogTitle: "Confermi di voler eliminare la tua risposta?"
   },
   groupHeader: {
-    confirmDialogTitle: "Confermi di voler eliminare il gruppo?"
+    confirmDialogTitle: "Confermi di voler eliminare il gruppo?",
+    car_sharing: " (Gruppo di car sharing)"
   },
   announcementHeader: {
     confirmDialogTitle: "Confermi l'eliminazione?"

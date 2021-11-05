@@ -6,6 +6,7 @@ import PropTypes from "prop-types";
 import LoadingSpinner from "./LoadingSpinner";
 import GroupNavbar from "./GroupNavbar";
 import Log from "./Log";
+import { GroupCarSharingRoutes } from './GroupCarSharingRoutes';
 
 const GroupInfo = Loadable({
   loader: () => import("./GroupInfo"),
@@ -144,6 +145,16 @@ export default class GroupMainScreen extends React.Component {
               />
             )}
           />
+          {/*Route for a cas sharing routes*/}
+          <Route
+            exact
+            path={`${currentPath}/routes`}
+            render={props => (
+              <GroupCarSharingRoutes 
+                group={group}
+                />
+            )}
+          />
           <Route
             exact
             path={`${currentPath}/calendar`}
@@ -156,7 +167,7 @@ export default class GroupMainScreen extends React.Component {
             )}
           />
         </Switch>
-        <GroupNavbar allowNavigation={allowNavigation} />
+        <GroupNavbar allowNavigation={allowNavigation} is_car_sharing={Boolean(group.is_car_sharing)}/>
       </div>
     ) : (
       <LoadingSpinner />

@@ -173,7 +173,9 @@ router.post('/', async (req, res, next) => {
     visible,
     owner_id,
     contact_type,
-    contact_info
+    contact_info,
+    //Optional parameter to create a car sharing group
+    is_car_sharing
   } = req.body
   if (
     !(
@@ -205,7 +207,8 @@ router.post('/', async (req, res, next) => {
     owner_id,
     contact_type,
     settings_id,
-    image_id
+    image_id,
+    is_car_sharing: is_car_sharing || false
   }
   if (contact_type !== 'none') {
     group.contact_info = contact_info

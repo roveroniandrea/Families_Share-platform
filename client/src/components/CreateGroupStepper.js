@@ -1,24 +1,24 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React from 'react'
+import PropTypes from 'prop-types'
 import {
   withStyles,
   MuiThemeProvider,
   createMuiTheme
-} from "@material-ui/core/styles";
-import Stepper from "@material-ui/core/Stepper";
-import Step from "@material-ui/core/Step";
-import StepLabel from "@material-ui/core/StepLabel";
-import StepContent from "@material-ui/core/StepContent";
-import Button from "@material-ui/core/Button";
-import Switch from "@material-ui/core/Switch";
-import autosize from "autosize";
-import { withRouter } from "react-router-dom";
-import axios from "axios";
-import LoadingSpinner from "./LoadingSpinner";
-import Texts from "../Constants/Texts";
-import withLanguage from "./LanguageContext";
-import InviteDialog from "./InviteDialog";
-import Log from "./Log";
+} from '@material-ui/core/styles'
+import Stepper from '@material-ui/core/Stepper'
+import Step from '@material-ui/core/Step'
+import StepLabel from '@material-ui/core/StepLabel'
+import StepContent from '@material-ui/core/StepContent'
+import Button from '@material-ui/core/Button'
+import Switch from '@material-ui/core/Switch'
+import autosize from 'autosize'
+import { withRouter } from 'react-router-dom'
+import axios from 'axios'
+import LoadingSpinner from './LoadingSpinner'
+import Texts from '../Constants/Texts'
+import withLanguage from './LanguageContext'
+import InviteDialog from './InviteDialog'
+import Log from './Log'
 
 const muiTheme = createMuiTheme({
   typography: {
@@ -27,74 +27,74 @@ const muiTheme = createMuiTheme({
   overrides: {
     MuiStepLabel: {
       label: {
-        fontFamily: "Roboto",
-        fontSize: "1.56rem"
+        fontFamily: 'Roboto',
+        fontSize: '1.56rem'
       }
     },
     MuiStepIcon: {
       root: {
-        display: "block",
-        width: "3rem",
-        height: "3rem",
-        "&$active": {
-          color: "#00838f"
+        display: 'block',
+        width: '3rem',
+        height: '3rem',
+        '&$active': {
+          color: '#00838f'
         },
-        "&$completed": {
-          color: "#00838f"
+        '&$completed': {
+          color: '#00838f'
         }
       }
     },
     MuiButton: {
       root: {
-        fontSize: "1.4rem",
-        fontFamily: "Roboto"
+        fontSize: '1.4rem',
+        fontFamily: 'Roboto'
       }
     }
   },
   palette: {
     secondary: {
-      main: "#c43e00"
+      main: '#c43e00'
     }
   }
-});
+})
 
-const styles = theme => ({
+const styles = (theme) => ({
   root: {
-    width: "95%"
+    width: '95%'
   },
   continueButton: {
-    backgroundColor: "#00838f",
+    backgroundColor: '#00838f',
     marginTop: theme.spacing.unit,
     marginRight: theme.spacing.unit,
-    "&:hover": {
-      backgroundColor: "#00838f"
+    '&:hover': {
+      backgroundColor: '#00838f'
     }
   },
   stepLabel: {
     root: {
-      color: "#ffffff",
-      "&$active": {
-        color: "white",
+      color: '#ffffff',
+      '&$active': {
+        color: 'white',
         fontWeight: 500
       },
-      "&$completed": {
+      '&$completed': {
         color: theme.palette.text.primary,
         fontWeight: 500
       },
-      "&$alternativeLabel": {
-        textAlign: "center",
+      '&$alternativeLabel': {
+        textAlign: 'center',
         marginTop: 16,
-        fontSize: "5rem"
+        fontSize: '5rem'
       },
-      "&$error": {
+      '&$error': {
         color: theme.palette.error.main
       }
     }
   },
   cancelButton: {
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     marginTop: theme.spacing.unit,
-    color: "grey",
+    color: 'grey',
     marginRight: theme.spacing.unit
   },
   actionsContainer: {
@@ -103,7 +103,7 @@ const styles = theme => ({
   resetContainer: {
     padding: theme.spacing.unit * 3
   }
-});
+})
 
 class CreateGroupStepper extends React.Component {
   state = {
@@ -111,55 +111,55 @@ class CreateGroupStepper extends React.Component {
     fetchedGroups: false,
     activeStep: 0,
     formIsValidated: false,
-    name: "",
-    description: "",
-    location: "",
+    name: '',
+    description: '',
+    location: '',
     inviteIds: [],
     groupNames: [],
     groupVisibility: false,
     creatingGroup: false,
-    contactType: "email",
-    contactInfo: ""
-  };
+    contactType: 'email',
+    contactInfo: ''
+  }
 
   componentDidMount() {
     axios
-      .get("/api/groups", { params: { searchBy: "all" } })
-      .then(response => {
-        const groups = response.data;
+      .get('/api/groups', { params: { searchBy: 'all' } })
+      .then((response) => {
+        const groups = response.data
         this.setState({
           fetchedGroups: true,
-          groupNames: groups.map(group => group.name)
-        });
+          groupNames: groups.map((group) => group.name)
+        })
       })
-      .catch(error => {
-        Log.error(error);
-        this.setState({ fetchedGroups: true, groupNames: [] });
-      });
-    document.addEventListener("message", this.handleMessage, false);
+      .catch((error) => {
+        Log.error(error)
+        this.setState({ fetchedGroups: true, groupNames: [] })
+      })
+    document.addEventListener('message', this.handleMessage, false)
   }
 
   componentWillUnmount() {
-    document.removeEventListener("message", this.handleMessage, false);
+    document.removeEventListener('message', this.handleMessage, false)
   }
 
-  handleMessage = event => {
-    const { activeStep } = this.state;
-    const { history } = this.props;
-    const data = JSON.parse(event.data);
-    if (data.action === "stepperGoBack") {
+  handleMessage = (event) => {
+    const { activeStep } = this.state
+    const { history } = this.props
+    const data = JSON.parse(event.data)
+    if (data.action === 'stepperGoBack') {
       if (activeStep - 1 >= 0) {
-        this.setState({ activeStep: activeStep - 1 });
+        this.setState({ activeStep: activeStep - 1 })
       } else {
-        history.goBack();
+        history.goBack()
       }
     }
-  };
+  }
 
   createGroup = () => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    const { history } = this.props;
-    this.setState({ creatingGroup: true });
+    const user = JSON.parse(localStorage.getItem('user'))
+    const { history } = this.props
+    this.setState({ creatingGroup: true })
     const {
       description,
       groupVisibility: visible,
@@ -167,123 +167,131 @@ class CreateGroupStepper extends React.Component {
       location,
       contactType,
       contactInfo,
-      name
-    } = this.state;
+      name,
+      is_car_sharing
+    } = this.state
     axios
-      .post("/api/groups", {
+      .post('/api/groups', {
         google_token: user.google_token,
         name,
         description,
         location,
-        background: "#00838F",
+        background: '#00838F',
         contact_type: contactType,
         contact_info: contactInfo,
         visible,
         owner_id: user.id,
         email: user.email,
-        invite_ids
+        invite_ids,
+        is_car_sharing: Boolean(is_car_sharing)
       })
-      .then(response => {
-        Log.info(response);
-        history.push("/myfamiliesshare");
+      .then((response) => {
+        Log.info(response)
+        history.push('/myfamiliesshare')
       })
-      .catch(error => {
-        Log.error(error);
-        history.push("/myfamiliesshare");
-      });
-  };
+      .catch((error) => {
+        Log.error(error)
+        history.push('/myfamiliesshare')
+      })
+  }
 
   handleContinue = () => {
-    const { activeStep } = this.state;
+    const { activeStep } = this.state
     if (this.validate()) {
       if (activeStep === 4) {
-        this.createGroup();
+        this.createGroup()
       }
-      this.setState(state => ({
+      this.setState((state) => ({
         activeStep: state.activeStep + 1,
         formIsValidated: false
-      }));
+      }))
     } else {
-      this.setState({ formIsValidated: true });
+      this.setState({ formIsValidated: true })
     }
-  };
+  }
 
   handleCancel = () => {
-    this.setState(state => ({
+    this.setState((state) => ({
       activeStep: state.activeStep - 1
-    }));
-  };
+    }))
+  }
 
-  handleChange = event => {
-    const { groupNames, groupVisibility } = this.state;
-    const { name, value } = event.target;
-    const { language } = this.props;
-    if (name === "name") {
+  handleChange = (event) => {
+    const { groupNames, groupVisibility, is_car_sharing } = this.state
+    const { name, value } = event.target
+    const { language } = this.props
+    if (name === 'name') {
       const nameExists =
         groupNames.filter(
-          groupName => groupName.toUpperCase() === value.toUpperCase().trim()
-        ).length > 0;
+          (groupName) => groupName.toUpperCase() === value.toUpperCase().trim()
+        ).length > 0
       if (nameExists) {
         event.target.setCustomValidity(
           Texts[language].createGroupStepper.nameErr
-        );
+        )
       } else {
-        event.target.setCustomValidity("");
+        event.target.setCustomValidity('')
       }
     }
-    if (name === "groupVisibility") {
-      this.setState({ groupVisibility: !groupVisibility });
-    } else {
-      this.setState({ [name]: value });
+    if (name === 'groupVisibility') {
+      this.setState({ groupVisibility: !groupVisibility })
+    } 
+    else {
+      if(name === 'is_car_sharing'){
+        this.setState({ is_car_sharing: !is_car_sharing })
+      }
+      else{
+        this.setState({ [name]: value })
+      }
     }
-  };
+  }
 
   validate = () => {
-    const { language } = this.props;
-    const texts = Texts[language].createGroupStepper;
+    const { language } = this.props
+    const texts = Texts[language].createGroupStepper
     if (this.formEl.checkValidity() === false) {
       for (let i = 0; i < this.formEl.length; i += 1) {
-        const elem = this.formEl[i];
-        const errorLabel = document.getElementById(`${elem.name}Err`);
-        if (errorLabel && elem.nodeName.toLowerCase() !== "button") {
+        const elem = this.formEl[i]
+        const errorLabel = document.getElementById(`${elem.name}Err`)
+        if (errorLabel && elem.nodeName.toLowerCase() !== 'button') {
           if (!elem.validity.valid) {
             if (elem.validity.valueMissing) {
-              errorLabel.textContent = texts.requiredErr;
+              errorLabel.textContent = texts.requiredErr
             } else if (elem.validity.customError) {
-              errorLabel.textContent = texts.nameErr;
+              errorLabel.textContent = texts.nameErr
             }
           } else {
-            errorLabel.textContent = "";
+            errorLabel.textContent = ''
           }
         }
       }
-      return false;
+      return false
     }
     for (let i = 0; i < this.formEl.length; i += 1) {
-      const elem = this.formEl[i];
-      const errorLabel = document.getElementById(`${elem.name}Err`);
-      if (errorLabel && elem.nodeName.toLowerCase() !== "button") {
-        errorLabel.textContent = "";
+      const elem = this.formEl[i]
+      const errorLabel = document.getElementById(`${elem.name}Err`)
+      if (errorLabel && elem.nodeName.toLowerCase() !== 'button') {
+        errorLabel.textContent = ''
       }
     }
-    return true;
-  };
+    return true
+  }
 
   handleInviteModalOpen = () => {
-    this.setState({ inviteModalIsOpen: true });
-  };
+    this.setState({ inviteModalIsOpen: true })
+  }
 
   handleInviteModalClose = () => {
-    this.setState({ inviteModalIsOpen: false });
-  };
+    this.setState({ inviteModalIsOpen: false })
+  }
 
-  handleInvite = inviteIds => {
-    this.setState({ inviteModalIsOpen: false, inviteIds });
-  };
+  handleInvite = (inviteIds) => {
+    this.setState({ inviteModalIsOpen: false, inviteIds })
+  }
 
   getStepContent = () => {
-    const { classes, language } = this.props;
-    const contactTypes = ["phone", "email"];
+    const { classes, language } = this.props
+    const contactTypes = ['phone', 'email']
     const {
       activeStep,
       name,
@@ -292,9 +300,10 @@ class CreateGroupStepper extends React.Component {
       inviteModalIsOpen,
       groupVisibility,
       contactType,
-      contactInfo
-    } = this.state;
-    const texts = Texts[language].createGroupStepper;
+      contactInfo,
+      is_car_sharing
+    } = this.state
+    const texts = Texts[language].createGroupStepper
     switch (activeStep) {
       case 0:
         return (
@@ -315,15 +324,24 @@ class CreateGroupStepper extends React.Component {
               className="textareaInput form-control"
               placeholder={texts.description}
               value={description}
-              onChange={event => {
-                this.handleChange(event);
-                autosize(document.querySelectorAll("textarea"));
+              onChange={(event) => {
+                this.handleChange(event)
+                autosize(document.querySelectorAll('textarea'))
               }}
               required
             />
             <span className="invalid-feedback" id="descriptionErr" />
+            <span>{texts.is_car_sharing}</span>
+            <Switch
+              onClick={() =>
+                // Switch to create a car sharing group
+                this.handleChange({
+                  target: { name: 'is_car_sharing', value: '' }
+                })}
+              checked={Boolean(is_car_sharing)}
+            ></Switch>
           </div>
-        );
+        )
       case 1:
         return (
           <div className="row no-gutters">
@@ -334,7 +352,7 @@ class CreateGroupStepper extends React.Component {
               checked={groupVisibility}
               onClick={() =>
                 this.handleChange({
-                  target: { name: "groupVisibility", value: "" }
+                  target: { name: 'groupVisibility', value: '' }
                 })
               }
               value="groupVisibility"
@@ -345,7 +363,7 @@ class CreateGroupStepper extends React.Component {
               }}
             />
           </div>
-        );
+        )
       case 2:
         return (
           <div>
@@ -360,18 +378,18 @@ class CreateGroupStepper extends React.Component {
             />
             <span className="invalid-feedback" id="locationErr" />
           </div>
-        );
+        )
       case 3:
         return (
           <div>
             <select
               value={contactType}
-              style={{ width: "100px" }}
+              style={{ width: '100px' }}
               className="createGroupSelectInput "
               onChange={this.handleChange}
               name="contactType"
             >
-              {contactTypes.map(d => (
+              {contactTypes.map((d) => (
                 <option key={d} value={d}>
                   {texts.contactTypes[d]}
                 </option>
@@ -388,7 +406,7 @@ class CreateGroupStepper extends React.Component {
             />
             <span className="invalid-feedback" id="contactInfoErr" />
           </div>
-        );
+        )
       case 4:
         return (
           <div className="row no-gutters" id="createGroupScreenInvites">
@@ -406,42 +424,42 @@ class CreateGroupStepper extends React.Component {
               onClick={this.handleInviteModalOpen}
             />
           </div>
-        );
+        )
       default:
-        return <div>Lorem Ipsum</div>;
+        return <div>Lorem Ipsum</div>
     }
-  };
+  }
 
   render() {
-    const { classes, language } = this.props;
-    const texts = Texts[language].createGroupStepper;
-    const steps = texts.stepLabels;
+    const { classes, language } = this.props
+    const texts = Texts[language].createGroupStepper
+    const steps = texts.stepLabels
     const {
       activeStep,
       formIsValidated,
       creatingGroup,
       fetchedGroups
-    } = this.state;
-    const formClass = [];
+    } = this.state
+    const formClass = []
     if (formIsValidated) {
-      formClass.push("was-validated");
+      formClass.push('was-validated')
     } else {
-      formClass.pop();
+      formClass.pop()
     }
 
     return fetchedGroups && !creatingGroup ? (
       <div className={classes.root}>
         <form
-          ref={form => {
-            this.formEl = form;
+          ref={(form) => {
+            this.formEl = form
           }}
-          onSubmit={event => event.preventDefault()}
+          onSubmit={(event) => event.preventDefault()}
           className={formClass}
           noValidate
         >
           <MuiThemeProvider theme={muiTheme}>
             <Stepper activeStep={activeStep} orientation="vertical">
-              {steps.map(label => {
+              {steps.map((label) => {
                 return (
                   <Step key={label}>
                     <StepLabel className={classes.stepLabel}>{label}</StepLabel>
@@ -470,7 +488,7 @@ class CreateGroupStepper extends React.Component {
                       </div>
                     </StepContent>
                   </Step>
-                );
+                )
               })}
             </Stepper>
           </MuiThemeProvider>
@@ -478,7 +496,7 @@ class CreateGroupStepper extends React.Component {
       </div>
     ) : (
       <LoadingSpinner />
-    );
+    )
   }
 }
 
@@ -486,5 +504,5 @@ CreateGroupStepper.propTypes = {
   classes: PropTypes.object,
   history: PropTypes.object,
   language: PropTypes.string
-};
-export default withRouter(withLanguage(withStyles(styles)(CreateGroupStepper)));
+}
+export default withRouter(withLanguage(withStyles(styles)(CreateGroupStepper)))

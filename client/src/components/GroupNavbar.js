@@ -44,7 +44,7 @@ const muiTheme = createMuiTheme({
   }
 });
 
-const GroupNavbar = ({ history, language, match, allowNavigation }) => {
+const GroupNavbar = ({ history, language, match, allowNavigation, is_car_sharing }) => {
   const handleChange = (event, value) => {
     const { groupId } = match.params;
     if (allowNavigation) {
@@ -69,7 +69,7 @@ const GroupNavbar = ({ history, language, match, allowNavigation }) => {
   const flags = [
     activeTab === "info",
     activeTab === "calendar",
-    activeTab === "activities",
+    activeTab === "activities" || activeTab === 'routes',
     activeTab === "members",
     activeTab === "chat"
   ];
@@ -104,9 +104,9 @@ const GroupNavbar = ({ history, language, match, allowNavigation }) => {
           }
         />
         <BottomNavigationAction
-          value="activities"
+          value={is_car_sharing? 'routes': "activities"}
           disabled={disabled}
-          label={texts.activitiesTab}
+          label={is_car_sharing? texts.routesTab : texts.activitiesTab}
           icon={
             flags[2] ? (
               <i className="fas fa-heart groupNavbarIcon" />

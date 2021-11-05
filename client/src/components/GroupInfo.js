@@ -192,14 +192,15 @@ class GroupInfo extends React.Component {
       userIsAdmin,
       groupAccepted,
       userAccepted,
-      confirmIsOpen
+      confirmIsOpen,
     } = this.state;
     const {
       name: groupName,
       group_id: groupId,
       background: groupBackground,
       description: groupInfo,
-      contact_info: contactInfo
+      contact_info: contactInfo,
+      is_car_sharing
     } = group;
     const texts = Texts[language].groupInfo;
     return fetchedGroupInfo ? (
@@ -210,6 +211,7 @@ class GroupInfo extends React.Component {
           groupLogo={path(group, ["image", "path"])}
           groupBackground={groupBackground}
           userIsAdmin={userIsAdmin}
+          is_car_sharing={Boolean(is_car_sharing)}
         />
         <div id="groupInfoMainContainer">
           <GroupAbout
