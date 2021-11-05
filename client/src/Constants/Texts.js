@@ -930,6 +930,7 @@ const en = {
   },
   myFamiliesShareScreen: {
     myGroups: "My groups",
+    myGroupsCarSharing: "My groups for car sharing",
     myActivities: "My activities",
     myNotifications: "My notifications",
     myGroupsPrompt:
@@ -3508,6 +3509,7 @@ const it = {
   },
   myFamiliesShareScreen: {
     myGroups: "I miei gruppi",
+    myGroupsCarSharing: "I miei gruppi di Car Sharing",
     myActivities: "Le mie attività",
     myNotifications: "Le mie notifiche",
     myGroupsPrompt:
