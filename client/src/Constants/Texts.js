@@ -982,7 +982,8 @@ const en = {
   profileNavbar: {
     framily: "FRAMILY",
     info: "INFO",
-    children: "CHILDREN"
+    children: "CHILDREN",
+    cars: "CARS"
   },
   profileInfo: {
     adress: "Address",
@@ -3562,7 +3563,8 @@ const it = {
   profileNavbar: {
     framily: "AMICI",
     info: "INFO",
-    children: "BAMBINI"
+    children: "BAMBINI",
+    cars: "MACCHINE"
   },
   profileInfo: {
     adress: "Indirizzo",

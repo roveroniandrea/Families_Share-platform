@@ -102,6 +102,13 @@ class ProfileScreen extends React.Component {
                 />
               )}
             />
+             <Route
+              exact
+              path={`${currentPath}/cars`}
+              render={props => (
+                <h1>TODO: schemata macchine</h1>
+              )}
+            />
           </Switch>
         </React.Fragment>
       </React.Fragment>
