@@ -7,6 +7,10 @@ const carSchema = new mongoose.Schema(
       unique: true,
       required: true
     },
+    owner_id: {
+      type: String,
+      required: true
+    },
     car_name: {
       type: String,
       required: true

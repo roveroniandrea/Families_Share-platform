@@ -183,6 +183,10 @@ const en = {
     addChildPrompt:
       "You haven't added any children yet. Click the child icon to add a new child"
   },
+  profileCars: {
+    addCarPrompt:
+    "You have't added any car yet. Click the car icon to add a new car"
+  },
   myCalendarScreen: {
     backNavTitle: "My Calendar"
   },
@@ -2787,6 +2791,10 @@ const it = {
   profileChildren: {
     addChildPrompt:
       "Non hai ancora aggiunto figli. Fare clic sull'icona figlio per aggiungere un nuovo figlio"
+  },
+  profileCars: {
+    addCarPrompt:
+    "Non hai ancora aggiunto macchine. Fare clic sull'icona figlio per aggiungere una nuova macchina"
   },
   myCalendarScreen: {
     backNavTitle: "Il mio calendario"
