@@ -102,6 +102,8 @@ const Child = require('../models/child')
 const Profile = require('../models/profile')
 const Community = require('../models/community')
 const User = require('../models/user')
+const Path = require('../models/path')
+const Waypoint = require('../models/waipoint')
 
 router.get('/', (req, res, next) => {
   if (!req.user_id) return res.status(401).send('Not authenticated')
@@ -317,6 +319,11 @@ router.delete('/:id', async (req, res, next) => {
     await Member.deleteMany({ group_id: id })
     await Group_Settings.deleteOne({ group_id: id })
     await Image.deleteMany({ owner_type: 'group', owner_id: id })
+    let pathsList = await Path.find({group_id: id})
+    pathsList.forEach(path =>{
+      Waypoint.deleteMany({path_id: path.path_id})
+    })
+    await Path.deleteMany({group_id: id})
     res.status(200).send('Group was deleted')
   } catch (error) {
     next(error)
