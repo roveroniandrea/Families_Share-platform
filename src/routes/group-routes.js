@@ -103,7 +103,7 @@ const Profile = require('../models/profile')
 const Community = require('../models/community')
 const User = require('../models/user')
 const Path = require('../models/path')
-const Waypoint = require('../models/waipoint')
+const Waypoint = require('../models/waypoint')
 
 router.get('/', (req, res, next) => {
   if (!req.user_id) return res.status(401).send('Not authenticated')
