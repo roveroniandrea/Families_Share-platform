@@ -568,6 +568,14 @@ router.delete('/:groupId/members/:memberId', async (req, res, next) => {
     }, Promise.resolve())
 
     await Member.deleteOne({ group_id, user_id: member_id })
+    
+    let pathsList = await Path.find({group_id: group_id, car_owner_id: member_id})
+    pathsList.forEach(path =>{
+      Waypoint.deleteMany({path_id: path.path_id})
+    })
+    await Path.deleteMany({group_id: group_id})
+    await Waypoint.deleteMany({passenger_id: member_id})
+    
     await nh.removeMemberNotification(member_id, group_id)
     res.status(200).send('User removed from group')
   } catch (error) {
