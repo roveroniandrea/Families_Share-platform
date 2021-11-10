@@ -94,6 +94,7 @@ const Member = require('../models/member')
 const User = require('../models/user')
 const Notification = require('../models/notification')
 const Parent = require('../models/parent')
+const Car = require('../models/car')
 const Reply = require('../models/reply')
 const Child = require('../models/child')
 const Announcement = require('../models/announcement')
@@ -1437,5 +1438,159 @@ router.post('/:userId/sendmenotification', async (req, res, next) => {
     res.status(200).send('Push notification sent')
   } catch (err) {
     next(err)
+  }
+})
+
+// CAR ROUTES
+/** Returning all the cars for a user */
+router.get('/:id/cars', (req, res, next) => {
+  if (!req.user_id) {
+    return res.status(401).send('Unauthorized')
+  }
+  const { id } = req.params
+  Car.find({ owner_id: id })
+    .then((cars) => {
+      if (cars.length === 0) {
+        return res.status(404).send('User has no cars')
+      }
+      res.json(cars)
+    })
+    .catch(next)
+})
+
+/** Creating a car */
+router.post(
+  '/:id/cars',
+  childProfileUpload.single('photo'),
+  async (req, res, next) => {
+    const owner_id = req.params.id
+    if (req.user_id !== owner_id) {
+      return res.status(401).send('Unauthorized')
+    }
+    const car = req.body
+    if (!(car.car_name && car.num_seats)) {
+      return res.status(400).send('Bad Request')
+    }
+
+    try {
+      await Car.create({...car, car_id: objectid(), owner_id})
+      res.status(200).send('Car created')
+    } catch (error) {
+      next(error)
+    }
+  }
+)
+
+/** Getting details of a car */
+router.get('/:userId/cars/:carId', (req, res, next) => {
+  if (!req.user_id) {
+    return res.status(401).send('Unauthorized')
+  }
+  /*const child_id = req.params.childId
+  Child.findOne({ child_id })
+    .populate('image')
+    .lean()
+    .exec()
+    .then((child) => {
+      if (!child) {
+        return res.status(404).send('Child not found')
+      }
+      res.json(child)
+    })
+    .catch(next)*/
+})
+
+/**Updating a car */
+router.patch(
+  '/:userId/cars/:carId',
+  childProfileUpload.single('photo'),
+  async (req, res, next) => {
+    if (req.user_id !== req.params.userId) {
+      return res.status(401).send('Unauthorized')
+    }
+    const { file } = req
+    const child_id = req.params.childId
+    const {
+      given_name,
+      family_name,
+      gender,
+      birthdate,
+      background,
+      allergies,
+      other_info,
+      special_needs
+    } = req.body
+    const childPatch = {
+      ...req.body
+    }
+    if (
+      !(
+        given_name ||
+        family_name ||
+        gender ||
+        birthdate ||
+        background ||
+        allergies ||
+        other_info ||
+        special_needs
+      )
+    ) {
+      return res.status(400).send('Bad Request')
+    }
+    try {
+      await Child.updateOne({ child_id }, childPatch)
+      if (file) {
+        /*const fileName = file.filename.split('.')
+        const imagePatch = {
+          path: `/images/profiles/${file.filename}`,
+          thumbnail_path: `/images/profiles/${fileName[0]}_t.${fileName[1]}`
+        }
+        await sharp(
+          path.join(__dirname, `../../images/profiles/${file.filename}`)
+        )
+          .resize({
+            height: 200,
+            fit: sharp.fit.cover
+          })
+          .toFile(
+            path.join(
+              __dirname,
+              `../../images/profiles/${fileName[0]}_t.${fileName[1]}`
+            )
+          )
+        await Image.updateOne(
+          { owner_type: 'child', owner_id: child_id },
+          imagePatch
+        )*/
+      }
+      res.status(200).send(' Child Profile Updated')
+    } catch (error) {
+      next(error)
+    }
+  }
+)
+
+/**Deleting a car */
+router.delete('/:userId/cars/:carId', async (req, res, next) => {
+  if (req.user_id !== req.params.userId) {
+    return res.status(401).send('Unauthorized')
+  }
+  const user_id = req.params.userId
+  const car_id = req.params.carId
+  try {
+    /*const memberships = await Member.find({ user_id })
+    const groupIds = memberships.map((membership) => membership.group_id)
+    const userGroups = await Group.find({ group_id: { $in: groupIds } })
+    await Promise.all(
+      userGroups.map((group) => {
+        uh.unsubcribeChildFromGroupEvents(group.calendar_id, child_id)
+      })
+    )
+    await Child.deleteOne({ child_id })
+    await Parent.deleteMany({ child_id })
+    await Image.deleteOne({ owner_id: child_id })
+    res.status(200).send('Child deleted')*/
+  } catch (error) {
+    next(error)
   }
 })
