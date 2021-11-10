@@ -36,12 +36,12 @@ class ProfileCars extends React.Component {
   addCar = () => {
     const { history } = this.props;
     const { pathname } = history.location;
-    history.push(`${pathname}/createCar`);
+    history.push(`${pathname}/create`);
   };
 
   render() {
     const { classes, language } = this.props;
-    const { cars, profileId, myProfile } = this.state;
+    const { cars, myProfile } = this.state;
     const texts = Texts[language].profileCars;
     return (
       <React.Fragment>

@@ -1139,6 +1139,22 @@ const en = {
     unspecified: "Unspecified",
     requiredErr: "Please fill out this field."
   },
+  createCarScreen: {
+    backNavTitle: "Add car",
+    save: "SAVE",
+    car_name: "Car model",
+    num_seats: "Number of seats",
+    additional: "Add specific information",
+    add: "ADD",
+    edit: "EDIT",
+    example: "e.g., food intolerances",
+    acceptTerms:
+      "I accept the Terms of Use and the Policy in regards to the treatment " +
+      "and use of my data.",
+    acceptTermsErr: "Please accept the terms",
+    unspecified: "Unspecified",
+    requiredErr: "Please fill out this field."
+  },
   additionalInfoScreen: {
     backNavTitle: "Information",
     save: "SAVE",
@@ -2794,7 +2810,7 @@ const it = {
   },
   profileCars: {
     addCarPrompt:
-    "Non hai ancora aggiunto macchine. Fare clic sull'icona figlio per aggiungere una nuova macchina"
+    "Non hai ancora aggiunto macchine. Fare clic sull'icona macchina per aggiungere una nuova macchina"
   },
   myCalendarScreen: {
     backNavTitle: "Il mio calendario"
@@ -3723,6 +3739,22 @@ const it = {
       "Si prega di accettare i termini d'uso e l'informativa sulla provacy per procedere",
     unspecified: "Non specificato",
     requiredErr: "Perfavore compila questo campo."
+  },
+  createCarScreen: {
+    backNavTitle: "Aggiungi macchina",
+    save: "SALVA",
+    car_name: "Modello auto",
+    num_seats: "Numero di posti",
+    additional: "Aggiungi informazioni",
+    add: "AGGIUNGI",
+    edit: "MODIFICA",
+    example: "e.g., food intolerances",
+    acceptTerms:
+      "I accept the Terms of Use and the Policy in regards to the treatment " +
+      "and use of my data.",
+    acceptTermsErr: "Per favore accetta i termini",
+    unspecified: "Non specificato",
+    requiredErr: "Per favore compila il form."
   },
   additionalInfoScreen: {
     backNavTitle: "Informazioni",
