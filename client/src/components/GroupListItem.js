@@ -66,7 +66,12 @@ class GroupListItem extends React.Component {
   handleNavigation = () => {
     const { history } = this.props;
     const { group } = this.state;
-    history.push(`/groups/${group.group_id}/activities`);
+    if(!group.is_car_sharing){
+      history.push(`/groups/${group.group_id}/activities`);
+    }
+    else{
+      history.push(`/groups/${group.group_id}/routes`);
+    }
   };
 
   render() {
