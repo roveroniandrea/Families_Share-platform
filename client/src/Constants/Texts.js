@@ -1147,7 +1147,7 @@ const en = {
     additional: "Add specific information",
     add: "ADD",
     edit: "EDIT",
-    example: "e.g., food intolerances",
+    example: "Some infos",
     acceptTerms:
       "I accept the Terms of Use and the Policy in regards to the treatment " +
       "and use of my data.",
@@ -3748,7 +3748,7 @@ const it = {
     additional: "Aggiungi informazioni",
     add: "AGGIUNGI",
     edit: "MODIFICA",
-    example: "e.g., food intolerances",
+    example: "Altre info",
     acceptTerms:
       "I accept the Terms of Use and the Policy in regards to the treatment " +
       "and use of my data.",

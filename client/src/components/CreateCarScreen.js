@@ -29,9 +29,9 @@ class CreateCarScreen extends React.Component {
     } else {
       this.state = {
         car_name: "",
-        num_seats: 0,
+        num_seats: 2,
         other_info: "",
-        acceptAdditionalTerms: false
+        acceptTerms: false
       };
     }
   }
@@ -125,18 +125,6 @@ class CreateCarScreen extends React.Component {
     this.setState({ formIsValidated: true });
   };
 
-  handleAdd = () => {
-    const { history } = this.props;
-    const { pathname } = history.location;
-    history.push({
-      pathname: `${pathname}/additional`,
-      state: {
-        ...this.state
-      }
-    });
-    return false;
-  };
-
   handleAcceptTerms = () => {
     const { acceptTerms } = this.state;
     const { language } = this.props;
@@ -157,8 +145,8 @@ class CreateCarScreen extends React.Component {
       formIsValidated,
       car_name,
       num_seats,
-      acceptAdditionalTerms,
       acceptTerms,
+      other_info
     } = this.state;
     const formClass = [];
     if (formIsValidated) {
@@ -216,8 +204,7 @@ class CreateCarScreen extends React.Component {
                   value={car_name}
                 />
                 <span className="invalid-feedback" id="nameErr" />
-              </div>
-              {/**TODO: numero di posti */} 
+              </div> 
               <div className="col-5-10">
                 <input
                   type="number"
@@ -240,17 +227,15 @@ class CreateCarScreen extends React.Component {
               <div className="col-7-10">
                 <div className="center">
                   <h1>{texts.additional}</h1>
-                  <h2>{texts.example}</h2>
+                  <input
+                  type="text"
+                  name="other_info"
+                  className="createChildProfileInputField form-control"
+                  placeholder={texts.example}
+                  onChange={this.handleChange}
+                  value={other_info}
+                />
                 </div>
-              </div>
-              <div className="col-3-10">
-                <button
-                  className="center"
-                  type="button"
-                  onClick={this.handleAdd}
-                >
-                  {acceptAdditionalTerms ? texts.edit : texts.add}
-                </button>
               </div>
             </div>
             <div className="row no-gutters">
@@ -258,7 +243,7 @@ class CreateCarScreen extends React.Component {
                 <Checkbox
                   classes={{ root: classes.checkbox, checked: classes.checked }}
                   className="center"
-                  checked={acceptTerms}
+                  checked={Boolean(acceptTerms)}
                   onClick={this.handleAcceptTerms}
                 />
               </div>

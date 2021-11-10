@@ -49,7 +49,7 @@ class ProfileCars extends React.Component {
           <ul>
             {cars.map((car, index) => (
               <li key={index}>
-                <h1>{car}</h1>
+                <h1>{car.car_name}</h1>
               </li>
             ))}
           </ul>

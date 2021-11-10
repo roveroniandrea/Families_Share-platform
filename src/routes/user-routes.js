@@ -1463,78 +1463,21 @@ router.post(
   '/:id/cars',
   childProfileUpload.single('photo'),
   async (req, res, next) => {
-    if (req.user_id !== req.params.id) {
+    const owner_id = req.params.id
+    if (req.user_id !== owner_id) {
       return res.status(401).send('Unauthorized')
     }
-    /*const {
-      birthdate,
-      given_name,
-      family_name,
-      gender,
-      allergies,
-      other_info,
-      special_needs,
-      background,
-      image: imagePath
-    } = req.body
-    const { file } = req
-    if (!(birthdate && given_name && family_name && gender && background)) {
+    const car = req.body
+    if (!(car.car_name && car.num_seats)) {
       return res.status(400).send('Bad Request')
     }
-    const parent_id = req.params.id
-    const child = {
-      birthdate,
-      given_name,
-      family_name,
-      gender,
-      allergies,
-      other_info,
-      special_needs,
-      background,
-      suspended: false
-    }
-    const image_id = objectid()
-    const child_id = objectid()
-    const image = {
-      image_id,
-      owner_type: 'child',
-      owner_id: child_id
-    }
-    if (file) {
-      const fileName = file.filename.split('.')
-      image.path = `/images/profiles/${file.filename}`
-      image.thumbnail_path = `/images/profiles/${fileName[0]}_t.${fileName[1]}`
-      await sharp(
-        path.join(__dirname, `../../images/profiles/${file.filename}`)
-      )
-        .resize({
-          height: 200,
-          fit: sharp.fit.cover
-        })
-        .toFile(
-          path.join(
-            __dirname,
-            `../../images/profiles/${fileName[0]}_t.${fileName[1]}`
-          )
-        )
-    } else {
-      image.path = imagePath
-      image.thumbnail_path = imagePath
-    }
-    child.child_id = child_id
-    child.image_id = image_id
-    const parent = {
-      parent_id,
-      child_id
-    }
+
     try {
-      await Image.create(image)
-      await Child.create(child)
-      await Parent.create(parent)
-      res.status(200).send('Child created')
+      await Car.create({...car, car_id: objectid(), owner_id})
+      res.status(200).send('Car created')
     } catch (error) {
       next(error)
-    }*/
+    }
   }
 )
 
