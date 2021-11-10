@@ -76,7 +76,7 @@ function _GroupSharedRoutesScreen({
   const renderActivities = () => {}
 
   const add = () => {
-    const path = `/groups/${group.group_id}/path/create`
+    const path = `/groups/${group.group_id}/paths/create`
     history.push(path)
   }
 
