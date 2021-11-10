@@ -113,6 +113,10 @@ const CreateActivityScreen = Loadable({
   loader: () => import("./components/CreateActivityScreen"),
   loading: () => Loading
 });
+const CreatePathScreen = Loadable({
+  loader: () => import("./components/CreatePathScreen"),
+  loading: () => Loading
+});
 const CreatePlanScreen = Loadable({
   loader: () => import("./components/CreatePlanScreen"),
   loading: () => Loading
@@ -321,6 +325,11 @@ class App extends React.Component {
                 exact
                 path="/groups/:groupId/activities/create"
                 component={CreateActivityScreen}
+              />
+              <PrivateRoute
+                exact
+                path="/groups/:groupId/paths/create"
+                component={CreatePathScreen}
               />
               <PrivateRoute
                 exact

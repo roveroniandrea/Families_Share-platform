@@ -1904,4 +1904,35 @@ router.delete(
   }
 )
 
+/**Retrieving all the paths in a group */
+router.get('/:id/paths', (req, res, next) => {
+  if (!req.user_id) {
+    return res.status(401).send('Not authenticated')
+  }
+  const group_id = req.params.id
+  const user_id = req.user_id
+  Member.findOne({
+    group_id,
+    user_id,
+    group_accepted: true,
+    user_accepted: true
+  })
+    .then(member => {
+      if (!member) {
+        return res.status(401).send('Unauthorized')
+      }
+      return Path.find({ group_id })
+        .sort({ departure_date: -1 })
+        .lean()
+        .exec()
+        .then(paths => {
+          if (paths.length === 0) {
+            return res.status(404).send('Group has no shared paths')
+          }
+          res.json(paths)
+        })
+    })
+    .catch(next)
+})
+
 module.exports = router

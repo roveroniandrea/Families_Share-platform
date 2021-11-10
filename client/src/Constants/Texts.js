@@ -841,6 +841,9 @@ const en = {
     newPlan: "Advanced planning",
     newActivity: "New activity"
   },
+  groupSharedRoutesScreen:{
+    routesHeader: "Shared routes of the group",
+  },
   activityListItem: {
     every: "Every",
     of: "of"
@@ -3448,6 +3451,9 @@ const it = {
     export: "Esporta l'agenda",
     newPlan: "Pianificazione avanzata",
     newActivity: "Nuova attività"
+  },
+  groupSharedRoutesScreen:{
+    routesHeader: "Percorsi condivisi del gruppo",
   },
   activityListItem: {
     every: "Ogni",
