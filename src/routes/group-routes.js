@@ -573,7 +573,7 @@ router.delete('/:groupId/members/:memberId', async (req, res, next) => {
     pathsList.forEach(path =>{
       Waypoint.deleteMany({path_id: path.path_id})
     })
-    await Path.deleteMany({group_id: group_id})
+    await Path.deleteMany({group_id: group_id, user_id: member_id})
     await Waypoint.deleteMany({passenger_id: member_id})
     
     await nh.removeMemberNotification(member_id, group_id)

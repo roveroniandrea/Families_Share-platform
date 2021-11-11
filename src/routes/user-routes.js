@@ -846,7 +846,7 @@ router.delete('/:userId/groups/:groupId', async (req, res, next) => {
     pathsList.forEach(path =>{
       Waypoint.deleteMany({path_id: path.path_id})
     })
-    await Path.deleteMany({group_id: group_id})
+    await Path.deleteMany({group_id: group_id, car_owner_id: user_id})
     await Waypoint.deleteMany({passenger_id: user_id})
     res.status(200).send('User left group')
   } catch (error) {
