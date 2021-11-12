@@ -1171,6 +1171,9 @@ const en = {
   createActivityScreen: {
     backNavTitle: "New activity"
   },
+  createPathScreen: {
+    backNavTitle: "New path"
+  },
   createActivityStepper: {
     pendingMessage: "The activity is pending confirmation from an admin",
     continue: "Continue",
@@ -3773,6 +3776,9 @@ const it = {
   },
   createActivityScreen: {
     backNavTitle: "Nuova attività"
+  },
+  createPathScreen: {
+    backNavTitle: "Nuovo percorso"
   },
   createPlanScreen: { backNavTitle: "Nuova Plan" },
   createActivityStepper: {
