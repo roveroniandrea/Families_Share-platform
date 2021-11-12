@@ -68,12 +68,10 @@ function _GroupSharedRoutesScreen({
       setFetchedActivityData(true)
       setSharedPaths(paths)
     })
-  }, [])
+  }, [group.group_id])
 
   const { name } = group
   const texts = Texts[language].groupSharedRoutesScreen
-
-  const renderActivities = () => {}
 
   const add = () => {
     const path = `/groups/${group.group_id}/paths/create`
