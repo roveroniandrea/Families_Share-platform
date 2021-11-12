@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import withLanguage from "./LanguageContext";
 import Texts from "../Constants/Texts";
 import BackNavigation from "./BackNavigation";
-import CreateActivityStepper from "./CreateActivityStepper";
+import CreatePathStepper from "./CreatePathStepper";
 
 const CreatePathScreen = ({ language, history }) => {
   const texts = Texts[language].createActivityScreen;
@@ -13,7 +13,7 @@ const CreatePathScreen = ({ language, history }) => {
         title={texts.backNavTitle}
         onClick={() => history.goBack()}
       />
-      <CreateActivityStepper />
+      <CreatePathStepper />
     </div>
   );
 };

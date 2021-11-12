@@ -1182,12 +1182,24 @@ const en = {
     save: "Save",
     stepLabels: ["Information", "Dates", "Timeslots"]
   },
+  createPathStepper: {
+    continue: "Continue",
+    cancel: "Cancel",
+    finish: "Create",
+    save: "Save",
+    stepLabels: ["Information", "Date", "Timeslot"]
+  },
   createActivityInformation: {
     link: "Link (optional)",
     color: "Color of the activity",
     description: "Description (optional)",
     name: "Name of the activity",
     location: "Location (optional)"
+  },
+  createPathInformation: {
+    color: "Color of the path",
+    from: "Start point of the path",
+    to: "End point of the path",
   },
   createActivityDates: {
     header: "Select one or more days",
@@ -3790,12 +3802,24 @@ const it = {
     save: "Salva",
     stepLabels: ["Informazioni", "Date", "Orari"]
   },
+  createPathStepper: {
+    continue: "Continua",
+    cancel: "Cancella",
+    finish: "Crea",
+    save: "Salva",
+    stepLabels: ["Informazioni", "Data", "Orario"]
+  },
   createActivityInformation: {
     link: "Collegamento (facoltativo)",
     color: "Colore dell'attività",
     description: "Descrizione (facoltativo)",
     name: "Titolo dell'attività",
     location: "Posizione (facoltativo)"
+  },
+  createPathInformation: {
+    color: "Colore del percorso",
+    from: "Inizio del percorso",
+    to: "Fine del percorso",
   },
   createActivityDates: {
     header: "Seleziona uno o più giorni",
