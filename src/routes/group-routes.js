@@ -49,10 +49,10 @@ const transporter = nodemailer.createTransport({
 })
 
 const groupStorage = multer.diskStorage({
-  destination (req, file, cb) {
+  destination(req, file, cb) {
     cb(null, path.join(__dirname, '../../images/groups'))
   },
-  filename (req, file, cb) {
+  filename(req, file, cb) {
     const fileName = `${req.params.id}-${Date.now()}.${file.mimetype.slice(
       file.mimetype.indexOf('/') + 1,
       file.mimetype.length
@@ -67,10 +67,10 @@ const groupUpload = multer({
 })
 
 const announcementStorage = multer.diskStorage({
-  destination (req, file, cb) {
+  destination(req, file, cb) {
     cb(null, path.join(__dirname, '../../images/announcements'))
   },
-  filename (req, file, cb) {
+  filename(req, file, cb) {
     if (req.params.announcement_id === undefined) {
       req.params.announcement_id = objectid()
     }
@@ -104,6 +104,7 @@ const Community = require('../models/community')
 const User = require('../models/user')
 const Path = require('../models/path')
 const Waypoint = require('../models/waypoint')
+const Car = require('../models/car')
 
 router.get('/', (req, res, next) => {
   if (!req.user_id) return res.status(401).send('Not authenticated')
@@ -319,11 +320,11 @@ router.delete('/:id', async (req, res, next) => {
     await Member.deleteMany({ group_id: id })
     await Group_Settings.deleteOne({ group_id: id })
     await Image.deleteMany({ owner_type: 'group', owner_id: id })
-    let pathsList = await Path.find({group_id: id})
-    pathsList.forEach(path =>{
-      Waypoint.deleteMany({path_id: path.path_id})
+    let pathsList = await Path.find({ group_id: id })
+    pathsList.forEach(path => {
+      Waypoint.deleteMany({ path_id: path.path_id })
     })
-    await Path.deleteMany({group_id: id})
+    await Path.deleteMany({ group_id: id })
     res.status(200).send('Group was deleted')
   } catch (error) {
     next(error)
@@ -568,6 +569,24 @@ router.delete('/:groupId/members/:memberId', async (req, res, next) => {
     }, Promise.resolve())
 
     await Member.deleteOne({ group_id, user_id: member_id })
+
+    const userCars = await Car.find({ owner_id: member_id }).then((userCars) => { 
+      userCars.forEach(car => {
+        const pathList = await Path.find({ car_id: car.car_id, group_id: group_id }).then((pathList) => {
+          pathList.forEach((path) => {
+            Waypoint.deleteMany({ path_id: path.path_id })
+          })
+        })
+        await Path.deleteMany({ group_id: group_id, car_id: car.car_id })
+      })
+    });
+
+    const groupPathList = await Path.find({group_id: group_id}).then((groupPathList)=>{
+      groupPathList.forEach(path =>{
+        await Waypoint.deleteMany({path_id: path.path_id, passenger_id: member_id})
+      })
+    })
+
     await nh.removeMemberNotification(member_id, group_id)
     res.status(200).send('User removed from group')
   } catch (error) {
@@ -1903,36 +1922,5 @@ router.delete(
     }
   }
 )
-
-/**Retrieving all the paths in a group */
-router.get('/:id/paths', (req, res, next) => {
-  if (!req.user_id) {
-    return res.status(401).send('Not authenticated')
-  }
-  const group_id = req.params.id
-  const user_id = req.user_id
-  Member.findOne({
-    group_id,
-    user_id,
-    group_accepted: true,
-    user_accepted: true
-  })
-    .then(member => {
-      if (!member) {
-        return res.status(401).send('Unauthorized')
-      }
-      return Path.find({ group_id })
-        .sort({ departure_date: -1 })
-        .lean()
-        .exec()
-        .then(paths => {
-          if (paths.length === 0) {
-            return res.status(404).send('Group has no shared paths')
-          }
-          res.json(paths)
-        })
-    })
-    .catch(next)
-})
 
 module.exports = router
