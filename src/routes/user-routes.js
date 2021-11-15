@@ -1595,21 +1595,19 @@ router.delete('/:userId/cars/:carId', async (req, res, next) => {
   if (req.user_id !== req.params.userId) {
     return res.status(401).send('Unauthorized')
   }
-  const user_id = req.params.userId
   const car_id = req.params.carId
   try {
-    /*const memberships = await Member.find({ user_id })
-    const groupIds = memberships.map((membership) => membership.group_id)
-    const userGroups = await Group.find({ group_id: { $in: groupIds } })
-    await Promise.all(
-      userGroups.map((group) => {
-        uh.unsubcribeChildFromGroupEvents(group.calendar_id, child_id)
+
+    await Car.deleteOne({ car_id })
+
+    const pathList = await Path.find({ car_id: car_id }).then((pathList) => {
+      pathList.forEach((path) => {
+        Waypoint.deleteMany({ path_id: path.path_id })
       })
-    )
-    await Child.deleteOne({ child_id })
-    await Parent.deleteMany({ child_id })
-    await Image.deleteOne({ owner_id: child_id })
-    res.status(200).send('Child deleted')*/
+    })
+    Path.deleteMany({ car_id: car_id })
+
+    res.status(200).send('Car deleted')
   } catch (error) {
     next(error)
   }
