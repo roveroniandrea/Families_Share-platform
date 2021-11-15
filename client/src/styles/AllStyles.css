@@ -1760,6 +1760,12 @@
   border-radius: 3px;
   border: none;
 }
+.joinGroupButton:disabled {
+  opacity: 0.6;
+  cursor:not-allowed;
+}
+
+
 #instructionContainer {
   min-height: 8.8rem;
 }

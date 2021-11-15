@@ -862,6 +862,8 @@ const en = {
     startGuideInfo: "Look up the 7-step start-up guide",
     join: "JOIN GROUP",
     leave: "LEAVE GROUP",
+    shareGroup: "SHARE GROUP",
+    linkCopied: "LINK COPIED",
     pending: "CANCEL REQUEST",
     confirm: "Are you sure you want to leave the group?"
   },
@@ -3473,6 +3475,8 @@ const it = {
     startGuideInfo: "Segui i sette passi per avviare al meglio il gruppo",
     join: "UNISCITI AL GRUPPO",
     leave: "ABBANDONA IL GRUPPO",
+    shareGroup: "CONDIVIDI IL GRUPPO",
+    linkCopied: "LINK COPIATO",
     pending: "CANCELLA LA RICHIESTA",
     confirm: "Sei sicuro/a di voler abbandonare il gruppo?"
   },
