@@ -178,9 +178,41 @@ class GroupInfo extends React.Component {
       disabled = true;
     }
     return !disabled ? (
-      <button type="button" onClick={handleFunc} className="joinGroupButton">
-        {text}
-      </button>
+      <div>
+        <button type="button" onClick={handleFunc} className="joinGroupButton">
+          {text}
+        </button>
+      </div>
+    ) : null;
+  };
+
+  renderShareButton = () => {
+    const { language } = this.props;
+    const { groupAccepted, userAccepted } = this.state;
+    const texts = Texts[language].groupInfo;
+    let disabled = false;
+    let text = texts.shareGroup;
+    let handleFunc;
+    if (userAccepted) {
+      if (groupAccepted) {
+        handleFunc = () => {
+          navigator.clipboard.writeText(window.location.href);
+          let button = document.getElementById("shareGroup")
+          button.innerHTML = texts.linkCopied;
+          button.disabled = true
+        };
+      } else {
+        disabled = true;
+      }
+    } else {
+      disabled = true;
+    }
+    return !disabled ? (
+      <div>
+        <button type="button" id="shareGroup" onClick={handleFunc} className="joinGroupButton">
+          {text}
+        </button>
+      </div>
     ) : null;
   };
 
@@ -240,6 +272,7 @@ class GroupInfo extends React.Component {
             </CopyToClipboard>
           )}
           {this.renderJoinButton()}
+          {this.renderShareButton()}
           <ConfirmDialog
             isOpen={confirmIsOpen}
             title={texts.confirm}

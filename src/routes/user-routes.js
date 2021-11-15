@@ -103,6 +103,8 @@ const Password_Reset = require('../models/password-reset')
 const Device = require('../models/device')
 const Rating = require('../models/rating')
 const Community = require('../models/community')
+const Path = require('../models/path')
+const Waypoint = require('../models/waypoint')
 
 router.post('/', async (req, res, next) => {
   const {
@@ -841,6 +843,24 @@ router.delete('/:userId/groups/:groupId', async (req, res, next) => {
       })
     )
     await Member.deleteOne({ user_id, group_id })
+
+    const userCars = await Car.find({ owner_id: user_id }).then((userCars) => {
+      userCars.forEach(car => {
+        const pathList = Path.find({ car_id: car.car_id, group_id: group_id }).then((pathList) => {
+          pathList.forEach((path) => {
+            Waypoint.deleteMany({ path_id: path.path_id })
+          })
+        })
+        Path.deleteMany({ group_id: group_id, car_id: car.car_id })
+      })
+    });
+
+    const groupPathList = await Path.find({ group_id: group_id }).then((groupPathList) => {
+      groupPathList.forEach(path => {
+        Waypoint.deleteMany({ path_id: path.path_id, passenger_id: user_id })
+      })
+    })
+
     res.status(200).send('User left group')
   } catch (error) {
     next(error)
@@ -1473,7 +1493,7 @@ router.post(
     }
 
     try {
-      await Car.create({...car, car_id: objectid(), owner_id})
+      await Car.create({ ...car, car_id: objectid(), owner_id })
       res.status(200).send('Car created')
     } catch (error) {
       next(error)
@@ -1502,68 +1522,30 @@ router.get('/:userId/cars/:carId', (req, res, next) => {
 
 /**Updating a car */
 router.patch(
-  '/:userId/cars/:carId',
-  childProfileUpload.single('photo'),
-  async (req, res, next) => {
+  '/:userId/cars/:carId',async (req, res, next) => {
     if (req.user_id !== req.params.userId) {
       return res.status(401).send('Unauthorized')
     }
     const { file } = req
-    const child_id = req.params.childId
+    const car_id = req.params.carId
     const {
-      given_name,
-      family_name,
-      gender,
-      birthdate,
-      background,
-      allergies,
-      other_info,
-      special_needs
+      car_name,
+      num_seats,
     } = req.body
-    const childPatch = {
+    const carPatch = {
       ...req.body
     }
     if (
       !(
-        given_name ||
-        family_name ||
-        gender ||
-        birthdate ||
-        background ||
-        allergies ||
-        other_info ||
-        special_needs
+        car_name ||
+        num_seats
       )
     ) {
       return res.status(400).send('Bad Request')
     }
     try {
-      await Child.updateOne({ child_id }, childPatch)
-      if (file) {
-        /*const fileName = file.filename.split('.')
-        const imagePatch = {
-          path: `/images/profiles/${file.filename}`,
-          thumbnail_path: `/images/profiles/${fileName[0]}_t.${fileName[1]}`
-        }
-        await sharp(
-          path.join(__dirname, `../../images/profiles/${file.filename}`)
-        )
-          .resize({
-            height: 200,
-            fit: sharp.fit.cover
-          })
-          .toFile(
-            path.join(
-              __dirname,
-              `../../images/profiles/${fileName[0]}_t.${fileName[1]}`
-            )
-          )
-        await Image.updateOne(
-          { owner_type: 'child', owner_id: child_id },
-          imagePatch
-        )*/
-      }
-      res.status(200).send(' Child Profile Updated')
+      await Car.updateOne({ car_id }, carPatch)
+      res.status(200).send(' Car Profile Updated')
     } catch (error) {
       next(error)
     }
@@ -1575,21 +1557,19 @@ router.delete('/:userId/cars/:carId', async (req, res, next) => {
   if (req.user_id !== req.params.userId) {
     return res.status(401).send('Unauthorized')
   }
-  const user_id = req.params.userId
   const car_id = req.params.carId
   try {
-    /*const memberships = await Member.find({ user_id })
-    const groupIds = memberships.map((membership) => membership.group_id)
-    const userGroups = await Group.find({ group_id: { $in: groupIds } })
-    await Promise.all(
-      userGroups.map((group) => {
-        uh.unsubcribeChildFromGroupEvents(group.calendar_id, child_id)
+
+    await Car.deleteOne({ car_id })
+
+    const pathList = await Path.find({ car_id: car_id }).then((pathList) => {
+      pathList.forEach((path) => {
+        Waypoint.deleteMany({ path_id: path.path_id })
       })
-    )
-    await Child.deleteOne({ child_id })
-    await Parent.deleteMany({ child_id })
-    await Image.deleteOne({ owner_id: child_id })
-    res.status(200).send('Child deleted')*/
+    })
+    Path.deleteMany({ car_id: car_id })
+
+    res.status(200).send('Car deleted')
   } catch (error) {
     next(error)
   }
