@@ -12,9 +12,8 @@ class CreatePathInformation extends React.Component {
     super(props)
     const { handleSubmit, from, to, color, car_id } = this.props
     this.state = { from, to, color, car_id, myCars: [] }
-    this.getMyCars()
-    .then(cars => {
-      this.setState({...this.state, myCars: cars})
+    this.getMyCars().then((cars) => {
+      this.setState({ ...this.state, myCars: cars })
     })
 
     handleSubmit(this.state, this.validate(this.state))
@@ -31,6 +30,7 @@ class CreatePathInformation extends React.Component {
   handleChange = (event) => {
     const state = Object.assign({}, this.state)
     const { name, value } = event.target
+    console.log(name, value)
     const { handleSubmit } = this.props
     state[name] = value
     handleSubmit(state, this.validate(state))
@@ -72,18 +72,25 @@ class CreatePathInformation extends React.Component {
           </div>
           <div className="col-8-10">
             <select
-            value={car_id}
-            onChange={(e) => this.handleChange({target: {name: 'car_id', value: e.target.value}})}
-            placeholder={texts.car}
-            name="car_id"
-            className="center"
-          >
-            {this.state.myCars.map(c => (
-              <option key={c.car_id} value={c.car_id}>
-                {c.car_name}
+              value={car_id}
+              onChange={(e) =>
+                this.handleChange({
+                  target: { name: 'car_id', value: e.target.value }
+                })
+              }
+              placeholder={texts.car}
+              name="car_id"
+              className="center"
+            >
+              <option key={0} value="">
+                ----
               </option>
-            ))}
-          </select>
+              {this.state.myCars.map((c) => (
+                <option key={c.car_id} value={c.car_id}>
+                  {c.car_name}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
         <div className="row no-gutters" style={rowStyle}>
