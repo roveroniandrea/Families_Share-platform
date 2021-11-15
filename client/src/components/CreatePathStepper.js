@@ -140,11 +140,10 @@ class CreatePathStepper extends React.Component {
     this.state = {
       activeStep: 0,
       information: {
-        name: "",
         color: colors[Math.floor(Math.random() * colors.length)],
-        description: "",
-        location: "",
-        link: ""
+        from: "",
+        to: "",
+        car_id: ""
       },
       dates: {
         selectedDays: [],
@@ -219,6 +218,7 @@ class CreatePathStepper extends React.Component {
       });
   };
 
+  /**TODO: */
   formatDataToActivity = (information, dates, timeslots, groupId, userId) => {
     return {
       group_id: groupId,
@@ -276,6 +276,7 @@ class CreatePathStepper extends React.Component {
               externals: JSON.stringify([]),
               status: "ongoing",
               link: timeslot.link,
+              //TODO:??
               activityColor: information.color,
               category: timeslot.category,
               groupId,

@@ -12,15 +12,19 @@ class CreatePathInformation extends React.Component {
       handleSubmit,
       from,
       to,
-      color
+      color,
+      car_id
     } = this.props;
-    this.state = { color, cost, description, link, location, name };
+    this.state = { from,
+      to,
+      color,
+      car_id };
     handleSubmit(this.state, this.validate(this.state));
     autosize(document.querySelectorAll("textarea"));
   }
 
   validate = state => {
-    if (state.color && state.name) {
+    if (state.color && state.from && state.to && state.car_id) {
       return true;
     }
     return false;
@@ -45,41 +49,26 @@ class CreatePathInformation extends React.Component {
 
   render() {
     const { language } = this.props;
-    const { name, color, description, location, link } = this.state;
+    const { from,
+      to,
+      color,
+      car_id } = this.state;
     const texts = Texts[language].createPathInformation;
     const rowStyle = { minHeight: "7rem" };
     return (
-      <div id="CreatePathInformationContainer">
+      <div id="createActivityInformationContainer">
         <div className="row no-gutters" style={rowStyle}>
           <div className="col-2-10">
-            <i className="fas fa-clipboard-check center" />
+            <i className="fas fa-car center" />
           </div>
           <div className="col-8-10">
             <input
               type="text"
-              name="name"
-              placeholder={texts.name}
-              value={name}
+              name="car_id"
+              placeholder={texts.car}
+              value={car_id}
               className="center"
               onChange={this.handleChange}
-            />
-          </div>
-        </div>
-        <div className="row no-gutters" style={rowStyle}>
-          <div className="col-2-10">
-            <i className="fas fa-align-left center" />
-          </div>
-          <div className="col-8-10">
-            <textarea
-              rows="1"
-              name="description"
-              className="center"
-              placeholder={texts.description}
-              value={description}
-              onChange={event => {
-                this.handleChange(event);
-                autosize(document.querySelectorAll("textarea"));
-              }}
             />
           </div>
         </div>
@@ -88,11 +77,11 @@ class CreatePathInformation extends React.Component {
             <i className="fas fa-map-marker-alt center" />
           </div>
           <div className="col-8-10">
-            <input
+          <input
               type="text"
-              name="location"
-              placeholder={texts.location}
-              value={location}
+              name="from"
+              placeholder={texts.from}
+              value={from}
               className="center"
               onChange={this.handleChange}
             />
@@ -100,14 +89,14 @@ class CreatePathInformation extends React.Component {
         </div>
         <div className="row no-gutters" style={rowStyle}>
           <div className="col-2-10">
-            <i className="fas fa-link center" />
+            <i className="fas fa-map-marker-alt center" />
           </div>
           <div className="col-8-10">
-            <input
+          <input
               type="text"
-              name="link"
-              placeholder={texts.link}
-              value={link}
+              name="to"
+              placeholder={texts.to}
+              value={to}
               className="center"
               onChange={this.handleChange}
             />

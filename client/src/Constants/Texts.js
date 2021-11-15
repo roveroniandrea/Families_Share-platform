@@ -1200,6 +1200,7 @@ const en = {
     color: "Color of the path",
     from: "Start point of the path",
     to: "End point of the path",
+    car: "Car to use"
   },
   createActivityDates: {
     header: "Select one or more days",
@@ -3820,6 +3821,7 @@ const it = {
     color: "Colore del percorso",
     from: "Inizio del percorso",
     to: "Fine del percorso",
+    car: "Macchina da utilizzare"
   },
   createActivityDates: {
     header: "Seleziona uno o più giorni",
