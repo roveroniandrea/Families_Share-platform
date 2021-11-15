@@ -1202,6 +1202,12 @@ const en = {
     to: "End point of the path",
     car: "Car to use"
   },
+  createPathDates: {
+    header: "Select one day",
+  },
+  createPathTimeslots: {
+    header: "Add the start time of the path",
+  },
   createActivityDates: {
     header: "Select one or more days",
     repetition: "Repetition",
@@ -3822,6 +3828,12 @@ const it = {
     from: "Inizio del percorso",
     to: "Fine del percorso",
     car: "Macchina da utilizzare"
+  },
+  createPathDates: {
+    header: "Seleziona un giorno",
+  },
+  createPathTimeslots: {
+    header: "Aggiungi l'orario di inizio del percorso",
   },
   createActivityDates: {
     header: "Seleziona uno o più giorni",

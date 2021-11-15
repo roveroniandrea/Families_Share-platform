@@ -16,8 +16,8 @@ import moment from "moment";
 import axios from "axios";
 import withLanguage from "./LanguageContext";
 import CreatePathInformation from "./CreatePathInformation";
-import CreateActivityDates from "./CreateActivityDates";
-import CreateActivityTimeslots from "./CreateActivityTimeslots";
+import CreatePathDates from "./CreatePathDates";
+import CreatePathTimeslots from "./CreatePathTimeslots";
 import Texts from "../Constants/Texts";
 import Log from "./Log";
 import LoadingSpinner from "./LoadingSpinner";
@@ -318,12 +318,12 @@ class CreatePathStepper extends React.Component {
     this.setState({ dates, stepWasValidated: wasValidated });
   };
 
-  handleTimeslotsSubmit = (timeslots, wasValidated) => {
-    this.setState({ timeslots, stepWasValidated: wasValidated });
+  handleTimeslotsSubmit = (date) => {
+    this.setState({ date });
   };
 
   getStepContent = () => {
-    const { activeStep, information, dates, timeslots } = this.state;
+    const { activeStep, information, dates } = this.state;
     switch (activeStep) {
       case 0:
         return (
@@ -334,19 +334,18 @@ class CreatePathStepper extends React.Component {
         );
       case 1:
         return (
-          <CreateActivityDates
+          <CreatePathDates
             {...dates}
             handleSubmit={this.handleDatesSubmit}
           />
         );
       case 2:
         return (
-          <CreateActivityTimeslots
+          <CreatePathTimeslots
             activityName={information.name}
             activityLocation={information.location}
             activityLink={information.link}
             dates={dates.selectedDays}
-            {...timeslots}
             handleSubmit={this.handleTimeslotsSubmit}
           />
         );
