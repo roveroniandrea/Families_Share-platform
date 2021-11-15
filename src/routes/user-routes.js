@@ -1522,68 +1522,30 @@ router.get('/:userId/cars/:carId', (req, res, next) => {
 
 /**Updating a car */
 router.patch(
-  '/:userId/cars/:carId',
-  childProfileUpload.single('photo'),
-  async (req, res, next) => {
+  '/:userId/cars/:carId',async (req, res, next) => {
     if (req.user_id !== req.params.userId) {
       return res.status(401).send('Unauthorized')
     }
     const { file } = req
-    const child_id = req.params.childId
+    const car_id = req.params.carId
     const {
-      given_name,
-      family_name,
-      gender,
-      birthdate,
-      background,
-      allergies,
-      other_info,
-      special_needs
+      car_name,
+      num_seats,
     } = req.body
-    const childPatch = {
+    const carPatch = {
       ...req.body
     }
     if (
       !(
-        given_name ||
-        family_name ||
-        gender ||
-        birthdate ||
-        background ||
-        allergies ||
-        other_info ||
-        special_needs
+        car_name ||
+        num_seats
       )
     ) {
       return res.status(400).send('Bad Request')
     }
     try {
-      await Child.updateOne({ child_id }, childPatch)
-      if (file) {
-        /*const fileName = file.filename.split('.')
-        const imagePatch = {
-          path: `/images/profiles/${file.filename}`,
-          thumbnail_path: `/images/profiles/${fileName[0]}_t.${fileName[1]}`
-        }
-        await sharp(
-          path.join(__dirname, `../../images/profiles/${file.filename}`)
-        )
-          .resize({
-            height: 200,
-            fit: sharp.fit.cover
-          })
-          .toFile(
-            path.join(
-              __dirname,
-              `../../images/profiles/${fileName[0]}_t.${fileName[1]}`
-            )
-          )
-        await Image.updateOne(
-          { owner_type: 'child', owner_id: child_id },
-          imagePatch
-        )*/
-      }
-      res.status(200).send(' Child Profile Updated')
+      await Car.updateOne({ car_id }, carPatch)
+      res.status(200).send(' Car Profile Updated')
     } catch (error) {
       next(error)
     }
