@@ -183,6 +183,10 @@ const en = {
     addChildPrompt:
       "You haven't added any children yet. Click the child icon to add a new child"
   },
+  profileCars: {
+    addCarPrompt:
+    "You have't added any car yet. Click the car icon to add a new car"
+  },
   myCalendarScreen: {
     backNavTitle: "My Calendar"
   },
@@ -837,6 +841,9 @@ const en = {
     newPlan: "Advanced planning",
     newActivity: "New activity"
   },
+  groupSharedRoutesScreen:{
+    routesHeader: "Shared routes of the group",
+  },
   activityListItem: {
     every: "Every",
     of: "of"
@@ -982,7 +989,8 @@ const en = {
   profileNavbar: {
     framily: "FRAMILY",
     info: "INFO",
-    children: "CHILDREN"
+    children: "CHILDREN",
+    cars: "CARS"
   },
   profileInfo: {
     adress: "Address",
@@ -1127,6 +1135,22 @@ const en = {
     date: "Date",
     month: "Month",
     year: "Year",
+    acceptTerms:
+      "I accept the Terms of Use and the Policy in regards to the treatment " +
+      "and use of my data.",
+    acceptTermsErr: "Please accept the terms",
+    unspecified: "Unspecified",
+    requiredErr: "Please fill out this field."
+  },
+  createCarScreen: {
+    backNavTitle: "Add car",
+    save: "SAVE",
+    car_name: "Car model",
+    num_seats: "Number of seats",
+    additional: "Add specific information",
+    add: "ADD",
+    edit: "EDIT",
+    example: "Some infos",
     acceptTerms:
       "I accept the Terms of Use and the Policy in regards to the treatment " +
       "and use of my data.",
@@ -2787,6 +2811,10 @@ const it = {
     addChildPrompt:
       "Non hai ancora aggiunto figli. Fare clic sull'icona figlio per aggiungere un nuovo figlio"
   },
+  profileCars: {
+    addCarPrompt:
+    "Non hai ancora aggiunto macchine. Fare clic sull'icona macchina per aggiungere una nuova macchina"
+  },
   myCalendarScreen: {
     backNavTitle: "Il mio calendario"
   },
@@ -3424,6 +3452,9 @@ const it = {
     newPlan: "Pianificazione avanzata",
     newActivity: "Nuova attività"
   },
+  groupSharedRoutesScreen:{
+    routesHeader: "Percorsi condivisi del gruppo",
+  },
   activityListItem: {
     every: "Ogni",
     of: "di"
@@ -3562,7 +3593,8 @@ const it = {
   profileNavbar: {
     framily: "AMICI",
     info: "INFO",
-    children: "BAMBINI"
+    children: "BAMBINI",
+    cars: "MACCHINE"
   },
   profileInfo: {
     adress: "Indirizzo",
@@ -3713,6 +3745,22 @@ const it = {
       "Si prega di accettare i termini d'uso e l'informativa sulla provacy per procedere",
     unspecified: "Non specificato",
     requiredErr: "Perfavore compila questo campo."
+  },
+  createCarScreen: {
+    backNavTitle: "Aggiungi macchina",
+    save: "SALVA",
+    car_name: "Modello auto",
+    num_seats: "Numero di posti",
+    additional: "Aggiungi informazioni",
+    add: "AGGIUNGI",
+    edit: "MODIFICA",
+    example: "Altre info",
+    acceptTerms:
+      "I accept the Terms of Use and the Policy in regards to the treatment " +
+      "and use of my data.",
+    acceptTermsErr: "Per favore accetta i termini",
+    unspecified: "Non specificato",
+    requiredErr: "Per favore compila il form."
   },
   additionalInfoScreen: {
     backNavTitle: "Informazioni",

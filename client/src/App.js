@@ -77,6 +77,10 @@ const CreateChildScreen = Loadable({
   loader: () => import("./components/CreateChildScreen"),
   loading: () => Loading
 });
+const CreateCarScreen = Loadable({
+  loader: () => import("./components/CreateCarScreen"),
+  loading: () => Loading
+});
 const SearchGroupScreen = Loadable({
   loader: () => import("./components/SearchGroupScreen"),
   loading: () => Loading
@@ -107,6 +111,10 @@ const ActivityScreen = Loadable({
 });
 const CreateActivityScreen = Loadable({
   loader: () => import("./components/CreateActivityScreen"),
+  loading: () => Loading
+});
+const CreatePathScreen = Loadable({
+  loader: () => import("./components/CreatePathScreen"),
   loading: () => Loading
 });
 const CreatePlanScreen = Loadable({
@@ -273,6 +281,11 @@ class App extends React.Component {
                 component={CreateChildScreen}
               />
               <PrivateRoute
+                exact
+                path="/profiles/:profileId/cars/create"
+                component={CreateCarScreen}
+              />
+              <PrivateRoute
                 path="/profiles/:profileId/children/:childId"
                 component={ChildProfileScreen}
               />
@@ -312,6 +325,11 @@ class App extends React.Component {
                 exact
                 path="/groups/:groupId/activities/create"
                 component={CreateActivityScreen}
+              />
+              <PrivateRoute
+                exact
+                path="/groups/:groupId/paths/create"
+                component={CreatePathScreen}
               />
               <PrivateRoute
                 exact

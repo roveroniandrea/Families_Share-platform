@@ -8,6 +8,7 @@ import ProfileHeader from "./ProfileHeader";
 import ProfileNavbar from "./ProfileNavbar";
 import LoadingSpinner from "./LoadingSpinner";
 import Log from "./Log";
+import ProfileCars from './ProfileCars';
 
 const ProfileInfo = Loadable({
   loader: () => import("./ProfileInfo"),
@@ -29,6 +30,20 @@ const getMyChildren = userId => {
       return [];
     });
 };
+
+/**Returns all my cars */
+const getMyCars = userId => {
+  return axios
+  .get(`/api/users/${userId}/cars`)
+  .then(response => {
+    return response.data;
+  })
+  .catch(error => {
+    Log.error(error);
+    return [];
+  });
+}
+
 const getMyProfile = userId => {
   return axios
     .get(`/api/users/${userId}/profile`)
@@ -64,17 +79,19 @@ class ProfileScreen extends React.Component {
     const profile = await getMyProfile(profileId);
 
     const children = await getMyChildren(profileId);
+    const cars = await getMyCars(profileId);
     this.setState({
       fetchedProfile: true,
       children,
-      profile
+      profile,
+      cars
     });
   }
 
   render() {
     const { match } = this.props;
     const { profileId } = match.params;
-    const { fetchedProfile, children } = this.state;
+    const { fetchedProfile, children, cars } = this.state;
     const currentPath = match.url;
     const { profile } = this.state;
     return fetchedProfile ? (
@@ -99,6 +116,17 @@ class ProfileScreen extends React.Component {
                   {...props}
                   profileId={profileId}
                   usersChildren={children}
+                />
+              )}
+            />
+             <Route
+              exact
+              path={`${currentPath}/cars`}
+              render={props => (
+                <ProfileCars
+                  {...props}
+                  profileId={profileId}
+                  usersCars={cars}
                 />
               )}
             />
