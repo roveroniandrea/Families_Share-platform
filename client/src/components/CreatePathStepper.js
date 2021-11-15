@@ -1,26 +1,26 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { withRouter } from "react-router-dom";
-import { withSnackbar } from "notistack";
+import React from 'react'
+import PropTypes from 'prop-types'
+import { withRouter } from 'react-router-dom'
+import { withSnackbar } from 'notistack'
 import {
   withStyles,
   MuiThemeProvider,
   createMuiTheme
-} from "@material-ui/core/styles";
-import Stepper from "@material-ui/core/Stepper";
-import Step from "@material-ui/core/Step";
-import StepLabel from "@material-ui/core/StepLabel";
-import StepContent from "@material-ui/core/StepContent";
-import Button from "@material-ui/core/Button";
-import moment from "moment";
-import axios from "axios";
-import withLanguage from "./LanguageContext";
-import CreatePathInformation from "./CreatePathInformation";
-import CreatePathDates from "./CreatePathDates";
-import CreatePathTimeslots from "./CreatePathTimeslots";
-import Texts from "../Constants/Texts";
-import Log from "./Log";
-import LoadingSpinner from "./LoadingSpinner";
+} from '@material-ui/core/styles'
+import Stepper from '@material-ui/core/Stepper'
+import Step from '@material-ui/core/Step'
+import StepLabel from '@material-ui/core/StepLabel'
+import StepContent from '@material-ui/core/StepContent'
+import Button from '@material-ui/core/Button'
+import moment from 'moment'
+import axios from 'axios'
+import withLanguage from './LanguageContext'
+import CreatePathInformation from './CreatePathInformation'
+import CreatePathDates from './CreatePathDates'
+import CreatePathTimeslots from './CreatePathTimeslots'
+import Texts from '../Constants/Texts'
+import Log from './Log'
+import LoadingSpinner from './LoadingSpinner'
 
 const muiTheme = createMuiTheme({
   typography: {
@@ -34,76 +34,76 @@ const muiTheme = createMuiTheme({
     },
     MuiStepLabel: {
       label: {
-        fontFamily: "Roboto",
-        fontSize: "1.56rem"
+        fontFamily: 'Roboto',
+        fontSize: '1.56rem'
       }
     },
     MuiButton: {
       root: {
-        fontSize: "1.2rem",
-        fontFamily: "Roboto",
-        float: "left"
+        fontSize: '1.2rem',
+        fontFamily: 'Roboto',
+        float: 'left'
       }
     }
   }
-});
+})
 
-const styles = theme => ({
+const styles = (theme) => ({
   root: {
-    width: "100%"
+    width: '100%'
   },
   continueButton: {
-    backgroundColor: "#00838F",
+    backgroundColor: '#00838F',
     marginTop: theme.spacing.unit,
     marginRight: theme.spacing.unit,
-    "&:hover": {
-      backgroundColor: "#00838F"
+    '&:hover': {
+      backgroundColor: '#00838F'
     },
-    boxShadow: "0 6px 6px 0 rgba(0,0,0,0.24)",
-    height: "4.2rem",
-    width: "12rem"
+    boxShadow: '0 6px 6px 0 rgba(0,0,0,0.24)',
+    height: '4.2rem',
+    width: '12rem'
   },
   createButton: {
-    backgroundColor: "#ff6f00",
-    position: "fixed",
-    bottom: "5%",
-    left: "50%",
-    transform: "translateX(-50%)",
-    borderRadius: "3.2rem",
+    backgroundColor: '#ff6f00',
+    position: 'fixed',
+    bottom: '5%',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    borderRadius: '3.2rem',
     marginTop: theme.spacing.unit,
     marginRight: theme.spacing.unit,
-    "&:hover": {
-      backgroundColor: "#ff6f00"
+    '&:hover': {
+      backgroundColor: '#ff6f00'
     }
   },
   stepLabel: {
     root: {
-      color: "#ffffff",
-      "&$active": {
-        color: "white",
+      color: '#ffffff',
+      '&$active': {
+        color: 'white',
         fontWeight: 500
       },
-      "&$completed": {
+      '&$completed': {
         color: theme.palette.text.primary,
         fontWeight: 500
       },
-      "&$alternativeLabel": {
-        textAlign: "center",
+      '&$alternativeLabel': {
+        textAlign: 'center',
         marginTop: 16,
-        fontSize: "5rem"
+        fontSize: '5rem'
       },
-      "&$error": {
+      '&$error': {
         color: theme.palette.error.main
       }
     }
   },
   cancelButton: {
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     marginTop: theme.spacing.unit,
-    color: "grey",
+    color: 'grey',
     marginRight: theme.spacing.unit,
-    "&:hover": {
-      backgroundColor: "#ffffff"
+    '&:hover': {
+      backgroundColor: '#ffffff'
     }
   },
   actionsContainer: {
@@ -112,43 +112,43 @@ const styles = theme => ({
   resetContainer: {
     padding: theme.spacing.unit * 3
   }
-});
+})
 
 class CreatePathStepper extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
     const colors = [
-      "#f44336",
-      "#e91e63",
-      "#9c27b0",
-      "#673ab7",
-      "#3f51b5",
-      "#2196f3",
-      "#03a9f4",
-      "#00bcd4",
-      "#009688",
-      "#4caf50",
-      "#8bc34a",
-      "#cddc39",
-      "#ffeb3b",
-      "#ffc107",
-      "#ff9800",
-      "#ff5722",
-      "#795548",
-      "#607d8b"
-    ];
+      '#f44336',
+      '#e91e63',
+      '#9c27b0',
+      '#673ab7',
+      '#3f51b5',
+      '#2196f3',
+      '#03a9f4',
+      '#00bcd4',
+      '#009688',
+      '#4caf50',
+      '#8bc34a',
+      '#cddc39',
+      '#ffeb3b',
+      '#ffc107',
+      '#ff9800',
+      '#ff5722',
+      '#795548',
+      '#607d8b'
+    ]
     this.state = {
       activeStep: 0,
       information: {
         color: colors[Math.floor(Math.random() * colors.length)],
-        from: "",
-        to: "",
-        car_id: ""
+        from: '',
+        to: '',
+        car_id: ''
       },
       dates: {
         selectedDays: [],
         repetition: false,
-        repetitionType: "",
+        repetitionType: '',
         lastSelect: new Date()
       },
       timeslots: {
@@ -157,58 +157,51 @@ class CreatePathStepper extends React.Component {
       },
       stepWasValidated: false,
       creating: false
-    };
+    }
   }
 
   componentDidMount() {
-    document.addEventListener("message", this.handleMessage, false);
+    document.addEventListener('message', this.handleMessage, false)
   }
 
   componentWillUnmount() {
-    document.removeEventListener("message", this.handleMessage, false);
+    document.removeEventListener('message', this.handleMessage, false)
   }
 
-  handleMessage = event => {
-    const data = JSON.parse(event.data);
-    const { history } = this.props;
-    const { activeStep } = this.state;
-    if (data.action === "stepperGoBack") {
+  handleMessage = (event) => {
+    const data = JSON.parse(event.data)
+    const { history } = this.props
+    const { activeStep } = this.state
+    if (data.action === 'stepperGoBack') {
       if (activeStep - 1 >= 0) {
-        this.setState({ activeStep: activeStep - 1 });
+        this.setState({ activeStep: activeStep - 1 })
       } else {
-        history.goBack();
+        history.goBack()
       }
     }
-  };
+  }
 
-  createActivity = () => {
-    const { match, history, enqueueSnackbar, language } = this.props;
-    const texts = Texts[language].createPathStepper;
-    const { groupId } = match.params;
-    const { information, dates, timeslots } = this.state;
-    const userId = JSON.parse(localStorage.getItem("user")).id;
-    const activity = this.formatDataToActivity(
-      information,
-      dates,
-      timeslots,
-      groupId,
-      userId
-    );
-    const events = this.formatDataToEvents(
-      information,
-      dates,
-      timeslots,
-      groupId
-    );
-    this.setState({ creating: true });
+  createPath = () => {
+    const { match, history, enqueueSnackbar, language } = this.props
+    const texts = Texts[language].createPathStepper
+    const { groupId } = match.params
+    const { information, dates, date } = this.state
+    const userId = JSON.parse(localStorage.getItem('user')).id
+    const departure_date = dates.selectedDays[0]
+    departure_date.setHours(date.slice(0, 2), date.slice(3, 5))
+    const path = {
+      car_owner_id: userId,
+      group_id: groupId,
+      departure_date,
+      from: information.from,
+      to: information.to,
+      color: information.color,
+      car_id: information.car_id
+    }
+    this.setState({ creating: true })
     axios
-      .post(`/api/groups/${groupId}/activities`, { activity, events })
+      .post(`/api/groups/${groupId}/paths`, { path })
       .then(response => {
-        if (response.data.status === "pending") {
-          enqueueSnackbar(texts.pendingMessage, {
-            variant: "info"
-          });
-        }
         Log.info(response);
         history.goBack();
       })
@@ -216,114 +209,40 @@ class CreatePathStepper extends React.Component {
         Log.error(error);
         history.goBack();
       });
-  };
-
-  /**TODO: */
-  formatDataToActivity = (information, dates, timeslots, groupId, userId) => {
-    return {
-      group_id: groupId,
-      creator_id: userId,
-      name: information.name,
-      color: information.color,
-      description: information.description,
-      location: information.location,
-      repetition: dates.repetition,
-      repetition_type: dates.repetitionType,
-      different_timeslots: timeslots.differentTimeslots
-    };
-  };
-
-  formatDataToEvents = (information, dates, timeslots, groupId) => {
-    const events = [];
-    dates.selectedDays.forEach((date, index) => {
-      timeslots.activityTimeslots[index].forEach(timeslot => {
-        const dstart = new Date(date);
-        const dend = new Date(date);
-        const { startTime, endTime } = timeslot;
-        dstart.setHours(startTime.substr(0, startTime.indexOf(":")));
-        dstart.setMinutes(
-          startTime.substr(startTime.indexOf(":") + 1, startTime.length - 1)
-        );
-        dend.setHours(endTime.substr(0, endTime.indexOf(":")));
-        dend.setMinutes(
-          endTime.substr(endTime.indexOf(":") + 1, endTime.length - 1)
-        );
-        if (
-          startTime.substr(0, startTime.indexOf(":")) >
-          endTime.substr(0, endTime.indexOf(":"))
-        ) {
-          dend.setDate(dend.getDate() + 1);
-        }
-        const event = {
-          description: timeslot.description,
-          location: timeslot.location,
-          summary: timeslot.name,
-          start: {
-            dateTime: dstart,
-            date: null
-          },
-          end: {
-            dateTime: dend,
-            date: null
-          },
-          extendedProperties: {
-            shared: {
-              requiredParents: timeslot.requiredParents,
-              requiredChildren: timeslot.requiredChildren,
-              cost: timeslot.cost,
-              parents: JSON.stringify([]),
-              children: JSON.stringify([]),
-              externals: JSON.stringify([]),
-              status: "ongoing",
-              link: timeslot.link,
-              //TODO:??
-              activityColor: information.color,
-              category: timeslot.category,
-              groupId,
-              repetition: dates.repetition ? dates.repetitionType : "none",
-              start: startTime.substr(0, startTime.indexOf(":")),
-              end: endTime.substr(0, startTime.indexOf(":"))
-            }
-          }
-        };
-        events.push(event);
-      });
-    });
-    return events;
-  };
+  }
 
   handleContinue = () => {
-    const { activeStep } = this.state;
+    const { activeStep } = this.state
     if (activeStep === 2) {
-      this.createActivity();
+      this.createPath()
     } else {
       this.setState({
         activeStep: activeStep + 1
-      });
+      })
     }
-  };
+  }
 
   handleCancel = () => {
-    const { activeStep } = this.state;
+    const { activeStep } = this.state
     this.setState({
       activeStep: activeStep - 1
-    });
-  };
+    })
+  }
 
   handleInformationSubmit = (information, wasValidated) => {
-    this.setState({ information, stepWasValidated: wasValidated });
-  };
+    this.setState({ information, stepWasValidated: wasValidated })
+  }
 
   handleDatesSubmit = (dates, wasValidated) => {
-    this.setState({ dates, stepWasValidated: wasValidated });
-  };
+    this.setState({ dates, stepWasValidated: wasValidated })
+  }
 
   handleTimeslotsSubmit = (date) => {
-    this.setState({ date });
-  };
+    this.setState({ date })
+  }
 
   getStepContent = () => {
-    const { activeStep, information, dates } = this.state;
+    const { activeStep, information, dates } = this.state
     switch (activeStep) {
       case 0:
         return (
@@ -331,14 +250,11 @@ class CreatePathStepper extends React.Component {
             {...information}
             handleSubmit={this.handleInformationSubmit}
           />
-        );
+        )
       case 1:
         return (
-          <CreatePathDates
-            {...dates}
-            handleSubmit={this.handleDatesSubmit}
-          />
-        );
+          <CreatePathDates {...dates} handleSubmit={this.handleDatesSubmit} />
+        )
       case 2:
         return (
           <CreatePathTimeslots
@@ -348,86 +264,86 @@ class CreatePathStepper extends React.Component {
             dates={dates.selectedDays}
             handleSubmit={this.handleTimeslotsSubmit}
           />
-        );
+        )
       default:
-        return <div>Lorem Ipsum</div>;
+        return <div>Lorem Ipsum</div>
     }
-  };
+  }
 
   getStepLabel = (label, index) => {
-    const { activeStep } = this.state;
-    const iconStyle = { fontSize: "2rem" };
-    let icon = "";
+    const { activeStep } = this.state
+    const iconStyle = { fontSize: '2rem' }
+    let icon = ''
     switch (index) {
       case 0:
-        icon = "fas fa-info-circle";
-        break;
+        icon = 'fas fa-info-circle'
+        break
       case 1:
-        icon = "fas fa-calendar-alt";
-        break;
+        icon = 'fas fa-calendar-alt'
+        break
       case 2:
-        icon = "fas fa-clock";
-        break;
+        icon = 'fas fa-clock'
+        break
       default:
-        icon = "fas fa-exclamation";
+        icon = 'fas fa-exclamation'
     }
     if (activeStep >= index) {
-      iconStyle.color = "#00838F";
+      iconStyle.color = '#00838F'
     } else {
-      iconStyle.color = "rgba(0,0,0,0.5)";
+      iconStyle.color = 'rgba(0,0,0,0.5)'
     }
     return (
       <div id="stepLabelIconContainer">
         <i className={icon} style={iconStyle} />
       </div>
-    );
-  };
+    )
+  }
 
-  getDatesCompletedLabel = label => {
-    const { dates: days } = this.state;
-    const { selectedDays, repetitionType } = days;
-    let completedLabel = "";
-    if (repetitionType === "monthly") {
-      const selectedDay = moment(selectedDays[0]);
-      completedLabel = `Every ${selectedDay.format("Do ")}`;
+  getDatesCompletedLabel = (label) => {
+    const { dates: days } = this.state
+    const { selectedDays, repetitionType } = days
+    let completedLabel = ''
+    if (repetitionType === 'monthly') {
+      const selectedDay = moment(selectedDays[0])
+      completedLabel = `Every ${selectedDay.format('Do ')}`
     } else {
-      const eachMonthsDates = {};
-      selectedDays.forEach(selectedDay => {
-        const key = moment(selectedDay).format("MMMM YYYY");
+      const eachMonthsDates = {}
+      selectedDays.forEach((selectedDay) => {
+        const key = moment(selectedDay).format('MMMM YYYY')
         if (eachMonthsDates[key] === undefined) {
-          eachMonthsDates[key] = [selectedDay];
+          eachMonthsDates[key] = [selectedDay]
         } else {
-          eachMonthsDates[key].push(selectedDay);
+          eachMonthsDates[key].push(selectedDay)
         }
-      });
-      const months = Object.keys(eachMonthsDates);
-      const dates = Object.values(eachMonthsDates);
+      })
+      const months = Object.keys(eachMonthsDates)
+      const dates = Object.values(eachMonthsDates)
       for (let i = 0; i < months.length; i += 1) {
-        let monthString = "";
-        dates[i].forEach(date => {
-          monthString += ` ${moment(date).format("DD")},`;
-        });
-        monthString = monthString.substr(0, monthString.length - 1);
-        monthString += ` ${months[i]}`;
-        completedLabel += ` ${monthString}, `;
+        let monthString = ''
+        dates[i].forEach((date) => {
+          monthString += ` ${moment(date).format('DD')},`
+        })
+        monthString = monthString.substr(0, monthString.length - 1)
+        monthString += ` ${months[i]}`
+        completedLabel += ` ${monthString}, `
       }
-      completedLabel = completedLabel.substr(0, completedLabel.length - 2);
+      completedLabel = completedLabel.substr(0, completedLabel.length - 2)
     }
     return (
-      <div style={{ paddingTop: "2 rem" }}>
+      <div style={{ paddingTop: '2 rem' }}>
         <div className="row-nogutters">{label}</div>
         <div className="row-nogutters" style={{ opacity: 0.54 }}>
           {completedLabel}
         </div>
       </div>
-    );
-  };
+    )
+  }
 
   render() {
-    const { language, classes } = this.props;
-    const texts = Texts[language].createPathStepper;
-    const steps = texts.stepLabels;
-    const { activeStep, stepWasValidated, creating } = this.state;
+    const { language, classes } = this.props
+    const texts = Texts[language].createPathStepper
+    const steps = texts.stepLabels
+    const { activeStep, stepWasValidated, creating } = this.state
     return (
       <div className={classes.root}>
         {creating && <LoadingSpinner />}
@@ -476,12 +392,12 @@ class CreatePathStepper extends React.Component {
                     </div>
                   </StepContent>
                 </Step>
-              );
+              )
             })}
           </Stepper>
         </MuiThemeProvider>
       </div>
-    );
+    )
   }
 }
 
@@ -491,7 +407,7 @@ CreatePathStepper.propTypes = {
   history: PropTypes.object,
   language: PropTypes.string,
   enqueueSnackbar: PropTypes.func
-};
+}
 export default withSnackbar(
   withRouter(withLanguage(withStyles(styles)(CreatePathStepper)))
-);
+)
