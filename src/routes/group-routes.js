@@ -49,10 +49,10 @@ const transporter = nodemailer.createTransport({
 })
 
 const groupStorage = multer.diskStorage({
-  destination (req, file, cb) {
+  destination(req, file, cb) {
     cb(null, path.join(__dirname, '../../images/groups'))
   },
-  filename (req, file, cb) {
+  filename(req, file, cb) {
     const fileName = `${req.params.id}-${Date.now()}.${file.mimetype.slice(
       file.mimetype.indexOf('/') + 1,
       file.mimetype.length
@@ -67,10 +67,10 @@ const groupUpload = multer({
 })
 
 const announcementStorage = multer.diskStorage({
-  destination (req, file, cb) {
+  destination(req, file, cb) {
     cb(null, path.join(__dirname, '../../images/announcements'))
   },
-  filename (req, file, cb) {
+  filename(req, file, cb) {
     if (req.params.announcement_id === undefined) {
       req.params.announcement_id = objectid()
     }
@@ -114,17 +114,17 @@ router.get('/', (req, res, next) => {
   switch (query.searchBy) {
     case 'visibility':
       Group_Settings.find({ visible: query.visible })
-        .then(visibleGroups => {
+        .then((visibleGroups) => {
           if (visibleGroups.length === 0) {
             return res.status(404).send('No visible groups were found')
           }
           const groupIds = []
-          visibleGroups.forEach(group => groupIds.push(group.group_id))
+          visibleGroups.forEach((group) => groupIds.push(group.group_id))
           return Group.find({ group_id: { $in: groupIds } })
             .populate('image')
             .collation({ locale: 'en' })
             .sort({ name: 1 })
-            .then(groups => {
+            .then((groups) => {
               if (groups.length === 0) {
                 return res.status(400).send('No groups were found')
               }
@@ -139,7 +139,7 @@ router.get('/', (req, res, next) => {
         .populate('image')
         .lean()
         .exec()
-        .then(groups => {
+        .then((groups) => {
           if (groups.length === 0) {
             return res.status(404).send('No groups were found')
           }
@@ -150,7 +150,7 @@ router.get('/', (req, res, next) => {
     case 'all':
       Group.find({})
         .select('name')
-        .then(groups => {
+        .then((groups) => {
           if (groups.length === 0) {
             return res.status(404).send('No groups were found')
           }
@@ -237,7 +237,7 @@ router.post('/', async (req, res, next) => {
       user_accepted: true
     }
   ]
-  invite_ids.forEach(invite_id => {
+  invite_ids.forEach((invite_id) => {
     members.push({
       group_id,
       user_id: invite_id,
@@ -261,7 +261,7 @@ router.post('/', async (req, res, next) => {
 
 router.get('/suggestions', (req, res, next) => {
   Group_Settings.find({ visible: true })
-    .then(groups => {
+    .then((groups) => {
       if (groups.length === 0) {
         return res.status(404).send('No suggestions were found')
       }
@@ -287,7 +287,7 @@ router.get('/:id', (req, res, next) => {
     .populate('image')
     .lean()
     .exec()
-    .then(group => {
+    .then((group) => {
       if (!group) {
         return res.status(404).send('Group not found')
       }
@@ -319,11 +319,11 @@ router.delete('/:id', async (req, res, next) => {
     await Member.deleteMany({ group_id: id })
     await Group_Settings.deleteOne({ group_id: id })
     await Image.deleteMany({ owner_type: 'group', owner_id: id })
-    let pathsList = await Path.find({group_id: id})
-    pathsList.forEach(path =>{
-      Waypoint.deleteMany({path_id: path.path_id})
+    let pathsList = await Path.find({ group_id: id })
+    pathsList.forEach((path) => {
+      Waypoint.deleteMany({ path_id: path.path_id })
     })
-    await Path.deleteMany({group_id: id})
+    await Path.deleteMany({ group_id: id })
     res.status(200).send('Group was deleted')
   } catch (error) {
     next(error)
@@ -336,9 +336,24 @@ router.patch('/:id', groupUpload.single('photo'), async (req, res, next) => {
   }
   const { file } = req
   const { id } = req.params
-  const { visible, name, description, location, background, contact_type, contact_info } = req.body
+  const {
+    visible,
+    name,
+    description,
+    location,
+    background,
+    contact_type,
+    contact_info
+  } = req.body
   if (
-    !(visible !== undefined && name && description && location && background && contact_type)
+    !(
+      visible !== undefined &&
+      name &&
+      description &&
+      location &&
+      background &&
+      contact_type
+    )
   ) {
     return res.status(400).send('Bad Request')
   }
@@ -427,7 +442,7 @@ router.patch('/:id/settings', async (req, res, next) => {
 router.get('/:id/settings', (req, res, next) => {
   const { id } = req.params
   Group_Settings.findOne({ group_id: id })
-    .then(settings => {
+    .then((settings) => {
       if (!settings) {
         return res.status(404).send('Group Settings not found')
       }
@@ -439,7 +454,7 @@ router.get('/:id/settings', (req, res, next) => {
 router.get('/:id/members', (req, res, next) => {
   const { id } = req.params
   Member.find({ group_id: id })
-    .then(members => {
+    .then((members) => {
       if (members.length === 0) {
         return res.status(404).send('Group has no members')
       }
@@ -450,8 +465,14 @@ router.get('/:id/members', (req, res, next) => {
 
 router.get('/:id/children', async (req, res, next) => {
   const { id } = req.params
-  const members = await Member.find({ group_id: id, user_accepted: true, group_accepted: true }).distinct('user_id')
-  const children = await Parent.find({ parent_id: { $in: members } }).distinct('child_id')
+  const members = await Member.find({
+    group_id: id,
+    user_accepted: true,
+    group_accepted: true
+  }).distinct('user_id')
+  const children = await Parent.find({ parent_id: { $in: members } }).distinct(
+    'child_id'
+  )
   if (children.length === 0) {
     return res.status(404).send('Group has no children')
   }
@@ -503,7 +524,9 @@ router.patch('/:id/members', async (req, res, next) => {
       message = 'Admin removed'
     }
     res.status(200).send(message)
-  } catch (err) { next(err) }
+  } catch (err) {
+    next(err)
+  }
 })
 
 router.delete('/:groupId/members/:memberId', async (req, res, next) => {
@@ -527,25 +550,27 @@ router.delete('/:groupId/members/:memberId', async (req, res, next) => {
   }
   try {
     const children = await Parent.find({ parent_id: member_id })
-    const usersChildrenIds = children.map(child => child.child_id)
+    const usersChildrenIds = children.map((child) => child.child_id)
     const group = await Group.findOne({ group_id })
     let events = await ah.fetchAllGroupEvents(group.group_id, group.calendar_id)
-    events = events.filter(e => e.extendedProperties.shared.status === 'ongoing')
+    events = events.filter(
+      (e) => e.extendedProperties.shared.status === 'ongoing'
+    )
     const patchedEvents = []
-    events.forEach(event => {
+    events.forEach((event) => {
       let patched = false
       const parentIds = JSON.parse(event.extendedProperties.shared.parents)
       if (parentIds.includes(member_id)) {
         patched = true
         event.extendedProperties.shared.parents = JSON.stringify(
-          parentIds.filter(id => id !== member_id)
+          parentIds.filter((id) => id !== member_id)
         )
       }
       const childrenIds = JSON.parse(event.extendedProperties.shared.children)
-      if (childrenIds.filter(c => usersChildrenIds.includes(c)).length) {
+      if (childrenIds.filter((c) => usersChildrenIds.includes(c)).length) {
         patched = true
         event.extendedProperties.shared.children = JSON.stringify(
-          childrenIds.filter(id => usersChildrenIds.indexOf(id) === -1)
+          childrenIds.filter((id) => usersChildrenIds.indexOf(id) === -1)
         )
       }
       if (patched) patchedEvents.push(event)
@@ -606,7 +631,7 @@ router.post('/:id/members', async (req, res, next) => {
       }
     }
     await Member.create(
-      userIds.map(id => ({
+      userIds.map((id) => ({
         user_id: id,
         group_id,
         admin: false,
@@ -645,7 +670,7 @@ router.get('/:id/notifications', async (req, res, next) => {
     if (notifications.length === 0) {
       return res.status(404).send('Group has no notifications')
     }
-    notifications.forEach(notification => {
+    notifications.forEach((notification) => {
       notification.header =
         texts[user.language][notification.type][notification.code].header
       notification.description = nh.getNotificationDescription(
@@ -679,7 +704,10 @@ router.get('/:id/events', async (req, res, next) => {
     if (!member) {
       return res.status(401).send('Unauthorized')
     }
-    const events = await ah.fetchAllGroupEvents(group.group_id, group.calendar_id)
+    const events = await ah.fetchAllGroupEvents(
+      group.group_id,
+      group.calendar_id
+    )
     if (events.length === 0) {
       return res.status(404).send('Group has no events')
     }
@@ -701,27 +729,41 @@ router.get('/:id/metrics', async (req, res, next) => {
       group_accepted: true,
       user_accepted: true
     }).lean()
-    const member = members.find(m => m.user_id === user_id)
+    const member = members.find((m) => m.user_id === user_id)
     if (!member) {
       return res.status(401).send('Unauthorized')
     }
     if (!member.admin) {
       return res.status(401).send('Unauthorized')
     }
-    const profiles = await Profile.find({ user_id: { $in: members.map(m => m.user_id) } }).lean()
-    const children = await Parent.find({ parent_id: { $in: members.map(m => m.user_id) } }).lean()
+    const profiles = await Profile.find({
+      user_id: { $in: members.map((m) => m.user_id) }
+    }).lean()
+    const children = await Parent.find({
+      parent_id: { $in: members.map((m) => m.user_id) }
+    }).lean()
     const group = await Group.findOne({ group_id })
-    const events = await ah.fetchAllGroupEvents(group.group_id, group.calendar_id)
+    const events = await ah.fetchAllGroupEvents(
+      group.group_id,
+      group.calendar_id
+    )
     const totalVolunteers = members.length
-    const totalKids = [...new Set(children.map(c => c.child_id))].length
+    const totalKids = [...new Set(children.map((c) => c.child_id))].length
     const totalEvents = events.length
-    const contributions = profiles.map(p => ({ contribution: 0, user_id: p.user_id, given_name: p.given_name, family_name: p.family_name }))
-    const completedEvents = events.filter(e => e.extendedProperties.shared.status === 'completed')
+    const contributions = profiles.map((p) => ({
+      contribution: 0,
+      user_id: p.user_id,
+      given_name: p.given_name,
+      family_name: p.family_name
+    }))
+    const completedEvents = events.filter(
+      (e) => e.extendedProperties.shared.status === 'completed'
+    )
     const totalCompletedEvents = completedEvents.length
-    completedEvents.forEach(event => {
+    completedEvents.forEach((event) => {
       const participants = JSON.parse(event.extendedProperties.shared.parents)
-      participants.forEach(participant => {
-        const contributor = contributions.find(c => c.user_id === participant)
+      participants.forEach((participant) => {
+        const contributor = contributions.find((c) => c.user_id === participant)
         if (contributor) {
           contributor.contribution += 1
         }
@@ -750,14 +792,20 @@ router.post('/:id/contacts/export', async (req, res, next) => {
     if (!group) {
       return res.status(404).send('Non existing group')
     }
-    const members = await Member.find({ group_id, user_accepted: true, group_accepted: true })
-    const member = members.find(member => member.user_id === user_id)
+    const members = await Member.find({
+      group_id,
+      user_accepted: true,
+      group_accepted: true
+    })
+    const member = members.find((member) => member.user_id === user_id)
     if (!member) {
       return res.status(401).send('Unauthorized')
     }
-    const profiles = await Profile.find({ user_id: { $in: members.map(m => m.user_id) } })
-    profiles.forEach(profile => {
-      if (members.find(m => m.user_id === profile.user_id).admin) {
+    const profiles = await Profile.find({
+      user_id: { $in: members.map((m) => m.user_id) }
+    })
+    profiles.forEach((profile) => {
+      if (members.find((m) => m.user_id === profile.user_id).admin) {
         profile.admin = true
       } else {
         profile.admin = false
@@ -812,17 +860,19 @@ router.post('/:id/agenda/export', async (req, res, next) => {
       return res.status(404).send('Group has no agenda')
     }
     let events = await ah.fetchAllGroupEvents(group.group_id, group.calendar_id)
-    events = events.filter(e => e.extendedProperties.shared.status === 'ongoing')
+    events = events.filter(
+      (e) => e.extendedProperties.shared.status === 'ongoing'
+    )
     for (const event of events) {
       const parentIds = JSON.parse(event.extendedProperties.shared.parents)
       const childIds = JSON.parse(event.extendedProperties.shared.children)
       const parents = await Profile.find({ user_id: { $in: parentIds } })
       const children = await Child.find({ child_id: { $in: childIds } })
       event.extendedProperties.shared.parents = JSON.stringify(
-        parents.map(parent => `${parent.given_name} ${parent.family_name}`)
+        parents.map((parent) => `${parent.given_name} ${parent.family_name}`)
       )
       event.extendedProperties.shared.children = JSON.stringify(
-        children.map(child => `${child.given_name} ${child.family_name}`)
+        children.map((child) => `${child.given_name} ${child.family_name}`)
       )
     }
     groupAgenda.createExcel(group, activities, events, () => {
@@ -966,14 +1016,27 @@ router.patch('/:groupId/plans/:planId', async (req, res, next) => {
       return res.status(401).send('Unauthorized')
     }
     if (plan.participants) {
-      plan.participants = [plan.participants.find(p => p.user_id === userId), ...oldPlan.participants.filter(p => p.user_id !== userId)]
+      plan.participants = [
+        plan.participants.find((p) => p.user_id === userId),
+        ...oldPlan.participants.filter((p) => p.user_id !== userId)
+      ]
     }
     if (plan.participants) {
       plan.participants = await ph.syncChildSubscriptions(plan.participants)
     }
-    const updatedPlan = await Plan.findOneAndUpdate({ plan_id: planId }, { ...plan }, { new: true })
+    const updatedPlan = await Plan.findOneAndUpdate(
+      { plan_id: planId },
+      { ...plan },
+      { new: true }
+    )
     if (oldPlan.state !== updatedPlan.state) {
-      nh.planStateNotification(plan.name, updatedPlan.participants.map(p => p.user_id), updatedPlan.state, groupId, planId)
+      nh.planStateNotification(
+        plan.name,
+        updatedPlan.participants.map((p) => p.user_id),
+        updatedPlan.state,
+        groupId,
+        planId
+      )
     }
     if (updatedPlan.state === 'planning') {
       const updatedPlanObj = await updatedPlan.toJSON()
@@ -1041,10 +1104,7 @@ router.post('/:groupId/plans/:planId/export', async (req, res, next) => {
         attachments: [
           {
             filename: `plan.xlsx`,
-            path: path.join(
-              __dirname,
-              `../../plan.xlsx`
-            )
+            path: path.join(__dirname, `../../plan.xlsx`)
           }
         ]
       }
@@ -1082,9 +1142,13 @@ router.post('/:groupId/plans/:planId/activities', async (req, res, next) => {
     }
     const group = await Group.findOne({ group_id })
     if (plan.activitiesCreation === 'automatically') {
-      const [activity, events] = ph.transformPlanToActivities(plan, group, user_id)
+      const [activity, events] = ph.transformPlanToActivities(
+        plan,
+        group,
+        user_id
+      )
       await Promise.all(
-        events.map(event =>
+        events.map((event) =>
           calendar.events.insert({
             calendarId: group.calendar_id,
             resource: event
@@ -1104,10 +1168,7 @@ router.post('/:groupId/plans/:planId/activities', async (req, res, next) => {
           attachments: [
             {
               filename: `plan_solution.xlsx`,
-              path: path.join(
-                __dirname,
-                `../../plan_solution.xlsx`
-              )
+              path: path.join(__dirname, `../../plan_solution.xlsx`)
             }
           ]
         }
@@ -1149,9 +1210,11 @@ router.post('/:id/activities', async (req, res, next) => {
     activity.activity_id = activity_id
     const group = await Group.findOne({ group_id })
     activity.group_name = group.name
-    events.forEach(event => { event.extendedProperties.shared.activityId = activity_id })
+    events.forEach((event) => {
+      event.extendedProperties.shared.activityId = activity_id
+    })
     await Promise.all(
-      events.map(event =>
+      events.map((event) =>
         calendar.events.insert({
           calendarId: group.calendar_id,
           resource: event
@@ -1180,7 +1243,7 @@ router.get('/:id/activities', (req, res, next) => {
     group_accepted: true,
     user_accepted: true
   })
-    .then(member => {
+    .then((member) => {
       if (!member) {
         return res.status(401).send('Unauthorized')
       }
@@ -1188,7 +1251,7 @@ router.get('/:id/activities', (req, res, next) => {
         .sort({ createdAt: -1 })
         .lean()
         .exec()
-        .then(activities => {
+        .then((activities) => {
           if (activities.length === 0) {
             return res.status(404).send('Group has no activities')
           }
@@ -1276,7 +1339,11 @@ router.delete('/:groupId/activities/:activityId', async (req, res, next) => {
       })
     }, Promise.resolve())
     const activity = await Activity.findOneAndDelete({ activity_id })
-    await nh.deleteActivityNotification(user_id, activity.name, activityTimeslots)
+    await nh.deleteActivityNotification(
+      user_id,
+      activity.name,
+      activityTimeslots
+    )
     res.status(200).send('Activity Deleted')
   } catch (error) {
     next(error)
@@ -1294,14 +1361,14 @@ router.get('/:groupId/activities/:activityId', (req, res, next) => {
     group_accepted: true,
     user_accepted: true
   })
-    .then(member => {
+    .then((member) => {
       if (!member) {
         return res.status(401).send('Unauthorized')
       }
       return Activity.findOne({ activity_id: activityId })
         .lean()
         .exec()
-        .then(activity => {
+        .then((activity) => {
           if (!activity) {
             return res.status(404).send('Activity not found')
           }
@@ -1351,10 +1418,7 @@ router.post(
             attachments: [
               {
                 filename: `activity.pdf`,
-                path: path.join(
-                  __dirname,
-                  `../../activity.pdf`
-                )
+                path: path.join(__dirname, `../../activity.pdf`)
               }
             ]
           }
@@ -1378,10 +1442,7 @@ router.post(
             attachments: [
               {
                 filename: `activity.xlsx`,
-                path: path.join(
-                  __dirname,
-                  `../../activity.xlsx`
-                )
+                path: path.join(__dirname, `../../activity.xlsx`)
               }
             ]
           }
@@ -1472,7 +1533,11 @@ router.patch(
     if (!req.user_id) {
       return res.status(401).send('Not authenticated')
     }
-    const { groupId: group_id, activityId: activity_id, timeslotId: timeslot_id } = req.params
+    const {
+      groupId: group_id,
+      activityId: activity_id,
+      timeslotId: timeslot_id
+    } = req.params
     const user_id = req.user_id
     try {
       const member = await Member.findOne({
@@ -1507,22 +1572,32 @@ router.patch(
         return res.status(400).send('Bad Request')
       }
       const group = await Group.findOne({ group_id })
-      const myChildren = await Parent.distinct('child_id', { parent_id: req.user_id })
+      const myChildren = await Parent.distinct('child_id', {
+        parent_id: req.user_id
+      })
       const event = await calendar.events.get({
         calendarId: group.calendar_id,
         eventId: req.params.timeslotId
       })
-      const oldParents = JSON.parse(event.data.extendedProperties.shared.parents)
-      const oldChildren = JSON.parse(event.data.extendedProperties.shared.children)
+      const oldParents = JSON.parse(
+        event.data.extendedProperties.shared.parents
+      )
+      const oldChildren = JSON.parse(
+        event.data.extendedProperties.shared.children
+      )
       const parents = JSON.parse(extendedProperties.shared.parents)
       const children = JSON.parse(extendedProperties.shared.children)
       if (!member.admin) {
         if (parents.includes(req.user_id)) {
-          extendedProperties.shared.parents = JSON.stringify([...new Set([...oldParents, req.user_id])])
+          extendedProperties.shared.parents = JSON.stringify([
+            ...new Set([...oldParents, req.user_id])
+          ])
         } else {
-          extendedProperties.shared.parents = JSON.stringify(oldParents.filter(u => u !== req.user_id))
+          extendedProperties.shared.parents = JSON.stringify(
+            oldParents.filter((u) => u !== req.user_id)
+          )
         }
-        myChildren.forEach(c => {
+        myChildren.forEach((c) => {
           if (children.includes(c) && !oldChildren.includes(c)) {
             oldChildren.push(c)
           } else if (!children.includes(c) && oldChildren.includes(c)) {
@@ -1533,7 +1608,7 @@ router.patch(
       } else {
         if (adminChanges) {
           if (Object.keys(adminChanges).length > 0) {
-            Object.keys(adminChanges).forEach(id => {
+            Object.keys(adminChanges).forEach((id) => {
               if (adminChanges[id] > 0) {
                 adminChanges[id] = 'add'
               } else if (adminChanges[id] < 0) {
@@ -1542,31 +1617,65 @@ router.patch(
                 delete adminChanges[id]
               }
             })
-            nh.timeslotAdminChangesNotification(summary, adminChanges, req.user_id, group_id, activity_id, timeslot_id)
+            nh.timeslotAdminChangesNotification(
+              summary,
+              adminChanges,
+              req.user_id,
+              group_id,
+              activity_id,
+              timeslot_id
+            )
           }
         }
       }
       const externals = JSON.parse(extendedProperties.shared.externals || '[]')
       const volunteersReq =
-        (parents.length + externals.length) >= extendedProperties.shared.requiredParents
+        parents.length + externals.length >=
+        extendedProperties.shared.requiredParents
       const childrenReq =
         children.length >= extendedProperties.shared.requiredChildren
-      if (event.data.extendedProperties.shared.status !== extendedProperties.shared.status) {
-        nh.timeslotStatusChangeNotification(summary, extendedProperties.shared.status, oldParents, group_id, activity_id, timeslot_id)
+      if (
+        event.data.extendedProperties.shared.status !==
+        extendedProperties.shared.status
+      ) {
+        nh.timeslotStatusChangeNotification(
+          summary,
+          extendedProperties.shared.status,
+          oldParents,
+          group_id,
+          activity_id,
+          timeslot_id
+        )
       }
       if (notifyUsers) {
         extendedProperties.shared.parents = JSON.stringify([])
         extendedProperties.shared.children = JSON.stringify([])
         extendedProperties.shared.externals = JSON.stringify([])
-        await nh.timeslotMajorChangeNotification(summary, oldParents, group_id, activity_id, timeslot_id)
+        await nh.timeslotMajorChangeNotification(
+          summary,
+          oldParents,
+          group_id,
+          activity_id,
+          timeslot_id
+        )
       } else if (volunteersReq && childrenReq) {
-        await nh.timeslotRequirementsNotification(summary, parents, group_id, activity_id, timeslot_id)
+        await nh.timeslotRequirementsNotification(
+          summary,
+          parents,
+          group_id,
+          activity_id,
+          timeslot_id
+        )
       }
       if (JSON.parse(extendedProperties.shared.children).length > 37) {
-        extendedProperties.shared.children = JSON.stringify(JSON.parse(extendedProperties.shared.children).slice(0, 36))
+        extendedProperties.shared.children = JSON.stringify(
+          JSON.parse(extendedProperties.shared.children).slice(0, 36)
+        )
       }
       if (JSON.parse(extendedProperties.shared.parents).length > 37) {
-        extendedProperties.shared.parents = JSON.stringify(JSON.parse(extendedProperties.shared.parents).slice(0, 36))
+        extendedProperties.shared.parents = JSON.stringify(
+          JSON.parse(extendedProperties.shared.parents).slice(0, 36)
+        )
       }
       const timeslotPatch = {
         summary,
@@ -1606,14 +1715,8 @@ router.post(
       if (!member) {
         return res.status(401).send('Unauthorized')
       }
-      const {
-        summary,
-        description,
-        location,
-        start,
-        end,
-        extendedProperties
-      } = req.body
+      const { summary, description, location, start, end, extendedProperties } =
+        req.body
       if (
         !(
           summary ||
@@ -1679,7 +1782,10 @@ router.delete(
         calendarId: group.calendar_id,
         eventId: req.params.timeslotId
       })
-      nh.deleteTimeslotNotification(user_id, { summary, parents: JSON.parse(parents) })
+      nh.deleteTimeslotNotification(user_id, {
+        summary,
+        parents: JSON.parse(parents)
+      })
       res.status(200).send('Timeslot was deleted')
     } catch (error) {
       next(error)
@@ -1698,7 +1804,7 @@ router.get('/:id/announcements', (req, res, next) => {
     group_accepted: true,
     user_accepted: true
   })
-    .then(member => {
+    .then((member) => {
       if (!member) {
         return res.status(401).send('Unauthorized')
       }
@@ -1707,7 +1813,7 @@ router.get('/:id/announcements', (req, res, next) => {
         .sort({ createdAt: -1 })
         .lean()
         .exec()
-        .then(announcements => {
+        .then((announcements) => {
           if (announcements.length === 0) {
             return res.status(404).send('Group has no announcements')
           }
@@ -1750,7 +1856,7 @@ router.post(
       }
       if (files) {
         const images = []
-        files.forEach(photo => {
+        files.forEach((photo) => {
           images.push({
             image_id: objectid(),
             owner_type: 'announcement',
@@ -1841,7 +1947,8 @@ router.post(
     } catch (error) {
       next(error)
     }
-  })
+  }
+)
 
 router.get(
   '/:groupId/announcements/:announcementId/replies',
@@ -1858,11 +1965,11 @@ router.get(
       group_accepted: true,
       user_accepted: true
     })
-      .then(member => {
+      .then((member) => {
         if (!member) {
           return res.status(401).send('Unauthorized')
         }
-        return Reply.find({ announcement_id }).then(replies => {
+        return Reply.find({ announcement_id }).then((replies) => {
           if (replies.length === 0) {
             return res.status(404).send('Announcement has no replies')
           }
@@ -1917,7 +2024,7 @@ router.get('/:id/paths', (req, res, next) => {
     group_accepted: true,
     user_accepted: true
   })
-    .then(member => {
+    .then((member) => {
       if (!member) {
         return res.status(401).send('Unauthorized')
       }
@@ -1925,7 +2032,7 @@ router.get('/:id/paths', (req, res, next) => {
         .sort({ departure_date: -1 })
         .lean()
         .exec()
-        .then(paths => {
+        .then((paths) => {
           if (paths.length === 0) {
             return res.status(404).send('Group has no shared paths')
           }
@@ -1933,6 +2040,34 @@ router.get('/:id/paths', (req, res, next) => {
         })
     })
     .catch(next)
+})
+
+router.post('/:id/paths', async (req, res, next) => {
+  if (!req.user_id) {
+    return res.status(401).send('Not authenticated')
+  }
+  const user_id = req.user_id
+  const group_id = req.params.id
+  try {
+    const { path } = req.body
+    const member = await Member.findOne({
+      group_id,
+      user_id,
+      group_accepted: true,
+      user_accepted: true
+    })
+    if (!member) {
+      return res.status(401).send('Unauthorized')
+    }
+    if (!path) {
+      return res.status(400).send('Bad Request')
+    }
+    path.path_id = objectid()
+    await Path.create(path)
+    res.status(200).send('Path was created')
+  } catch (error) {
+    next(error)
+  }
 })
 
 module.exports = router
