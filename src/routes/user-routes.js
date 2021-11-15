@@ -846,18 +846,18 @@ router.delete('/:userId/groups/:groupId', async (req, res, next) => {
 
     const userCars = await Car.find({ owner_id: user_id }).then((userCars) => {
       userCars.forEach(car => {
-        const pathList = await Path.find({ car_id: car.car_id, group_id: group_id }).then((pathList) => {
+        const pathList = Path.find({ car_id: car.car_id, group_id: group_id }).then((pathList) => {
           pathList.forEach((path) => {
             Waypoint.deleteMany({ path_id: path.path_id })
           })
         })
-        await Path.deleteMany({ group_id: group_id, car_id: car.car_id })
+        Path.deleteMany({ group_id: group_id, car_id: car.car_id })
       })
     });
 
     const groupPathList = await Path.find({ group_id: group_id }).then((groupPathList) => {
       groupPathList.forEach(path => {
-        await Waypoint.deleteMany({ path_id: path.path_id, passenger_id: user_id })
+        Waypoint.deleteMany({ path_id: path.path_id, passenger_id: user_id })
       })
     })
 
