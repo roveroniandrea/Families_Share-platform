@@ -104,6 +104,7 @@ const Community = require('../models/community')
 const User = require('../models/user')
 const Path = require('../models/path')
 const Waypoint = require('../models/waypoint')
+const Car = require('../models/car')
 
 router.get('/', (req, res, next) => {
   if (!req.user_id) return res.status(401).send('Not authenticated')
@@ -593,6 +594,24 @@ router.delete('/:groupId/members/:memberId', async (req, res, next) => {
     }, Promise.resolve())
 
     await Member.deleteOne({ group_id, user_id: member_id })
+
+    const userCars = await Car.find({ owner_id: member_id }).then((userCars) => { 
+      userCars.forEach(car => {
+        const pathList = await Path.find({ car_id: car.car_id, group_id: group_id }).then((pathList) => {
+          pathList.forEach((path) => {
+            Waypoint.deleteMany({ path_id: path.path_id })
+          })
+        })
+        await Path.deleteMany({ group_id: group_id, car_id: car.car_id })
+      })
+    });
+
+    const groupPathList = await Path.find({group_id: group_id}).then((groupPathList)=>{
+      groupPathList.forEach(path =>{
+        await Waypoint.deleteMany({path_id: path.path_id, passenger_id: member_id})
+      })
+    })
+
     await nh.removeMemberNotification(member_id, group_id)
     res.status(200).send('User removed from group')
   } catch (error) {

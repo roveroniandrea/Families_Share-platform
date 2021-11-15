@@ -103,6 +103,8 @@ const Password_Reset = require('../models/password-reset')
 const Device = require('../models/device')
 const Rating = require('../models/rating')
 const Community = require('../models/community')
+const Path = require('../models/path')
+const Waypoint = require('../models/waypoint')
 
 router.post('/', async (req, res, next) => {
   const {
@@ -841,6 +843,24 @@ router.delete('/:userId/groups/:groupId', async (req, res, next) => {
       })
     )
     await Member.deleteOne({ user_id, group_id })
+
+    const userCars = await Car.find({ owner_id: user_id }).then((userCars) => {
+      userCars.forEach(car => {
+        const pathList = await Path.find({ car_id: car.car_id, group_id: group_id }).then((pathList) => {
+          pathList.forEach((path) => {
+            Waypoint.deleteMany({ path_id: path.path_id })
+          })
+        })
+        await Path.deleteMany({ group_id: group_id, car_id: car.car_id })
+      })
+    });
+
+    const groupPathList = await Path.find({ group_id: group_id }).then((groupPathList) => {
+      groupPathList.forEach(path => {
+        await Waypoint.deleteMany({ path_id: path.path_id, passenger_id: user_id })
+      })
+    })
+
     res.status(200).send('User left group')
   } catch (error) {
     next(error)
@@ -1473,7 +1493,7 @@ router.post(
     }
 
     try {
-      await Car.create({...car, car_id: objectid(), owner_id})
+      await Car.create({ ...car, car_id: objectid(), owner_id })
       res.status(200).send('Car created')
     } catch (error) {
       next(error)
