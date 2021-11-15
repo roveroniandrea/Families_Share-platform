@@ -1160,6 +1160,17 @@ const en = {
     unspecified: "Unspecified",
     requiredErr: "Please fill out this field."
   },
+  carProfileInfo: {
+    car_name: "Car Name",
+    num_seats: "Seats Number",
+    otherInfo: "Other info",
+    confirmDialogTitle: "Are you sure you want to delete this car?"
+  },
+  carProfileHeader: {
+    delete: "Delete car",
+    confirmDialogTitle:
+      "Are you sure you want to delete the car and remove all its data?"
+  },
   additionalInfoScreen: {
     backNavTitle: "Information",
     save: "SAVE",
@@ -3765,6 +3776,17 @@ const it = {
     acceptTermsErr: "Per favore accetta i termini",
     unspecified: "Non specificato",
     requiredErr: "Per favore compila il form."
+  },
+  carProfileInfo: {
+    car_name: "Nome Macchina",
+    num_seats: "Numbero di posti",
+    otherInfo: "Altre informazioni",
+    confirmDialogTitle: "Sei sicuro di voler eliminare questa macchina?"
+  },
+  carProfileHeader: {
+    delete: "Cancella macchina",
+    confirmDialogTitle:
+      "Sei sicuro di voler rimovere la macchina ?"
   },
   additionalInfoScreen: {
     backNavTitle: "Informazioni",

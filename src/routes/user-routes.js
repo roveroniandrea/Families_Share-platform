@@ -1506,18 +1506,19 @@ router.get('/:userId/cars/:carId', (req, res, next) => {
   if (!req.user_id) {
     return res.status(401).send('Unauthorized')
   }
-  /*const child_id = req.params.childId
-  Child.findOne({ child_id })
-    .populate('image')
+
+  const car_id = req.params.carId
+  Car.findOne({ car_id })
+    .populate()
     .lean()
     .exec()
-    .then((child) => {
-      if (!child) {
+    .then((car) => {
+      if (!car) {
         return res.status(404).send('Child not found')
       }
-      res.json(child)
+      res.json(car)
     })
-    .catch(next)*/
+    .catch(next)
 })
 
 /**Updating a car */
