@@ -30,6 +30,8 @@ class CreatePathInformation extends React.Component {
     autosize(document.querySelectorAll('textarea'))
     this.fromRef = React.createRef()
     this.toRef = React.createRef()
+    this.mapRef = React.createRef()
+    this.directionsRenderer = new window.google.maps.DirectionsRenderer()
   }
 
   validate = (state) => {
@@ -51,7 +53,12 @@ class CreatePathInformation extends React.Component {
       this.state.from &&
       this.state.to
     ) {
-      getFastestRoute(this.state.from, this.state.to, []).then((res) => {
+      getFastestRoute(
+        this.state.from,
+        this.state.to,
+        [],
+        this.directionsRenderer
+      ).then((res) => {
         this.setState({ ...this.state, pathExists: res.exists })
       })
     }
@@ -80,6 +87,9 @@ class CreatePathInformation extends React.Component {
   }
 
   componentDidMount() {
+    this.directionsRenderer.setMap(
+      new window.google.maps.Map(this.mapRef.current)
+    )
     initAutocomplete(this.fromRef, (addr) => {
       this.handleChange({
         target: { name: 'displayedFrom', value: addr }
@@ -172,6 +182,13 @@ class CreatePathInformation extends React.Component {
             </div>
           </div>
         )}
+        <div className="row no-gutters" style={({...rowStyle, display: pathExists? 'flex': 'none', height: '300px'})}>
+          <div className="col-2-10"></div>
+          <div
+            ref={this.mapRef}
+            className="col-8-10"
+          ></div>
+        </div>
         <div className="row no-gutters" style={rowStyle}>
           <div className="col-2-10">
             <i

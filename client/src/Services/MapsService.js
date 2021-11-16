@@ -18,9 +18,9 @@ export function initAutocomplete(inputRef, onChange) {
  * @param {string} to 
  * @param {string[]} waypoints 
  * @returns A promise with `{exists: boolean, waypoints: string[]}`. Exists is false if the route does not exist.
- * Waypoints will be returned in the shortest order
+ * Waypoint `ids` will be returned in the shortest order
  */
-export function getFastestRoute(from, to, waypoints = []) {
+export function getFastestRoute(from, to, waypoints = [], renderer = null) {
   const notFound = {
     exists: false,
     waypoints: []
@@ -39,13 +39,21 @@ export function getFastestRoute(from, to, waypoints = []) {
         travelMode: window.google.maps.TravelMode.DRIVING
       })
       .catch(() => notFound)
-      .then((response) =>
-        response?.geocoded_waypoints
-          ? {
-              exists: true,
-              waypoints: response.geocoded_waypoints.map((w) => w.place_id)
-            }
-          : notFound
+      .then((response) => {
+        if(response.status === 'OK'){
+          if(renderer){
+            console.log(renderer, 'ciao')
+            renderer.setDirections(response);
+          }
+          return {
+            exists: true,
+            waypoints: response.geocoded_waypoints.map((w) => w.place_id)
+          }
+        }
+        else{
+          return notFound
+        }
+      }
       )
   } else {
     return Promise.resolve(notFound)
