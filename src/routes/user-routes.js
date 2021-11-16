@@ -1526,7 +1526,6 @@ router.patch(
     if (req.user_id !== req.params.userId) {
       return res.status(401).send('Unauthorized')
     }
-    const { file } = req
     const car_id = req.params.carId
     const {
       car_name,
