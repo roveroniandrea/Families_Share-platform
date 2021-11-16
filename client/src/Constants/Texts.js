@@ -1202,7 +1202,8 @@ const en = {
     color: "Color of the path",
     from: "Start point of the path",
     to: "End point of the path",
-    car: "Car to use"
+    car: "Car to use",
+    pathNotExists: "Path does not exist"
   },
   createPathDates: {
     header: "Select one day",
@@ -3831,7 +3832,8 @@ const it = {
     color: "Colore del percorso",
     from: "Inizio del percorso",
     to: "Fine del percorso",
-    car: "Macchina da utilizzare"
+    car: "Macchina da utilizzare",
+    pathNotExists: "Il percorso non esiste"
   },
   createPathDates: {
     header: "Seleziona un giorno",

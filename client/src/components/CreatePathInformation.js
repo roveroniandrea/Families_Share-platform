@@ -6,12 +6,22 @@ import withLanguage from './LanguageContext'
 import Texts from '../Constants/Texts'
 import axios from 'axios'
 import Log from './Log'
+import { getFastestRoute, initAutocomplete } from '../Services/MapsService'
 
 class CreatePathInformation extends React.Component {
   constructor(props) {
     super(props)
     const { handleSubmit, from, to, color, car_id } = this.props
-    this.state = { from, to, color, car_id, myCars: [] }
+    this.state = {
+      from,
+      to,
+      displayedFrom: '',
+      displayedTo: '',
+      color,
+      car_id,
+      myCars: [],
+      pathExists: false
+    }
     this.getMyCars().then((cars) => {
       this.setState({ ...this.state, myCars: cars })
     })
@@ -36,6 +46,15 @@ class CreatePathInformation extends React.Component {
     state[name] = value
     handleSubmit(state, this.validate(state))
     this.setState(state)
+    if (
+      (name === 'from' || name === 'to') &&
+      this.state.from &&
+      this.state.to
+    ) {
+      getFastestRoute(this.state.from, this.state.to, []).then((res) => {
+        this.setState({ ...this.state, pathExists: res.exists })
+      })
+    }
   }
 
   handleColorChange = (color) => {
@@ -60,20 +79,28 @@ class CreatePathInformation extends React.Component {
       })
   }
 
-  initPlacesAPI = (ref) => {
-    if(window.google && ref.current){
-      new window.google.maps.places.Autocomplete(ref.current)
-    }
-  }
-
   componentDidMount() {
-    this.initPlacesAPI(this.fromRef)
-    this.initPlacesAPI(this.toRef)
+    initAutocomplete(this.fromRef, (addr) => {
+      this.handleChange({
+        target: { name: 'displayedFrom', value: addr }
+      })
+      this.handleChange({
+        target: { name: 'from', value: addr }
+      })
+    })
+    initAutocomplete(this.toRef, (addr) => {
+      this.handleChange({
+        target: { name: 'to', value: addr }
+      })
+      this.handleChange({
+        target: { name: 'displayedTo', value: addr }
+      })
+    })
   }
 
   render() {
     const { language } = this.props
-    const { from, to, color, car_id } = this.state
+    const { displayedTo, displayedFrom, color, car_id, pathExists } = this.state
     const texts = Texts[language].createPathInformation
     const rowStyle = { minHeight: '7rem' }
     return (
@@ -113,9 +140,9 @@ class CreatePathInformation extends React.Component {
             <input
               ref={this.fromRef}
               type="text"
-              name="from"
+              name="displayedFrom"
               placeholder={texts.from}
-              value={from}
+              value={displayedFrom}
               className="center"
               onChange={this.handleChange}
             />
@@ -129,14 +156,22 @@ class CreatePathInformation extends React.Component {
             <input
               ref={this.toRef}
               type="text"
-              name="to"
+              name="displayedTo"
               placeholder={texts.to}
-              value={to}
+              value={displayedTo}
               className="center"
               onChange={this.handleChange}
             />
           </div>
         </div>
+        {!pathExists && (
+          <div className="row no-gutters" style={rowStyle}>
+            <div className="col-2-10"></div>
+            <div className="col-8-10">
+              <h4 style={{ color: 'red' }}>{texts.pathNotExists}</h4>
+            </div>
+          </div>
+        )}
         <div className="row no-gutters" style={rowStyle}>
           <div className="col-2-10">
             <i
