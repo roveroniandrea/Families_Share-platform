@@ -25,20 +25,6 @@ const getCar = (userId, car_Id) => {
     });
 };
 
-/*
-const getParents = (userId, childId) => {
-  return axios
-    .get(`/api/users/${userId}/children/${childId}/parents`)
-    .then(response => {
-      return response.data;
-    })
-    .catch(error => {
-      Log.error(error);
-      return [];
-    });
-};
-*/
-
 class CarProfileScreen extends React.Component {
   state = { fetchedCarData: false, car: {} };
 
@@ -46,28 +32,10 @@ class CarProfileScreen extends React.Component {
     const { match } = this.props;
     const { profileId, carId } = match.params;
     const userId = JSON.parse(localStorage.getItem("user")).id;
-    console.log(match.params)
     const car = await getCar(profileId, carId);
-    //child.parents = await getParents(profileId, childId);
-    //child.showAdditional = userId === profileId;
     this.setState({ car, fetchedCarData: true });
   }
 
-/*
-  handleAddParent = parent => {
-    const { child } = this.state;
-    child.parents.push(parent);
-    this.setState({ child });
-  };
-
-  handleDeleteParent = index => {
-    const { history } = this.props;
-    const { child } = this.state;
-    child.parents.splice(index, 1);
-    this.setState({ child });
-    if (child.parents.length === 0) history.goBack();
-  };
-*/
   render() {
     const { car, fetchedCarData } = this.state;
     return fetchedCarData ? (
@@ -79,8 +47,6 @@ class CarProfileScreen extends React.Component {
         <CarProfileInfo
           num_seats = {car.num_seats}
           other_info = {car.other_info}
-          //handleAddParent={this.handleAddParent}
-          //handleDeleteParent={this.handleDeleteParent}
         />
       </React.Fragment>
     ) : (

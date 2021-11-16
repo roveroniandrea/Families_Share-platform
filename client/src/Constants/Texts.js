@@ -1171,6 +1171,18 @@ const en = {
     confirmDialogTitle:
       "Are you sure you want to delete the car and remove all its data?"
   },
+  editCarProfileScreen: {
+    backNavTitle: "Edit car",
+    save: "SAVE",
+    name: "Name",
+    seats: "Seats",
+    additional: "Add specific information",
+    example: "e.g., more details about the vehicle",
+    add: "EDIT",
+    unspecified: "Unspecified",
+    requiredErrr: "Please fill out this field."
+  },
+
   additionalInfoScreen: {
     backNavTitle: "Information",
     save: "SAVE",
@@ -1181,6 +1193,16 @@ const en = {
       "I acknowledge that this information will be disclosed with the group members " +
       "directly involved in the childcare activities."
   },
+
+  CaradditionalInfoScreen: {
+    backNavTitle: "Information",
+    save: "SAVE",
+    others: "Others",
+    acceptTerms:
+      "I acknowledge that this information will be disclosed with the group members " +
+      "directly involved in the childcare activities."
+  },
+
   createActivityScreen: {
     backNavTitle: "New activity"
   },
@@ -3810,11 +3832,32 @@ const it = {
     confirmDialogTitle:
       "Sei sicuro di voler rimovere la macchina ?"
   },
+  
+  editCarProfileScreen: {
+    backNavTitle: "Modifica macchina",
+    save: "SALVA",
+    name: "Nome Auto",
+    seats:"Posti",
+    additional: "Aggiungi informazioni specifiche",
+    example: "e.g., Altri dettagli sul tuo veicolo",
+    add: "MODIFICA",
+    unspecified: "Non specificato",
+    requiredErrr: "Per favore compila questo campo."
+  },
+
   additionalInfoScreen: {
     backNavTitle: "Informazioni",
     save: "SALVA",
     allergy: "Allergia",
     special: "Bisogni speciali",
+    others: "Altri",
+    acceptTerms:
+      'Acconsento che queste informazioni siano condivise con i membri del gruppo direttamente coinvolti nelle attività di cura dei figli ("childcare") '
+  },
+
+  CaradditionalInfoScreen: {
+    backNavTitle: "Informazioni",
+    save: "SALVA",
     others: "Altri",
     acceptTerms:
       'Acconsento che queste informazioni siano condivise con i membri del gruppo direttamente coinvolti nelle attività di cura dei figli ("childcare") '

@@ -853,7 +853,7 @@ router.delete('/:userId/groups/:groupId', async (req, res, next) => {
         })
         Path.deleteMany({ group_id: group_id, car_id: car.car_id })
       })
-    });
+    })
 
     const groupPathList = await Path.find({ group_id: group_id }).then((groupPathList) => {
       groupPathList.forEach(path => {
@@ -1523,15 +1523,15 @@ router.get('/:userId/cars/:carId', (req, res, next) => {
 
 /**Updating a car */
 router.patch(
-  '/:userId/cars/:carId',async (req, res, next) => {
+  '/:userId/cars/:carId', childProfileUpload.single('photo'), async (req, res, next) => {
     if (req.user_id !== req.params.userId) {
       return res.status(401).send('Unauthorized')
     }
-    const { file } = req
     const car_id = req.params.carId
     const {
       car_name,
       num_seats,
+      other_info
     } = req.body
     const carPatch = {
       ...req.body
@@ -1539,7 +1539,8 @@ router.patch(
     if (
       !(
         car_name ||
-        num_seats
+        num_seats ||
+        other_info
       )
     ) {
       return res.status(400).send('Bad Request')
@@ -1560,7 +1561,6 @@ router.delete('/:userId/cars/:carId', async (req, res, next) => {
   }
   const car_id = req.params.carId
   try {
-
     await Car.deleteOne({ car_id })
 
     const pathList = await Path.find({ car_id: car_id }).then((pathList) => {

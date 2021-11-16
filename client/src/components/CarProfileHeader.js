@@ -45,9 +45,9 @@ class CarProfileHeader extends React.Component {
 
   handleDelete = () => {
     const { match, history } = this.props;
-    const { profileId: userId, car_id } = match.params;
+    const { profileId: userId, carId } = match.params;
     axios
-      .delete(`/api/users/${userId}/cars/${car_id}`)
+      .delete(`/api/users/${userId}/cars/${carId}`)
       .then(response => {
         Log.info(response);
         history.goBack();
@@ -130,6 +130,7 @@ class CarProfileHeader extends React.Component {
             )}
           </div>
           <img
+            src=""
             className="profilePhoto horizontalCenter"
             alt="car image"
             onClick={this.handleImageModalOpen}
