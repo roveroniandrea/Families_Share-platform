@@ -18,6 +18,8 @@ class CreatePathInformation extends React.Component {
 
     handleSubmit(this.state, this.validate(this.state))
     autosize(document.querySelectorAll('textarea'))
+    this.fromRef = React.createRef()
+    this.toRef = React.createRef()
   }
 
   validate = (state) => {
@@ -30,7 +32,6 @@ class CreatePathInformation extends React.Component {
   handleChange = (event) => {
     const state = Object.assign({}, this.state)
     const { name, value } = event.target
-    console.log(name, value)
     const { handleSubmit } = this.props
     state[name] = value
     handleSubmit(state, this.validate(state))
@@ -57,6 +58,17 @@ class CreatePathInformation extends React.Component {
         Log.error(error)
         return []
       })
+  }
+
+  initPlacesAPI = (ref) => {
+    if(window.google && ref.current){
+      new window.google.maps.places.Autocomplete(ref.current)
+    }
+  }
+
+  componentDidMount() {
+    this.initPlacesAPI(this.fromRef)
+    this.initPlacesAPI(this.toRef)
   }
 
   render() {
@@ -99,6 +111,7 @@ class CreatePathInformation extends React.Component {
           </div>
           <div className="col-8-10">
             <input
+              ref={this.fromRef}
               type="text"
               name="from"
               placeholder={texts.from}
@@ -114,6 +127,7 @@ class CreatePathInformation extends React.Component {
           </div>
           <div className="col-8-10">
             <input
+              ref={this.toRef}
               type="text"
               name="to"
               placeholder={texts.to}
