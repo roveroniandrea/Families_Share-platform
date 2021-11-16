@@ -25,57 +25,9 @@ class CarProfileInfo extends React.Component {
     this.setState({ confirmDialogIsOpen: false, deleteIndex: "" });
   };
 
-  /*
-  addParent = () => {
-    this.setState({ modalIsOpen: true });
-  };
-  */
-
   handleClose = () => {
     this.setState({ modalIsOpen: false });
   };
-
-  /*
-  deleteParent = index => {
-    const { match, parents, handleDeleteParent } = this.props;
-    const { profileId, childId } = match.params;
-    axios
-      .delete(
-        `/api/users/${profileId}/children/${childId}/parents/${parents[index].user_id}`
-      )
-      .then(response => {
-        Log.info(response);
-        handleDeleteParent(index);
-      })
-      .catch(error => {
-        Log.error(error);
-      });
-  };
-  */
-  /*
-  handleAdd = parent => {
-    const { match, handleAddParent } = this.props;
-    const { profileId, childId } = match.params;
-    axios
-      .post(`/api/users/${profileId}/children/${childId}/parents`, {
-        parentId: parent.user_id
-      })
-      .then(response => {
-        Log.info(response);
-        handleAddParent(parent);
-      })
-      .catch(error => {
-        Log.error(error);
-      });
-    this.setState({ modalIsOpen: false });
-  };
-  */
-  /*
-  handleRedirectToParent = parent => {
-    const { history } = this.props;
-    history.push(`/profiles/${parent.user_id}/info`);
-  };
-  */
 
   render() {
     const {
