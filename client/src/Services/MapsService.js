@@ -42,7 +42,6 @@ export function getFastestRoute(from, to, waypoints = [], renderer = null) {
       .then((response) => {
         if(response.status === 'OK'){
           if(renderer){
-            console.log(renderer, 'ciao')
             renderer.setDirections(response);
           }
           return {
