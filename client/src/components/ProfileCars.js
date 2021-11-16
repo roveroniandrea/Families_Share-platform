@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import Fab from "@material-ui/core/Fab";
 import { withStyles } from "@material-ui/core/styles";
+import CarListItem from "./CarListItem";
 import Texts from "../Constants/Texts";
 import withLanguage from "./LanguageContext";
 
@@ -41,18 +42,18 @@ class ProfileCars extends React.Component {
 
   render() {
     const { classes, language } = this.props;
-    const { cars, myProfile } = this.state;
+    const { myProfile, cars, profileId } = this.state;
     const texts = Texts[language].profileCars;
     return (
       <React.Fragment>
         {cars.length > 0 ? (
           <ul>
-            {cars.map((car, index) => (
-              <li key={index}>
-                <h1>{car.car_name}</h1>
-              </li>
-            ))}
-          </ul>
+          {cars.map((car, index) => (
+            <li key={index}>
+              <CarListItem carId={car.car_id} userId={profileId} />
+            </li>
+          ))}
+        </ul>
         ) : (
           <div className="addCarPrompt">{texts.addCarPrompt}</div>
         )}
