@@ -58,13 +58,11 @@ class CarListItem extends React.Component {
               </div>
             </div>
           </React.Fragment>
-
-
         ) : (
           <Skeleton avatar active paragraph={{ rows: 1 }} />
         )}
       </div>
-    );
+    )
   }
 }
 
