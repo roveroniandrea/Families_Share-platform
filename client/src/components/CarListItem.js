@@ -5,9 +5,10 @@ import { withRouter } from "react-router-dom";
 import Texts from "../Constants/Texts";
 import withLanguage from "./LanguageContext";
 import Log from "./Log";
+import { Skeleton } from "antd";
 
 class CarListItem extends React.Component {
-  state = { fetchedChild: false, car: {} };
+  state = { fetchedCar: false, car: {} };
 
   componentDidMount() {
     const { userId, carId } = this.props;
@@ -15,7 +16,7 @@ class CarListItem extends React.Component {
       .get(`/api/users/${userId}/cars/${carId}`)
       .then(response => {
         const car = response.data;
-        this.setState({ fetchedChild: true, car });
+        this.setState({ fetchedCar: true, car });
       })
       .catch(error => {
         Log.error(error);
@@ -34,15 +35,15 @@ class CarListItem extends React.Component {
   render() {
     const { language, history, carId } = this.props;
     const { pathname } = history.location;
-    const { car, profileId, fetchedChild } = this.state;
+    const { car, fetchedCar } = this.state;
     const texts = Texts[language].carListItem;
     const route = `${pathname}/${carId}`;
-    return (
+    return fetchedCar ? (
       <div
         className="row no-gutters profileInfoContainer"
-        role="button" 
-        tabIndex={-42} 
-        onClick={() => history.push(route)} 
+        role="button"
+        tabIndex={-42}
+        onClick={() => history.push(route)}
         id="carInfoContainer"
         style={{ borderBottom: "1px solid rgba(0,0,0,0.1" }}
       >
@@ -58,6 +59,8 @@ class CarListItem extends React.Component {
         </React.Fragment>
 
       </div>
+    ) : (
+      <Skeleton avatar active paragraph={{ rows: 1 }} />
     );
   }
 }
