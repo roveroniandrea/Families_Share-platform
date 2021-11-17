@@ -6,6 +6,7 @@ import Fab from '@material-ui/core/Fab'
 import Texts from '../Constants/Texts'
 import { withStyles } from '@material-ui/core/styles'
 import withLanguage from './LanguageContext'
+import PathListItem from './PathListItem'
 
 const styles = {
   add: {
@@ -78,6 +79,7 @@ function _GroupSharedRoutesScreen({
     history.push(path)
   }
 
+ 
   return fetchedActivityData ? (
     <React.Fragment>
       <div className="row no-gutters" id="groupMembersHeaderContainer">
@@ -121,7 +123,7 @@ function _GroupSharedRoutesScreen({
             <ul>
               {sharedPaths.map((path, index) => (
                 <li key={index}>
-                  {JSON.stringify(path)}
+                  <PathListItem path={path} groupId= {group.group_id}/>
                 </li>
               ))}
             </ul>
