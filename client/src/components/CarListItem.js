@@ -38,7 +38,7 @@ class CarListItem extends React.Component {
     const { car, fetchedCar } = this.state;
     const texts = Texts[language].carListItem;
     const route = `${pathname}/${carId}`;
-    return fetchedCar ? (
+    return (
       <div
         className="row no-gutters profileInfoContainer"
         role="button"
@@ -47,20 +47,23 @@ class CarListItem extends React.Component {
         id="carInfoContainer"
         style={{ borderBottom: "1px solid rgba(0,0,0,0.1" }}
       >
-        <React.Fragment>
-          <div className="col-5-10">
-            <i className="fas fa-car center" />
-          </div>
-          <div className="col-5-10" >
-            <div className="verticalCenter">
-              <h1>{car.car_name}</h1>
+        {fetchedCar ? (
+          <React.Fragment>
+            <div className="col-5-10">
+              <i className="fas fa-car center" />
             </div>
-          </div>
-        </React.Fragment>
+            <div className="col-5-10" >
+              <div className="verticalCenter">
+                <h1>{car.car_name}</h1>
+              </div>
+            </div>
+          </React.Fragment>
 
+
+        ) : (
+          <Skeleton avatar active paragraph={{ rows: 1 }} />
+        )}
       </div>
-    ) : (
-      <Skeleton avatar active paragraph={{ rows: 1 }} />
     );
   }
 }
