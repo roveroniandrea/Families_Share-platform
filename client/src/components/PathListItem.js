@@ -6,37 +6,42 @@ import moment from "moment";
 import Texts from "../Constants/Texts";
 import withLanguage from "./LanguageContext";
 import Log from "./Log";
+import { Skeleton } from "antd";
 
-const getUser = userId => {
-    return axios
-        .get(`/api/users/${userId}/profile`)
-        .then(response => {
-            return response.data.map(user => user.given_name + " " + user.family_name);
-        })
-        .catch(error => {
-            Log.error(error);
-            return [];
-        });
+
+const getUser = async userId => {
+    console.log("userID: " + userId);
+    try {
+        const response = await axios
+            .get(`/api/users/${userId}/profile`);
+        return response.data;
+    } catch (error) {
+        Log.error(error);
+        return [];
+    }
 };
 
-const getCar = carId => {//TODO MANCA LA ROTTA
-    return axios
-        .get(`/api/users/${userId}/profile`)
-        .then(response => {
-            return response.data.map(user => user.given_name + " " + user.family_name);
-        })
-        .catch(error => {
-            Log.error(error);
-            return [];
-        });
+const getCar = async (userId, carId) => {
+    console.log("userID: " + userId);
+    try {
+        const response = await axios
+            .get(`/api/users/${userId}/cars/${carId}`);
+        return response.data;
+    } catch (error) {
+        Log.error(error);
+        return [];
+    }
 };
+
 
 
 class PathListItem extends React.Component {
     constructor(props) {
         super(props);
         const { path } = this.props;
-        this.state = { path };
+        this.state = { path, userInfo: "", available_seats: "", fetchedTimeslots: false };
+        this.info(path.car_owner_id, path.car_id);
+
     }
 
     handleActivityClick = event => {
@@ -45,9 +50,16 @@ class PathListItem extends React.Component {
         history.push(`${pathname}/${event.currentTarget.id}`);
     };
 
-    getUser = (car_id) =>{
-        const user = await getUser()
+    async info(user_id, car_id) {
+        const user = await getUser(user_id);
+
+        const car = await getCar(user_id, car_id);
+        const available_seats = car.num_seats;
+
+        this.setState({ ...this.state, userInfo: user.given_name + " " + user.family_name, available_seats: available_seats, fetchedTimeslots: true })
     }
+
+
 
     getDatesString = () => {
         const { language } = this.props;
@@ -61,9 +73,9 @@ class PathListItem extends React.Component {
 
     render() {
         const { language } = this.props;
-        const { path } = this.state;
+        const { path, userInfo, available_seats, fetchedTimeslots } = this.state;
         const texts = Texts[language].pathListItem;
-        return (
+        return fetchedTimeslots ? (
             <React.Fragment>
                 <div
                     role="button"
@@ -89,7 +101,7 @@ class PathListItem extends React.Component {
                     >
                         <div className="verticalCenter">
                             <div className="row no-gutters">
-                                <h1>{this.getUser(path.car_Id)}</h1>
+                                <h1>{userInfo}</h1>
                             </div>
                             <div className="row no-gutters">
                                 <h1>{texts.destination}: {path.to}</h1>
@@ -100,6 +112,14 @@ class PathListItem extends React.Component {
                                     style={{ marginRight: "1rem" }}
                                 />
                                 <h2>{this.getDatesString()}</h2>
+                            </div>
+                            <div className="row no-gutters">
+                                <img
+                                    src="/images/profiles/car-seat.png"
+                                    style={{ marginRight: "1rem", height: "16px"}}
+                                />
+                                
+                                <h2>{available_seats}</h2>
                             </div>
                         </div>
                     </div>
@@ -114,6 +134,8 @@ class PathListItem extends React.Component {
                     </div>
                 </div>
             </React.Fragment>
+        ) : (
+            <Skeleton avatar active paragraph={{ rows: 1 }} />
         );
     }
 }

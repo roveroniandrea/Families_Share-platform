@@ -7,6 +7,10 @@ const pathSchema = new mongoose.Schema(
       required: true,
       unique: true
     },
+    car_owner_id: {
+      type: String,
+      required: true
+    },
     car_id: {
       type: String,
       required: true
