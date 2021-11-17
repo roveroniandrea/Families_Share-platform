@@ -33,6 +33,17 @@ const getCar = async (userId, carId) => {
     }
 };
 
+const getNumWaypoints = async(groupId, pathId) => {
+    try {
+        const response = await axios
+            .get(`/api/groups/${groupId}/paths/${pathId}/waypoints`);
+        return response.data.length;
+    } catch (error) {
+        Log.error(error);
+        return 0;
+    }
+}
+
 
 
 class PathListItem extends React.Component {
@@ -54,7 +65,7 @@ class PathListItem extends React.Component {
         const user = await getUser(user_id);
 
         const car = await getCar(user_id, car_id);
-        const available_seats = car.num_seats;
+        const available_seats = car.num_seats - await getNumWaypoints(this.props.groupId, this.props.path.path_id);
 
         this.setState({ ...this.state, userInfo: user.given_name + " " + user.family_name, available_seats: available_seats, fetchedTimeslots: true })
     }
