@@ -848,6 +848,10 @@ const en = {
     every: "Every",
     of: "of"
   },
+  pathListItem: {
+    at: "at",
+    destination: "Destination"
+  },
   groupListItem: {
     open: "Participation to the group is open.",
     closed: "Participation to the group is closed.",
@@ -3516,6 +3520,10 @@ const it = {
   activityListItem: {
     every: "Ogni",
     of: "di"
+  },
+  pathListItem: {
+    at: "alle",
+    destination: "Destinazione"
   },
   groupListItem: {
     open: "Gruppo aperto: tutti possono richiedere di partecipare al gruppo",
