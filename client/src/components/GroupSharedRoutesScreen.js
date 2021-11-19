@@ -130,6 +130,7 @@ function _GroupSharedRoutesScreen({
           </div>
         )}
       </div>
+      <br></br><br></br><br></br>
     </React.Fragment>
   ) : (
     <LoadingSpinner />

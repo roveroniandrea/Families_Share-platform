@@ -107,13 +107,10 @@ class PathListItem extends React.Component {
                         />
                     </div>
                     <div
-                        className="col-6-10"
+                        className="col-3-10"
                         style={{ borderBottom: "1px solid rgba(0,0,0,0.1)" }}
                     >
                         <div className="verticalCenter">
-                            <div className="row no-gutters">
-                                <h1>{userInfo}</h1>
-                            </div>
                             <div className="row no-gutters">
                                 <h1>{texts.destination}: {path.to}</h1>
                             </div>
@@ -123,6 +120,20 @@ class PathListItem extends React.Component {
                                     style={{ marginRight: "1rem" }}
                                 />
                                 <h2>{this.getDatesString()}</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        className="col-1-10"
+                        style={{ borderBottom: "1px solid rgba(0,0,0,0.1)" }}
+                    ></div>
+                    <div
+                        className="col-2-10"
+                        style={{ borderBottom: "1px solid rgba(0,0,0,0.1)" }}
+                    >
+                        <div className="verticalCenter">
+                            <div className="row no-gutters">
+                                <h1>{userInfo}</h1>
                             </div>
                             <div className="row no-gutters">
                                 <img
