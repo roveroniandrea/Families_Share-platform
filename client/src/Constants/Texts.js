@@ -1228,6 +1228,9 @@ const en = {
     save: "Save",
     stepLabels: ["Information", "Date", "Timeslot"]
   },
+  PathInfoScreen:{
+    stepLabels: ["Information", "Date", "Timeslot"]
+  },
   createActivityInformation: {
     link: "Link (optional)",
     color: "Color of the activity",
@@ -3892,6 +3895,9 @@ const it = {
     cancel: "Cancella",
     finish: "Crea",
     save: "Salva",
+    stepLabels: ["Informazioni", "Data", "Orario"]
+  },
+  PathInfoScreen:{
     stepLabels: ["Informazioni", "Data", "Orario"]
   },
   createActivityInformation: {

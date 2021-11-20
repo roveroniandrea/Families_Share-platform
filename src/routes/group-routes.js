@@ -2079,6 +2079,7 @@ router.get('/:id/paths/pathId', async (req, res, next) => {
   const user_id = req.user_id
   const group_id = req.params.id
   const path_id = req.params.pathId
+
   try {
     const member = await Member.findOne({
       group_id,
