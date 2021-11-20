@@ -2072,7 +2072,7 @@ router.get('/:id/paths', (req, res, next) => {
 })
 
 /**Retrieving a path */
-router.get('/:id/paths/pathId', async (req, res, next) => {
+router.get('/:id/paths/:pathId', async (req, res, next) => {
   if (!req.user_id) {
     return res.status(401).send('Not authenticated')
   }

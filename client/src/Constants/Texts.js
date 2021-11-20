@@ -1229,6 +1229,14 @@ const en = {
     stepLabels: ["Information", "Date", "Timeslot"]
   },
   PathInfoScreen:{
+    date: "Date",
+    time: "start time of the path",
+    car: "Car",
+    start: "Start",
+    destination: "Destination",
+    color: "Color",
+    time: "Departure",
+    backNavTitle: "Path Info",
     stepLabels: ["Information", "Date", "Timeslot"]
   },
   createActivityInformation: {
@@ -3898,6 +3906,13 @@ const it = {
     stepLabels: ["Informazioni", "Data", "Orario"]
   },
   PathInfoScreen:{
+    backNavTitle: "Informazioni Percorso",
+    date: "Data",
+    car: "Macchina",
+    start: "Partenza",
+    destination: "Destinazione",
+    color: "Colore",
+    time: "Orario",
     stepLabels: ["Informazioni", "Data", "Orario"]
   },
   createActivityInformation: {
