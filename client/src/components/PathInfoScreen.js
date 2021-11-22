@@ -7,21 +7,13 @@ import {
   MuiThemeProvider,
   createMuiTheme
 } from '@material-ui/core/styles'
-import Stepper from '@material-ui/core/Stepper'
-import Step from '@material-ui/core/Step'
-import StepLabel from '@material-ui/core/StepLabel'
-import StepContent from '@material-ui/core/StepContent'
-import Button from '@material-ui/core/Button'
-import moment from 'moment'
 import axios from 'axios'
+import ConfirmDialog from "./ConfirmDialog";
+import OptionsModal from "./OptionsModal";
 import withLanguage from './LanguageContext'
-import BackNavigation from "./BackNavigation";
-import CreatePathInformation from './CreatePathInformation'
-import CreatePathDates from './CreatePathDates'
-import CreatePathTimeslots from './CreatePathTimeslots'
 import Texts from '../Constants/Texts'
 import Log from './Log'
-import LoadingSpinner from './LoadingSpinner'
+import { getFastestRoute } from '../Services/MapsService'
 
 const getPath = (groupId, pathId) => {
   return axios
@@ -155,7 +147,46 @@ const muiTheme = createMuiTheme({
 })
 
 class PathInfoScreen extends React.Component {
-  state = { fetchedPathData: false, path: {}, car: {} };
+
+  state = {
+    fetchedPathData: false,
+    path: {},
+    car: {},
+    optionsModalIsOpen: false,
+    confirmDialogIsOpen: false,
+    imageModalIsOpen: false
+  };
+
+  handleOptions = () => {
+    this.setState({ optionsModalIsOpen: true });
+  };
+
+  handleDelete = () => {
+    const { match, history } = this.props
+    const { groupId, path_id } = match.params
+    const userId = JSON.parse(localStorage.getItem("user")).id
+    axios
+      .delete(`/api/groups/${groupId}/paths/${path_id}`)
+      .then(response => {
+        Log.info(response);
+        history.goBack();
+      })
+      .catch(error => {
+        Log.error(error);
+        history.goBack();
+      });
+  };
+
+  handleConfirmDialogOpen = () => {
+    this.setState({ optionsModalIsOpen: false, confirmDialogIsOpen: true });
+  };
+
+  handleConfirmDialogClose = choice => {
+    if (choice === "agree") {
+      this.handleDelete();
+    }
+    this.setState({ confirmDialogIsOpen: false });
+  };
 
   async componentDidMount() {
     const { match } = this.props
@@ -164,143 +195,171 @@ class PathInfoScreen extends React.Component {
 
     const path = await getPath(groupId, path_id)
     const car = await getCar(userId, path.car_id)
-    this.setState({ path, car, fetchedPathData: true });
+    const color = path.color
+
+    this.setState({ path, car, fetchedPathData: true, color });
   }
 
   render() {
     const { history, language, classes } = this.props
-    const texts = Texts[language].PathInfoScreen
     const { path, car, fetchedPathData, color } = this.state;
+    const texts = Texts[language].PathInfoScreen
+    const userId = JSON.parse(localStorage.getItem("user")).id
+
     const rowStyle = { minHeight: '7rem' }
-    //const steps = texts.stepLabels
-    //const { activeStep, stepWasValidated, creating } = this.state
+
+    const { confirmDialogIsOpen, optionsModalIsOpen } = this.state;
+    const options = [
+      {
+        label: texts.delete,
+        style: "optionsModalButton",
+        handle: this.handleConfirmDialogOpen
+      }
+    ];
+
+    const d = new Date(path.departure_date)
+    const path_date_format = d.getDate() + "/" + (1 + d.getMonth()) + "/" + d.getFullYear()
+    const path_time_format = d.getHours() + ":" + d.getMinutes()
+
     return (
-      <div id="createActivityContainer">
-        <BackNavigation
-          title={texts.backNavTitle}
-          onClick={() => history.goBack()}
-        />
+      <React.Fragment>
+        <div id="createActivityContainer">
 
-        <div className={classes.root}>
-          <MuiThemeProvider theme={muiTheme}>
-
-            <div id="createActivityInformationContainer">
-              <br/><br/>
-              <div className="row no-gutters">
-                <div id="createActivityTimeslotsHeader" className="col-2-10">
-                  <h1 className="center">{texts.car}</h1>
-                </div>
-                <div id="createActivityTimeslotsHeader" className="col-8-10" />
+          <ConfirmDialog
+            title={texts.confirmDialogTitle}
+            handleClose={this.handleConfirmDialogClose}
+            isOpen={confirmDialogIsOpen}
+          />
+          <div id="pathHeaderContainer" style={{ backgroundColor: color }}>
+            <div className="row no-gutters" id="profileHeaderOptions">
+              <div className="col-2-10">
+                <button
+                  type="button"
+                  className="transparentButton center"
+                  onClick={() => history.goBack()}
+                >
+                  <i className="fas fa-arrow-left" />
+                </button>
               </div>
-
-              <div className="row no-gutters" style={rowStyle} >
-                <div className="col-2-10">
-                  <i className="fas fa-car center" />
-                </div>
-                <div className="col-8-10" style={{ borderBottom: "1px solid rgba(0,0,0,0.1)" }}>
-                  <h2 className="center">{car.car_name}</h2>
-                </div>
-              </div>
-              <br/>
-
-              <div className="row no-gutters">
-                <div id="createActivityTimeslotsHeader" className="col-2-10">
-                  <h1 className="center">{texts.start}</h1>
-                </div>
-                <div id="createActivityTimeslotsHeader" className="col-8-10" />
-              </div>
-
-
-              <div className="row no-gutters" style={rowStyle}>
-                <div className="col-2-10">
-                  <i className="fas fa-map-marker-alt center" />
-                </div>
-                <div className="col-8-10" style={{ borderBottom: "1px solid rgba(0,0,0,0.1)" }}>
-                  <h2 className="center">{path.from}</h2>
-                </div>
-              </div>
-              <br/>
-
-              <div className="row no-gutters">
-                <div id="createActivityTimeslotsHeader" className="col-2-10">
-                  <h1 className="center">{texts.destination}</h1>
-                </div>
-                <div id="createActivityTimeslotsHeader" className="col-8-10" />
-              </div>
-
-              <div className="row no-gutters" style={rowStyle}>
-                <div className="col-2-10">
-                  <i className="fas fa-map-marker-alt center" />
-                </div>
-                <div className="col-8-10" style={{ borderBottom: "1px solid rgba(0,0,0,0.1)" }}>
-                  <h2 className="center">{path.to}</h2>
-                </div>
-              </div>
-              <br/>
-
-              <div className="row no-gutters">
-                <div id="createActivityTimeslotsHeader" className="col-2-10">
-                  <h1 className="center">{texts.color}</h1>
-                </div>
-                <div id="createActivityTimeslotsHeader" className="col-8-10" />
-              </div>
-
-
-              <div className="row no-gutters" style={rowStyle}>
-                <div className="col-2-10">
-                  <i
-                    className="fas fa-palette center"
-                    style={{ color }}
-                    alt="palette icon"
-                  />
-                </div>
-                <div className="col-8-10" style={{ borderBottom: "1px solid rgba(0,0,0,0.1)" }}>
-                  <h2 className="center">{path.color}</h2>
-                </div>
-              </div>
-              <br/>
-
-              <div className="row no-gutters">
-                <div id="createActivityTimeslotsHeader" className="col-2-10">
-                  <h1 className="center">{texts.date}</h1>
-                </div>
-                <div id="createActivityTimeslotsHeader" className="col-8-10" />
-              </div>
-
-              <div className="row no-gutters" style={rowStyle}>
-                <div className="col-2-10">
-                  <i className="fas fa-calendar-alt center" />
-                </div>
-                <div className="col-8-10" style={{ borderBottom: "1px solid rgba(0,0,0,0.1)" }}>
-                  <h2 className="center">{path.departure_date}</h2>
-                </div>
-              </div>
-              <br/>
-
-              <div className="row no-gutters">
-                <div id="createActivityTimeslotsHeader" className="col-6-10">
-                  <h1 className="center">{texts.time}</h1>
-                </div>
-                <div id="createActivityTimeslotsHeader" className="col-4-10" />
-              </div>
-
-              <div className="row no-gutters" style={rowStyle}>
-                <div className="col-2-10">
-                  <i className="fas fa-clock center" />
-                </div>
-                <div className="col-8-10" style={{ borderBottom: "1px solid rgba(0,0,0,0.1)" }}>
-                  <h2 className="center">{path.departure_date}</h2>
-                </div>
-              </div>
-              <br/>
+              <div className="col-6-10" />
+              {userId === path.car_owner_id ? (
+                <React.Fragment>
+                  <div className="col-1-10" />
+                  <div className="col-1-10">
+                    <button
+                      type="button"
+                      className="transparentButton center"
+                      onClick={this.handleOptions}
+                    >
+                      <i className="fas fa-ellipsis-v" />
+                    </button>
+                  </div>
+                </React.Fragment>
+              ) : (
+                <div />
+              )}
             </div>
+            <OptionsModal
+              isOpen={optionsModalIsOpen}
+              handleClose={this.handleClose}
+              options={options}
+            />
+          </div>
 
-          </MuiThemeProvider>
+
+          <div className={classes.root}>
+
+            <MuiThemeProvider theme={muiTheme}>
+              <div id="createActivityInformationContainer">
+
+                <br /><br />
+                <div className="row no-gutters">
+                  <div id="createActivityTimeslotsHeader" className="col-6-10 center">
+                    <h1 className="center">{texts.car}</h1>
+                  </div>
+                  <div id="createActivityTimeslotsHeader" className="col-4-10" />
+                </div>
+                <div className="row no-gutters" style={rowStyle}>
+                  <div className="col-2-10">
+                    <i className="fas fa-car center" />
+                  </div>
+                  <div className="col-8-10" style={{ borderBottom: "1px solid rgba(0,0,0,0.1)" }}>
+                    <h2 className="center">{car.car_name}</h2>
+                  </div>
+                </div>
+
+                <br /><br />
+                <div className="row no-gutters">
+                  <div id="createActivityTimeslotsHeader" className="col-6-10 center">
+                    <h1 className="center">{texts.start}</h1>
+                  </div>
+                  <div id="createActivityTimeslotsHeader" className="col-4-10" />
+                </div>
+                <div className="row no-gutters" style={rowStyle}>
+                  <div className="col-2-10">
+                    <i className="fas fa-map-marker-alt center" />
+                  </div>
+                  <div className="col-8-10" style={{ borderBottom: "1px solid rgba(0,0,0,0.1)" }}>
+                    <h2 className="center">{path.from}</h2>
+                  </div>
+                </div>
+
+                <br /><br />
+                <div className="row no-gutters">
+                  <div id="createActivityTimeslotsHeader" className="col-6-10 center">
+                    <h1 className="center">{texts.destination}</h1>
+                  </div>
+                  <div id="createActivityTimeslotsHeader" className="col-4-10" />
+                </div>
+                <div className="row no-gutters" style={rowStyle}>
+                  <div className="col-2-10">
+                    <i className="fas fa-map-marker-alt center" />
+                  </div>
+                  <div className="col-8-10" style={{ borderBottom: "1px solid rgba(0,0,0,0.1)" }}>
+                    <h2 className="center">{path.to}</h2>
+                  </div>
+                </div>
+
+                <br /><br />
+                <div className="row no-gutters">
+                  <div id="createActivityTimeslotsHeader" className="col-6-10 center">
+                    <h1 className="center">{texts.date}</h1>
+                  </div>
+                  <div id="createActivityTimeslotsHeader" className="col-4-10" />
+                </div>
+                <div className="row no-gutters" style={rowStyle}>
+                  <div className="col-2-10">
+                    <i className="fas fa-calendar-alt center" />
+                  </div>
+                  <div className="col-8-10" style={{ borderBottom: "1px solid rgba(0,0,0,0.1)" }}>
+                    <h2 className="center">{path_date_format}</h2>
+                  </div>
+                </div>
+
+                <br /><br />
+                <div className="row no-gutters">
+                  <div id="createActivityTimeslotsHeader" className="col-6-10 center">
+                    <h1 className="center">{texts.time}</h1>
+                  </div>
+                  <div id="createActivityTimeslotsHeader" className="col-4-10" />
+                </div>
+                <div className="row no-gutters" style={rowStyle}>
+                  <div className="col-2-10">
+                    <i className="fas fa-clock center" />
+                  </div>
+                  <div className="col-8-10" style={{ borderBottom: "1px solid rgba(0,0,0,0.1)" }}>
+                    <h2 className="center">{path_time_format}</h2>
+                  </div>
+                </div>
+
+                <br /><br />
+              </div>
+
+            </MuiThemeProvider>
+          </div>
+
         </div>
-
-      </div>
-
-
+      </React.Fragment>
     )
   }
 }

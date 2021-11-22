@@ -1237,6 +1237,8 @@ const en = {
     color: "Color",
     time: "Departure",
     backNavTitle: "Path Info",
+    delete:"Delete Path",
+    confirmDialogTitle: "Are you sure you want to delete the car and remove all its data?",
     stepLabels: ["Information", "Date", "Timeslot"]
   },
   createActivityInformation: {
@@ -3913,6 +3915,8 @@ const it = {
     destination: "Destinazione",
     color: "Colore",
     time: "Orario",
+    delete:"Cancella Percorso",
+    confirmDialogTitle: "Sei sicuro di voler cancellare il percorso ?",
     stepLabels: ["Informazioni", "Data", "Orario"]
   },
   createActivityInformation: {

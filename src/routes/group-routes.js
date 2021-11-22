@@ -2071,6 +2071,40 @@ router.get('/:id/paths', (req, res, next) => {
     .catch(next)
 })
 
+/**Delete a path */
+router.delete(
+  '/:id/paths/:pathId',
+  async (req, res, next) => {
+    if (!req.user_id) {
+      return res.status(401).send('Not authenticated')
+    }
+
+    const group_id = req.params.id
+    const user_id = req.user_id
+    const path_id = req.params.pathId
+    try {
+      const member = await Member.findOne({
+        group_id,
+        user_id,
+        group_accepted: true,
+        user_accepted: true
+      })
+      if (!member) {
+        return res.status(401).send('Unauthorized')
+      }
+      const path = await Path.findOne({ path_id: path_id })
+
+      if (!(user_id === path.car_owner_id)) {
+        return res.status(401).send('Unauthorized')
+      }
+      await Waypoint.deleteMany({path_id: path_id})
+      await Path.deleteOne({ path_id: path_id })
+      res.status(200).send('path was deleted')
+    } catch (error) {
+      next(error)
+    }
+  })
+
 /**Retrieving a path */
 router.get('/:id/paths/:pathId', async (req, res, next) => {
   if (!req.user_id) {
