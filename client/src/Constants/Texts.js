@@ -1253,7 +1253,8 @@ const en = {
     from: "Start point of the path",
     to: "End point of the path",
     car: "Car to use",
-    pathNotExists: "Path does not exist"
+    pathNotExists: "Path does not exist",
+    openGmaps: "See route on Google Maps"
   },
   createPathDates: {
     header: "Select one day",
@@ -3931,7 +3932,8 @@ const it = {
     from: "Inizio del percorso",
     to: "Fine del percorso",
     car: "Macchina da utilizzare",
-    pathNotExists: "Il percorso non esiste"
+    pathNotExists: "Il percorso non esiste",
+    openGmaps: "Visualizza percorso su Google Maps"
   },
   createPathDates: {
     header: "Seleziona un giorno",
