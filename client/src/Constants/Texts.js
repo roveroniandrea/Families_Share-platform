@@ -1228,6 +1228,19 @@ const en = {
     save: "Save",
     stepLabels: ["Information", "Date", "Timeslot"]
   },
+  PathInfoScreen:{
+    date: "Date",
+    time: "start time of the path",
+    car: "Car",
+    start: "Start",
+    destination: "Destination",
+    color: "Color",
+    time: "Departure",
+    backNavTitle: "Path Info",
+    delete:"Delete Path",
+    confirmDialogTitle: "Are you sure you want to delete the car and remove all its data?",
+    stepLabels: ["Information", "Date", "Timeslot"]
+  },
   createActivityInformation: {
     link: "Link (optional)",
     color: "Color of the activity",
@@ -1240,7 +1253,8 @@ const en = {
     from: "Start point of the path",
     to: "End point of the path",
     car: "Car to use",
-    pathNotExists: "Path does not exist"
+    pathNotExists: "Path does not exist",
+    openGmaps: "See route on Google Maps"
   },
   createPathDates: {
     header: "Select one day",
@@ -3894,6 +3908,18 @@ const it = {
     save: "Salva",
     stepLabels: ["Informazioni", "Data", "Orario"]
   },
+  PathInfoScreen:{
+    backNavTitle: "Informazioni Percorso",
+    date: "Data",
+    car: "Macchina",
+    start: "Partenza",
+    destination: "Destinazione",
+    color: "Colore",
+    time: "Orario",
+    delete:"Cancella Percorso",
+    confirmDialogTitle: "Sei sicuro di voler cancellare il percorso ?",
+    stepLabels: ["Informazioni", "Data", "Orario"]
+  },
   createActivityInformation: {
     link: "Collegamento (facoltativo)",
     color: "Colore dell'attività",
@@ -3906,7 +3932,8 @@ const it = {
     from: "Inizio del percorso",
     to: "Fine del percorso",
     car: "Macchina da utilizzare",
-    pathNotExists: "Il percorso non esiste"
+    pathNotExists: "Il percorso non esiste",
+    openGmaps: "Visualizza percorso su Google Maps"
   },
   createPathDates: {
     header: "Seleziona un giorno",

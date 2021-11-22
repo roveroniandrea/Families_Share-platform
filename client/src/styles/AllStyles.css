@@ -3315,3 +3315,9 @@ a:active {
   font-family: "Roboto", sans-serif;
   font-size: 1.6rem;
 }
+
+#pathHeaderContainer {
+  height: 5rem;
+  position: relative;
+  overflow: hidden;
+}

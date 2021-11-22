@@ -33,6 +33,17 @@ const getCar = async (userId, carId) => {
     }
 };
 
+const getNumWaypoints = async(groupId, pathId) => {
+    try {
+        const response = await axios
+            .get(`/api/groups/${groupId}/paths/${pathId}/waypoints`);
+        return response.data.length;
+    } catch (error) {
+        Log.error(error);
+        return 0;
+    }
+}
+
 
 
 class PathListItem extends React.Component {
@@ -54,7 +65,7 @@ class PathListItem extends React.Component {
         const user = await getUser(user_id);
 
         const car = await getCar(user_id, car_id);
-        const available_seats = car.num_seats;
+        const available_seats = car.num_seats - await getNumWaypoints(this.props.groupId, this.props.path.path_id);
 
         this.setState({ ...this.state, userInfo: user.given_name + " " + user.family_name, available_seats: available_seats, fetchedTimeslots: true })
     }
@@ -96,13 +107,10 @@ class PathListItem extends React.Component {
                         />
                     </div>
                     <div
-                        className="col-6-10"
+                        className="col-3-10"
                         style={{ borderBottom: "1px solid rgba(0,0,0,0.1)" }}
                     >
                         <div className="verticalCenter">
-                            <div className="row no-gutters">
-                                <h1>{userInfo}</h1>
-                            </div>
                             <div className="row no-gutters">
                                 <h1>{texts.destination}: {path.to}</h1>
                             </div>
@@ -112,6 +120,20 @@ class PathListItem extends React.Component {
                                     style={{ marginRight: "1rem" }}
                                 />
                                 <h2>{this.getDatesString()}</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div
+                        className="col-1-10"
+                        style={{ borderBottom: "1px solid rgba(0,0,0,0.1)" }}
+                    ></div>
+                    <div
+                        className="col-2-10"
+                        style={{ borderBottom: "1px solid rgba(0,0,0,0.1)" }}
+                    >
+                        <div className="verticalCenter">
+                            <div className="row no-gutters">
+                                <h1>{userInfo}</h1>
                             </div>
                             <div className="row no-gutters">
                                 <img

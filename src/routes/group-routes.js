@@ -595,22 +595,32 @@ router.delete('/:groupId/members/:memberId', async (req, res, next) => {
 
     await Member.deleteOne({ group_id, user_id: member_id })
 
-    const userCars = await Car.find({ owner_id: member_id }).then((userCars) => { 
-      userCars.forEach(car => {
-        const pathList = Path.find({ car_id: car.car_id, group_id: group_id }).then((pathList) => {
-          pathList.forEach((path) => {
-            Waypoint.deleteMany({ path_id: path.path_id })
+    const userCars = await Car.find({ owner_id: member_id }).then(
+      (userCars) => {
+        userCars.forEach((car) => {
+          const pathList = Path.find({
+            car_id: car.car_id,
+            group_id: group_id
+          }).then((pathList) => {
+            pathList.forEach((path) => {
+              Waypoint.deleteMany({ path_id: path.path_id })
+            })
+          })
+          Path.deleteMany({ group_id: group_id, car_id: car.car_id })
+        })
+      }
+    )
+
+    const groupPathList = await Path.find({ group_id: group_id }).then(
+      (groupPathList) => {
+        groupPathList.forEach((path) => {
+          Waypoint.deleteMany({
+            path_id: path.path_id,
+            passenger_id: member_id
           })
         })
-        Path.deleteMany({ group_id: group_id, car_id: car.car_id })
-      })
-    });
-
-    const groupPathList = await Path.find({group_id: group_id}).then((groupPathList)=>{
-      groupPathList.forEach(path =>{
-        Waypoint.deleteMany({path_id: path.path_id, passenger_id: member_id})
-      })
-    })
+      }
+    )
 
     await nh.removeMemberNotification(member_id, group_id)
     res.status(200).send('User removed from group')
@@ -2061,6 +2071,71 @@ router.get('/:id/paths', (req, res, next) => {
     .catch(next)
 })
 
+/**Delete a path */
+router.delete(
+  '/:id/paths/:pathId',
+  async (req, res, next) => {
+    if (!req.user_id) {
+      return res.status(401).send('Not authenticated')
+    }
+
+    const group_id = req.params.id
+    const user_id = req.user_id
+    const path_id = req.params.pathId
+    try {
+      const member = await Member.findOne({
+        group_id,
+        user_id,
+        group_accepted: true,
+        user_accepted: true
+      })
+      if (!member) {
+        return res.status(401).send('Unauthorized')
+      }
+      const path = await Path.findOne({ path_id: path_id })
+
+      if (!(user_id === path.car_owner_id)) {
+        return res.status(401).send('Unauthorized')
+      }
+      await Waypoint.deleteMany({path_id: path_id})
+      await Path.deleteOne({ path_id: path_id })
+      res.status(200).send('path was deleted')
+    } catch (error) {
+      next(error)
+    }
+  })
+
+/**Retrieving a path */
+router.get('/:id/paths/:pathId', async (req, res, next) => {
+  if (!req.user_id) {
+    return res.status(401).send('Not authenticated')
+  }
+  const user_id = req.user_id
+  const group_id = req.params.id
+  const path_id = req.params.pathId
+
+  try {
+    const member = await Member.findOne({
+      group_id,
+      user_id,
+      group_accepted: true,
+      user_accepted: true
+    })
+    if (!member) {
+      return res.status(401).send('Unauthorized')
+    }
+    return Path.findOne({ path_id }).then((path) => {
+      if (!path) {
+        return res.status(404).send('Path not found')
+      }
+      res.json(path)
+    })
+  } catch (error) {
+    next(error)
+  }
+})
+
+/**Creating a path */
 router.post('/:id/paths', async (req, res, next) => {
   if (!req.user_id) {
     return res.status(401).send('Not authenticated')
@@ -2087,6 +2162,61 @@ router.post('/:id/paths', async (req, res, next) => {
   } catch (error) {
     next(error)
   }
+})
+
+/**Retrieving all the waypoints in a path */
+router.get('/:id/paths/:pathId/waypoints', (req, res, next) => {
+  if (!req.user_id) {
+    return res.status(401).send('Not authenticated')
+  }
+  const group_id = req.params.id
+  const user_id = req.user_id
+  const path_id = req.params.pathId
+  Member.findOne({
+    group_id,
+    user_id,
+    group_accepted: true,
+    user_accepted: true
+  })
+    .then((member) => {
+      if (!member) {
+        return res.status(401).send('Unauthorized')
+      }
+      return Waypoint.find({ path_id }).then((waypoints) => {
+        res.json(waypoints)
+      })
+    })
+    .catch(next)
+})
+
+/**Adding a waypoint to an existing path.  */
+router.post('/:id/paths/:pathId/waypoints', (req, res, next) => {
+  if (!req.user_id) {
+    return res.status(401).send('Not authenticated')
+  }
+  const group_id = req.params.id
+  const user_id = req.user_id
+  const path_id = req.params.pathId
+  Member.findOne({
+    group_id,
+    user_id,
+    group_accepted: true,
+    user_accepted: true
+  })
+    .then(async (member) => {
+      if (!member) {
+        return res.status(401).send('Unauthorized')
+      }
+      await Waypoint.create({
+        waypoint_id: objectid(),
+        path_id,
+        address: req.body.address,
+        passenger_id: user_id,
+        status: 'pending'
+      })
+      res.status(200).send('Waypoint was created')
+    })
+    .catch(next)
 })
 
 module.exports = router
