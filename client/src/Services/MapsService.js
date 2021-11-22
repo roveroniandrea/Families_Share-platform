@@ -1,3 +1,5 @@
+import Axios from 'axios';
+
 /**Initializes an input field with a Google Maps autocomplete.
  * @param inputRef React inputRef referring to the input component
  * @param onChange Callback with the selected place (string)
@@ -57,4 +59,10 @@ export function getFastestRoute(from, to, waypoints = [], renderer = null) {
   } else {
     return Promise.resolve(notFound)
   }
+}
+
+/**Returns a url in order to open the native google maps app */
+export function linkToOpenGMaps(from, to, waypoints = [], ){
+  return `https://www.google.com/maps/dir/?api=1&origin=${from}&destination=${to}&travelmode=driving${waypoints.length > 0? `&waypoints=${waypoints.join('|')}`: ''}`
+
 }
