@@ -6,7 +6,11 @@ import withLanguage from './LanguageContext'
 import Texts from '../Constants/Texts'
 import axios from 'axios'
 import Log from './Log'
-import { getFastestRoute, initAutocomplete } from '../Services/MapsService'
+import {
+  getFastestRoute,
+  initAutocomplete,
+  linkToOpenGMaps
+} from '../Services/MapsService'
 
 class CreatePathInformation extends React.Component {
   constructor(props) {
@@ -108,6 +112,10 @@ class CreatePathInformation extends React.Component {
     })
   }
 
+  getLinkToGmaps = () => {
+    return linkToOpenGMaps(this.state.from, this.state.to, [])
+  }
+
   render() {
     const { language } = this.props
     const { displayedTo, displayedFrom, color, car_id, pathExists } = this.state
@@ -182,12 +190,35 @@ class CreatePathInformation extends React.Component {
             </div>
           </div>
         )}
-        <div className="row no-gutters" style={({...rowStyle, display: pathExists? 'flex': 'none', height: '300px'})}>
+        {pathExists && (
+          <>
+            <div className="row no-gutters">
+              <div className="col-2-10"></div>
+              <div className="col-8-10">
+                <a
+                  type="button"
+                  href={this.getLinkToGmaps()}
+                  className="joinGroupButton"
+                  style={{ color: 'white' }}
+                  target="blank"
+                >
+                  {texts.openGmaps}
+                </a>
+              </div>
+            </div>
+            <br />
+          </>
+        )}
+        <div
+          className="row no-gutters"
+          style={{
+            ...rowStyle,
+            display: pathExists ? 'flex' : 'none',
+            height: '300px'
+          }}
+        >
           <div className="col-2-10"></div>
-          <div
-            ref={this.mapRef}
-            className="col-8-10"
-          ></div>
+          <div ref={this.mapRef} className="col-8-10"></div>
         </div>
         <div className="row no-gutters" style={rowStyle}>
           <div className="col-2-10">
