@@ -8,51 +8,64 @@ import {
   createMuiTheme
 } from '@material-ui/core/styles'
 import axios from 'axios'
-import ConfirmDialog from "./ConfirmDialog";
-import OptionsModal from "./OptionsModal";
+import ConfirmDialog from './ConfirmDialog'
+import OptionsModal from './OptionsModal'
 import withLanguage from './LanguageContext'
 import Texts from '../Constants/Texts'
 import Log from './Log'
 import { getFastestRoute } from '../Services/MapsService'
+import { json } from 'body-parser'
 
 const getPath = (groupId, pathId) => {
   return axios
     .get(`/api/groups/${groupId}/paths/${pathId}`)
-    .then(response => {
-      return response.data;
+    .then((response) => {
+      return response.data
     })
-    .catch(error => {
-      Log.error(error);
+    .catch((error) => {
+      Log.error(error)
       return {
-        path_id: "",
-        car_owner_id: "",
-        car_id: "",
-        group_id: "",
+        path_id: '',
+        car_owner_id: '',
+        car_id: '',
+        group_id: '',
         departure_date: new Date(),
-        from: "",
-        to: "",
-        color: ""
-      };
-    });
-};
+        from: '',
+        to: '',
+        color: ''
+      }
+    })
+}
 
 const getCar = (userId, car_Id) => {
   return axios
     .get(`/api/users/${userId}/cars/${car_Id}`)
-    .then(response => {
-      return response.data;
+    .then((response) => {
+      return response.data
     })
-    .catch(error => {
-      Log.error(error);
+    .catch((error) => {
+      Log.error(error)
       return {
-        car_id: "err",
-        owner_id: "err",
-        car_name: "err",
+        car_id: 'err',
+        owner_id: 'err',
+        car_name: 'err',
         num_seats: 2,
-        other_info: "err"
-      };
-    });
-};
+        other_info: 'err'
+      }
+    })
+}
+
+const getWaypoints = (groupId, pathId) => {
+  return axios
+    .get(`/api/groups/${groupId}/paths/${pathId}/waypoints`)
+    .then((response) => {
+      return response.data
+    })
+    .catch((error) => {
+      Log.error(error)
+      return {}
+    })
+}
 
 const styles = (theme) => ({
   root: {
@@ -147,84 +160,95 @@ const muiTheme = createMuiTheme({
 })
 
 class PathInfoScreen extends React.Component {
-
   state = {
     fetchedPathData: false,
     path: {},
     car: {},
     optionsModalIsOpen: false,
     confirmDialogIsOpen: false,
-    imageModalIsOpen: false
-  };
+    imageModalIsOpen: false,
+    waypoints: []
+  }
+
+  constructor() {
+    super()
+    this.mapRef = React.createRef()
+    this.directionsRenderer = new window.google.maps.DirectionsRenderer()
+  }
 
   handleOptions = () => {
-    this.setState({ optionsModalIsOpen: true });
-  };
+    this.setState({ optionsModalIsOpen: true })
+  }
 
   handleDelete = () => {
     const { match, history } = this.props
     const { groupId, path_id } = match.params
-    const userId = JSON.parse(localStorage.getItem("user")).id
+    const userId = JSON.parse(localStorage.getItem('user')).id
     axios
       .delete(`/api/groups/${groupId}/paths/${path_id}`)
-      .then(response => {
-        Log.info(response);
-        history.goBack();
+      .then((response) => {
+        Log.info(response)
+        history.goBack()
       })
-      .catch(error => {
-        Log.error(error);
-        history.goBack();
-      });
-  };
+      .catch((error) => {
+        Log.error(error)
+        history.goBack()
+      })
+  }
 
   handleConfirmDialogOpen = () => {
-    this.setState({ optionsModalIsOpen: false, confirmDialogIsOpen: true });
-  };
+    this.setState({ optionsModalIsOpen: false, confirmDialogIsOpen: true })
+  }
 
-  handleConfirmDialogClose = choice => {
-    if (choice === "agree") {
-      this.handleDelete();
+  handleConfirmDialogClose = (choice) => {
+    if (choice === 'agree') {
+      this.handleDelete()
     }
-    this.setState({ confirmDialogIsOpen: false });
-  };
+    this.setState({ confirmDialogIsOpen: false })
+  }
 
   async componentDidMount() {
+    this.directionsRenderer.setMap(
+      new window.google.maps.Map(this.mapRef.current)
+    )
     const { match } = this.props
     const { groupId, path_id } = match.params
-    const userId = JSON.parse(localStorage.getItem("user")).id
+    const userId = JSON.parse(localStorage.getItem('user')).id
 
     const path = await getPath(groupId, path_id)
+    const waypoints = await getWaypoints(groupId, path_id)
     const car = await getCar(userId, path.car_id)
     const color = path.color
+    getFastestRoute(path.from, path.to, waypoints, this.directionsRenderer)
 
-    this.setState({ path, car, fetchedPathData: true, color });
+    this.setState({ path, car, fetchedPathData: true, color, waypoints })
   }
 
   render() {
     const { history, language, classes } = this.props
-    const { path, car, fetchedPathData, color } = this.state;
+    const { path, car, fetchedPathData, color, waypoints } = this.state
     const texts = Texts[language].PathInfoScreen
-    const userId = JSON.parse(localStorage.getItem("user")).id
+    const userId = JSON.parse(localStorage.getItem('user')).id
 
     const rowStyle = { minHeight: '7rem' }
 
-    const { confirmDialogIsOpen, optionsModalIsOpen } = this.state;
+    const { confirmDialogIsOpen, optionsModalIsOpen } = this.state
     const options = [
       {
         label: texts.delete,
-        style: "optionsModalButton",
+        style: 'optionsModalButton',
         handle: this.handleConfirmDialogOpen
       }
-    ];
+    ]
 
     const d = new Date(path.departure_date)
-    const path_date_format = d.getDate() + "/" + (1 + d.getMonth()) + "/" + d.getFullYear()
-    const path_time_format = d.getHours() + ":" + d.getMinutes()
+    const path_date_format =
+      d.getDate() + '/' + (1 + d.getMonth()) + '/' + d.getFullYear()
+    const path_time_format = d.getHours() + ':' + d.getMinutes()
 
     return (
       <React.Fragment>
         <div id="createActivityContainer">
-
           <ConfirmDialog
             title={texts.confirmDialogTitle}
             handleClose={this.handleConfirmDialogClose}
@@ -266,98 +290,183 @@ class PathInfoScreen extends React.Component {
             />
           </div>
 
-
           <div className={classes.root}>
-
             <MuiThemeProvider theme={muiTheme}>
               <div id="createActivityInformationContainer">
-
-                <br /><br />
+                <br />
+                <br />
                 <div className="row no-gutters">
-                  <div id="createActivityTimeslotsHeader" className="col-6-10 center">
+                  <div
+                    id="createActivityTimeslotsHeader"
+                    className="col-6-10 center"
+                  >
                     <h1 className="center">{texts.car}</h1>
                   </div>
-                  <div id="createActivityTimeslotsHeader" className="col-4-10" />
+                  <div
+                    id="createActivityTimeslotsHeader"
+                    className="col-4-10"
+                  />
                 </div>
                 <div className="row no-gutters" style={rowStyle}>
                   <div className="col-2-10">
                     <i className="fas fa-car center" />
                   </div>
-                  <div className="col-8-10" style={{ borderBottom: "1px solid rgba(0,0,0,0.1)" }}>
+                  <div
+                    className="col-8-10"
+                    style={{ borderBottom: '1px solid rgba(0,0,0,0.1)' }}
+                  >
                     <h2 className="center">{car.car_name}</h2>
                   </div>
                 </div>
 
-                <br /><br />
+                <br />
+                <br />
                 <div className="row no-gutters">
-                  <div id="createActivityTimeslotsHeader" className="col-6-10 center">
+                  <div
+                    id="createActivityTimeslotsHeader"
+                    className="col-6-10 center"
+                  >
                     <h1 className="center">{texts.start}</h1>
                   </div>
-                  <div id="createActivityTimeslotsHeader" className="col-4-10" />
+                  <div
+                    id="createActivityTimeslotsHeader"
+                    className="col-4-10"
+                  />
                 </div>
                 <div className="row no-gutters" style={rowStyle}>
                   <div className="col-2-10">
                     <i className="fas fa-map-marker-alt center" />
                   </div>
-                  <div className="col-8-10" style={{ borderBottom: "1px solid rgba(0,0,0,0.1)" }}>
+                  <div
+                    className="col-8-10"
+                    style={{ borderBottom: '1px solid rgba(0,0,0,0.1)' }}
+                  >
                     <h2 className="center">{path.from}</h2>
                   </div>
                 </div>
 
-                <br /><br />
+                <br />
+                <br />
                 <div className="row no-gutters">
-                  <div id="createActivityTimeslotsHeader" className="col-6-10 center">
+                  <div
+                    id="createActivityTimeslotsHeader"
+                    className="col-6-10 center"
+                  >
                     <h1 className="center">{texts.destination}</h1>
                   </div>
-                  <div id="createActivityTimeslotsHeader" className="col-4-10" />
+                  <div
+                    id="createActivityTimeslotsHeader"
+                    className="col-4-10"
+                  />
                 </div>
                 <div className="row no-gutters" style={rowStyle}>
                   <div className="col-2-10">
                     <i className="fas fa-map-marker-alt center" />
                   </div>
-                  <div className="col-8-10" style={{ borderBottom: "1px solid rgba(0,0,0,0.1)" }}>
+                  <div
+                    className="col-8-10"
+                    style={{ borderBottom: '1px solid rgba(0,0,0,0.1)' }}
+                  >
                     <h2 className="center">{path.to}</h2>
                   </div>
                 </div>
 
-                <br /><br />
+                <br />
+                <br />
                 <div className="row no-gutters">
-                  <div id="createActivityTimeslotsHeader" className="col-6-10 center">
+                  <div
+                    id="createActivityTimeslotsHeader"
+                    className="col-6-10 center"
+                  >
                     <h1 className="center">{texts.date}</h1>
                   </div>
-                  <div id="createActivityTimeslotsHeader" className="col-4-10" />
+                  <div
+                    id="createActivityTimeslotsHeader"
+                    className="col-4-10"
+                  />
                 </div>
                 <div className="row no-gutters" style={rowStyle}>
                   <div className="col-2-10">
                     <i className="fas fa-calendar-alt center" />
                   </div>
-                  <div className="col-8-10" style={{ borderBottom: "1px solid rgba(0,0,0,0.1)" }}>
+                  <div
+                    className="col-8-10"
+                    style={{ borderBottom: '1px solid rgba(0,0,0,0.1)' }}
+                  >
                     <h2 className="center">{path_date_format}</h2>
                   </div>
                 </div>
 
-                <br /><br />
+                <br />
+                <br />
                 <div className="row no-gutters">
-                  <div id="createActivityTimeslotsHeader" className="col-6-10 center">
+                  <div
+                    id="createActivityTimeslotsHeader"
+                    className="col-6-10 center"
+                  >
                     <h1 className="center">{texts.time}</h1>
                   </div>
-                  <div id="createActivityTimeslotsHeader" className="col-4-10" />
+                  <div
+                    id="createActivityTimeslotsHeader"
+                    className="col-4-10"
+                  />
                 </div>
                 <div className="row no-gutters" style={rowStyle}>
                   <div className="col-2-10">
                     <i className="fas fa-clock center" />
                   </div>
-                  <div className="col-8-10" style={{ borderBottom: "1px solid rgba(0,0,0,0.1)" }}>
+                  <div
+                    className="col-8-10"
+                    style={{ borderBottom: '1px solid rgba(0,0,0,0.1)' }}
+                  >
                     <h2 className="center">{path_time_format}</h2>
                   </div>
                 </div>
-
-                <br /><br />
+                {waypoints.length > 0 && (
+                  <>
+                    <div className="row no-gutters" style={rowStyle}>
+                      <div
+                        className="col-2-10"
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'end',
+                          alignItems: 'center'
+                        }}
+                      >
+                        <img src="/images/profiles/car-seat.png" />
+                      </div>
+                      <div className="col-8-10">
+                        <h2 className="center">{texts.otherPassengers}</h2>
+                      </div>
+                    </div>
+                    <div className="row no-gutters">
+                      <div className="col-2-10"></div>
+                      <div className="col-8-10">
+                        {waypoints.map((w) => (
+                          <p>{JSON.stringify(w)}</p>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+                <br />
+                <br />
+                <div
+                  className="row no-gutters"
+                  style={{
+                    ...rowStyle,
+                    height: '300px',
+                    marginRight: '20px'
+                  }}
+                >
+                  <div className="col-2-10"></div>
+                  <div ref={this.mapRef} className="col-8-10"></div>
+                </div>
+                <br />
+                <br />
               </div>
-
             </MuiThemeProvider>
           </div>
-
         </div>
       </React.Fragment>
     )
