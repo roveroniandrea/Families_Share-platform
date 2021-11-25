@@ -1239,7 +1239,8 @@ const en = {
     backNavTitle: "Path Info",
     delete:"Delete Path",
     confirmDialogTitle: "Are you sure you want to delete the car and remove all its data?",
-    stepLabels: ["Information", "Date", "Timeslot"]
+    stepLabels: ["Information", "Date", "Timeslot"],
+    otherPassengers: "Other passengers"
   },
   createActivityInformation: {
     link: "Link (optional)",
@@ -3918,7 +3919,8 @@ const it = {
     time: "Orario",
     delete:"Cancella Percorso",
     confirmDialogTitle: "Sei sicuro di voler cancellare il percorso ?",
-    stepLabels: ["Informazioni", "Data", "Orario"]
+    stepLabels: ["Informazioni", "Data", "Orario"],
+    otherPassengers: "Altri passeggeri"
   },
   createActivityInformation: {
     link: "Collegamento (facoltativo)",

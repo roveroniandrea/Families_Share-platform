@@ -1,5 +1,3 @@
-import Axios from 'axios';
-
 /**Initializes an input field with a Google Maps autocomplete.
  * @param inputRef React inputRef referring to the input component
  * @param onChange Callback with the selected place (string)
