@@ -1240,7 +1240,10 @@ const en = {
     delete:"Delete Path",
     confirmDialogTitle: "Are you sure you want to delete the car and remove all its data?",
     stepLabels: ["Information", "Date", "Timeslot"],
-    otherPassengers: "Other passengers"
+    otherPassengers: "Other passengers",
+    noPassengers: "No passengers",
+    requestPassage: "Request passage",
+    withdrawRequest: "Withdraw passage request"
   },
   createActivityInformation: {
     link: "Link (optional)",
@@ -3920,7 +3923,10 @@ const it = {
     delete:"Cancella Percorso",
     confirmDialogTitle: "Sei sicuro di voler cancellare il percorso ?",
     stepLabels: ["Informazioni", "Data", "Orario"],
-    otherPassengers: "Altri passeggeri"
+    otherPassengers: "Altri passeggeri",
+    noPassengers: "Nessun passeggero",
+    requestPassage: "Richiedi passaggio",
+    withdrawRequest: "Ritira richiesta di passaggio"
   },
   createActivityInformation: {
     link: "Collegamento (facoltativo)",

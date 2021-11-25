@@ -13,9 +13,12 @@ import OptionsModal from './OptionsModal'
 import withLanguage from './LanguageContext'
 import Texts from '../Constants/Texts'
 import Log from './Log'
-import { getFastestRoute } from '../Services/MapsService'
-import { getPath, getCar, getPathWaypoints } from '../Services/CarSharingServices'
-
+import { getFastestRoute, initAutocomplete } from '../Services/MapsService'
+import {
+  getPath,
+  getCar,
+  getPathWaypoints
+} from '../Services/CarSharingServices'
 
 const styles = (theme) => ({
   root: {
@@ -117,13 +120,16 @@ class PathInfoScreen extends React.Component {
     optionsModalIsOpen: false,
     confirmDialogIsOpen: false,
     imageModalIsOpen: false,
-    waypoints: []
+    waypoints: [],
+    requestPassageAtAddress: '',
+    displayedRequestPassageAtAddress: ''
   }
 
   constructor() {
     super()
     this.mapRef = React.createRef()
     this.directionsRenderer = new window.google.maps.DirectionsRenderer()
+    this.requestPassageRef = React.createRef()
   }
 
   handleOptions = () => {
@@ -168,9 +174,32 @@ class PathInfoScreen extends React.Component {
     const waypoints = await getPathWaypoints(groupId, path_id)
     const car = await getCar(userId, path.car_id)
     const color = path.color
-    getFastestRoute(path.from, path.to, waypoints, this.directionsRenderer)
+    getFastestRoute(path.from, path.to, waypoints.map(w => w.address), this.directionsRenderer)
 
     this.setState({ path, car, fetchedPathData: true, color, waypoints })
+
+    initAutocomplete(this.requestPassageRef, (addr) => {
+      this.setState({ ...this.state, displayedRequestPassageAtAddress: addr })
+      getFastestRoute(
+        path.from,
+        path.to,
+        [...waypoints.map(w => w.address), addr],
+        this.directionsRenderer
+      )
+    })
+  }
+
+  handleRequestPassage = () => {
+    const { groupId, path_id } = this.props.match.params
+    const userId = JSON.parse(localStorage.getItem('user')).id
+    axios
+      .post(`/api/groups/${groupId}/paths/${path_id}/waypoints`, {
+        user_id: userId,
+        address: this.state.displayedRequestPassageAtAddress
+      })
+      .then((res) => {
+        alert(res.status)
+      })
   }
 
   render() {
@@ -196,6 +225,9 @@ class PathInfoScreen extends React.Component {
     const path_time_format = d.getHours() + ':' + d.getMinutes()
 
     const is_path_owner = path.car_owner_id === userId
+
+    const selfPassengerRequestStatus =
+      waypoints.find((w) => w.passenger_id === userId)?.status || 'none'
 
     return (
       <React.Fragment>
@@ -373,32 +405,53 @@ class PathInfoScreen extends React.Component {
                     <h2 className="center">{path_time_format}</h2>
                   </div>
                 </div>
-                {waypoints.length > 0 && (
-                  <>
-                    <div className="row no-gutters" style={rowStyle}>
-                      <div
-                        className="col-2-10"
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'end',
-                          alignItems: 'center'
-                        }}
+                <div className="row no-gutters" style={rowStyle}>
+                  <div
+                    className="col-2-10"
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'end',
+                      alignItems: 'center'
+                    }}
+                  >
+                    <img src="/images/profiles/car-seat.png" />
+                  </div>
+                  <div className="col-8-10">
+                    <h2 className="center">{texts.otherPassengers}</h2>
+                  </div>
+                </div>
+                <div className="row no-gutters">
+                  <div className="col-2-10"></div>
+                  <div className="col-8-10">
+                    {waypoints.map((w, i) => (
+                      <p key={i}>{JSON.stringify(w)}</p>
+                    ))}
+                    {waypoints.length === 0 && <p>{texts.noPassengers}</p>}
+                  </div>
+                </div>
+                {!is_path_owner && selfPassengerRequestStatus === 'none' && (
+                  <div className="row no-gutters">
+                    <div className="col-2-10"></div>
+                    <div className="col-8-10">
+                      <input
+                        type="text"
+                        placeholder={texts.requestPassage}
+                        onChange={(e) =>
+                          this.setState({
+                            ...this.state,
+                            requestPassageAtAddress: e.target.value
+                          })
+                        }
+                        ref={this.requestPassageRef}
+                      />
+                      <button
+                        onClick={this.handleRequestPassage}
+                        disabled={!Boolean(this.state.requestPassageAtAddress)}
                       >
-                        <img src="/images/profiles/car-seat.png" />
-                      </div>
-                      <div className="col-8-10">
-                        <h2 className="center">{texts.otherPassengers}</h2>
-                      </div>
+                        {texts.requestPassage}
+                      </button>
                     </div>
-                    <div className="row no-gutters">
-                      <div className="col-2-10"></div>
-                      <div className="col-8-10">
-                        {waypoints.map((w) => (
-                          <p>{JSON.stringify(w)}</p>
-                        ))}
-                      </div>
-                    </div>
-                  </>
+                  </div>
                 )}
                 <br />
                 <br />
