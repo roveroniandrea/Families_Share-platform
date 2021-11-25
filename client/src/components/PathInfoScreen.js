@@ -488,16 +488,13 @@ class PathInfoScreen extends React.Component {
                                 w.status === 'accepted' &&
                                 'TODO: elimina dal percorso'}
                               {w.waypoint_id === myWaypoint.waypoint_id &&
-                                w.status === 'pending' && (
+                                (w.status === 'pending' || w.status === 'accepted') && (
                                   <button
                                     onClick={this.handleWithdrawPassageRequest}
                                   >
                                     {texts.withdrawRequest}
                                   </button>
                                 )}
-                              {w.waypoint_id === myWaypoint.waypoint_id &&
-                                w.status === 'accepted' &&
-                                'TODO: esci dal percorso'}
                             </td>
                           </tr>
                         ))}
