@@ -166,15 +166,13 @@ class PathInfoScreen extends React.Component {
   handleWithdrawPassageRequest = (choice) => {
     if (choice === 'agree') {
       const userId = JSON.parse(localStorage.getItem('user')).id
-      if (this.state.withdrawRequestStep === 0) {
-        const myWaypoint = this.state.waypoints.find(
-          (w) => w.passenger_id === userId
-        )
-        if (myWaypoint) {
-          axios.delete(`/api/waypoints/${myWaypoint.waypoint_id}`).then(() => {
-            window.location.reload()
-          })
-        }
+      const myWaypoint = this.state.waypoints.find(
+        (w) => w.passenger_id === userId
+      )
+      if (myWaypoint) {
+        axios.delete(`/api/waypoints/${myWaypoint.waypoint_id}`).then(() => {
+          window.location.reload()
+        })
       }
     } else {
       if (choice === 'disagree') {
@@ -457,9 +455,54 @@ class PathInfoScreen extends React.Component {
                 <div className="row no-gutters">
                   <div className="col-2-10"></div>
                   <div className="col-8-10">
-                    {waypoints.map((w, i) => (
-                      <p key={i}>{JSON.stringify(w)}</p>
-                    ))}
+                    <table style={{ width: '100%', color: 'black' }}>
+                      <thead>
+                        <tr>
+                          <td style={{ border: '1px solid black' }}>
+                            {texts.passenger}
+                          </td>
+                          <td style={{ border: '1px solid black' }}>
+                            {texts.requestStatus}
+                          </td>
+                          <td style={{ border: '1px solid black' }}>
+                            {texts.action}
+                          </td>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {waypoints.map((w, i) => (
+                          <tr key={i}>
+                            <td>
+                              {w.waypoint_id === myWaypoint.waypoint_id ? (
+                                <b>{texts.yourRequest}</b>
+                              ) : (
+                                w.passenger_id
+                              )}
+                            </td>
+                            <td>{w.status}</td>
+                            <td>
+                              {is_path_owner &&
+                                w.status === 'pending' &&
+                                'TODO: accetta/rifiuta'}
+                              {is_path_owner &&
+                                w.status === 'accepted' &&
+                                'TODO: elimina dal percorso'}
+                              {w.waypoint_id === myWaypoint.waypoint_id &&
+                                w.status === 'pending' && (
+                                  <button
+                                    onClick={this.handleWithdrawPassageRequest}
+                                  >
+                                    {texts.withdrawRequest}
+                                  </button>
+                                )}
+                              {w.waypoint_id === myWaypoint.waypoint_id &&
+                                w.status === 'accepted' &&
+                                'TODO: esci dal percorso'}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                     {waypoints.length === 0 && <p>{texts.noPassengers}</p>}
                   </div>
                 </div>
@@ -483,19 +526,6 @@ class PathInfoScreen extends React.Component {
                         disabled={!Boolean(this.state.requestPassageAtAddress)}
                       >
                         {texts.requestPassage}
-                      </button>
-                    </div>
-                  </div>
-                )}
-                {!is_path_owner && selfPassengerRequestStatus === 'pending' && (
-                  <div className="row no-gutters">
-                    <div className="col-2-10"></div>
-                    <div className="col-8-10">
-                      <p>
-                        {texts.yourRequest} {myWaypoint.address}
-                      </p>
-                      <button onClick={this.handleWithdrawPassageRequest}>
-                        {texts.withdrawRequest}
                       </button>
                     </div>
                   </div>

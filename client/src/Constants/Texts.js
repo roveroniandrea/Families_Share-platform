@@ -1244,8 +1244,11 @@ const en = {
     noPassengers: "No passengers",
     requestPassage: "Request passage",
     withdrawRequest: "Withdraw passage request",
-    yourRequest: "Your passage request (waiting for confirmation): ",
-    confirmWithdraw: "Do you want to withdraw your passage request?"
+    yourRequest: "Yourself",
+    confirmWithdraw: "Do you want to withdraw your passage request?",
+    passenger: "Passenger",
+    requestStatus: "Request status",
+    action: "Action"
   },
   createActivityInformation: {
     link: "Link (optional)",
@@ -3929,8 +3932,11 @@ const it = {
     noPassengers: "Nessun passeggero",
     requestPassage: "Richiedi passaggio",
     withdrawRequest: "Ritira richiesta di passaggio",
-    yourRequest: "La tua richiesta di passaggio (in attesa di conferma): ",
-    confirmWithdraw: "Vuoi annullare la richiesta di passaggio?"
+    yourRequest: "Te stesso",
+    confirmWithdraw: "Vuoi annullare la richiesta di passaggio?",
+    passenger: "Passeggero",
+    requestStatus: "Status richiesta",
+    action: "Azione"
   },
   createActivityInformation: {
     link: "Collegamento (facoltativo)",
