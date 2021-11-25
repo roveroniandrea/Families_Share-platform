@@ -122,7 +122,8 @@ class PathInfoScreen extends React.Component {
     imageModalIsOpen: false,
     waypoints: [],
     requestPassageAtAddress: '',
-    displayedRequestPassageAtAddress: ''
+    displayedRequestPassageAtAddress: '',
+    withdrawRequestStep: 2
   }
 
   constructor() {
@@ -162,6 +163,31 @@ class PathInfoScreen extends React.Component {
     this.setState({ confirmDialogIsOpen: false })
   }
 
+  handleWithdrawPassageRequest = (choice) => {
+    if (choice === 'agree') {
+      const userId = JSON.parse(localStorage.getItem('user')).id
+      if (this.state.withdrawRequestStep === 0) {
+        const myWaypoint = this.state.waypoints.find(
+          (w) => w.passenger_id === userId
+        )
+        if (myWaypoint) {
+          axios.delete(`/api/waypoints/${myWaypoint.waypoint_id}`).then(() => {
+            window.location.reload()
+          })
+        }
+      }
+    } else {
+      if (choice === 'disagree') {
+        this.setState({ ...this.state, withdrawRequestStep: 2 })
+      } else {
+        this.setState({
+          ...this.state,
+          withdrawRequestStep: this.state.withdrawRequestStep - 1
+        })
+      }
+    }
+  }
+
   async componentDidMount() {
     this.directionsRenderer.setMap(
       new window.google.maps.Map(this.mapRef.current)
@@ -174,7 +200,12 @@ class PathInfoScreen extends React.Component {
     const waypoints = await getPathWaypoints(groupId, path_id)
     const car = await getCar(userId, path.car_id)
     const color = path.color
-    getFastestRoute(path.from, path.to, waypoints.map(w => w.address), this.directionsRenderer)
+    getFastestRoute(
+      path.from,
+      path.to,
+      waypoints.map((w) => w.address),
+      this.directionsRenderer
+    )
 
     this.setState({ path, car, fetchedPathData: true, color, waypoints })
 
@@ -183,7 +214,7 @@ class PathInfoScreen extends React.Component {
       getFastestRoute(
         path.from,
         path.to,
-        [...waypoints.map(w => w.address), addr],
+        [...waypoints.map((w) => w.address), addr],
         this.directionsRenderer
       )
     })
@@ -192,14 +223,16 @@ class PathInfoScreen extends React.Component {
   handleRequestPassage = () => {
     const { groupId, path_id } = this.props.match.params
     const userId = JSON.parse(localStorage.getItem('user')).id
-    axios
-      .post(`/api/groups/${groupId}/paths/${path_id}/waypoints`, {
-        user_id: userId,
-        address: this.state.displayedRequestPassageAtAddress
-      })
-      .then((res) => {
-        alert(res.status)
-      })
+    if (this.state.displayedRequestPassageAtAddress) {
+      axios
+        .post(`/api/groups/${groupId}/paths/${path_id}/waypoints`, {
+          user_id: userId,
+          address: this.state.displayedRequestPassageAtAddress
+        })
+        .then(() => {
+          window.location.reload()
+        })
+    }
   }
 
   render() {
@@ -226,8 +259,9 @@ class PathInfoScreen extends React.Component {
 
     const is_path_owner = path.car_owner_id === userId
 
-    const selfPassengerRequestStatus =
-      waypoints.find((w) => w.passenger_id === userId)?.status || 'none'
+    const myWaypoint = waypoints.find((w) => w.passenger_id === userId)
+
+    const selfPassengerRequestStatus = myWaypoint?.status || 'none'
 
     return (
       <React.Fragment>
@@ -453,6 +487,19 @@ class PathInfoScreen extends React.Component {
                     </div>
                   </div>
                 )}
+                {!is_path_owner && selfPassengerRequestStatus === 'pending' && (
+                  <div className="row no-gutters">
+                    <div className="col-2-10"></div>
+                    <div className="col-8-10">
+                      <p>
+                        {texts.yourRequest} {myWaypoint.address}
+                      </p>
+                      <button onClick={this.handleWithdrawPassageRequest}>
+                        {texts.withdrawRequest}
+                      </button>
+                    </div>
+                  </div>
+                )}
                 <br />
                 <br />
                 <div
@@ -472,6 +519,11 @@ class PathInfoScreen extends React.Component {
             </MuiThemeProvider>
           </div>
         </div>
+        <ConfirmDialog
+          title={texts.confirmWithdraw}
+          handleClose={this.handleWithdrawPassageRequest}
+          isOpen={this.state.withdrawRequestStep === 1}
+        />
       </React.Fragment>
     )
   }
