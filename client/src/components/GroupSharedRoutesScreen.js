@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import LoadingSpinner from './LoadingSpinner'
-import axios from 'axios'
-import Log from './Log'
 import Fab from '@material-ui/core/Fab'
 import Texts from '../Constants/Texts'
 import { withStyles } from '@material-ui/core/styles'
 import withLanguage from './LanguageContext'
 import PathListItem from './PathListItem'
+import { getGroupPaths } from '../Services/CarSharingServices';
 
 const styles = {
   add: {
@@ -43,18 +42,6 @@ const styles = {
   }
 }
 
-const fetchPaths = (groupId) => {
-  return axios
-    .get(`/api/groups/${groupId}/paths`)
-    .then((response) => {
-      return response.data
-    })
-    .catch((error) => {
-      Log.error(error)
-      return []
-    })
-}
-
 function _GroupSharedRoutesScreen({
   group,
   classes,
@@ -65,7 +52,7 @@ function _GroupSharedRoutesScreen({
   const [sharedPaths, setSharedPaths] = useState([])
 
   useEffect(() => {
-    fetchPaths(group.group_id).then((paths) => {
+    getGroupPaths(group.group_id).then((paths) => {
       setFetchedActivityData(true)
       setSharedPaths(paths)
     })

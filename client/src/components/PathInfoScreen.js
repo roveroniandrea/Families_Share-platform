@@ -14,58 +14,8 @@ import withLanguage from './LanguageContext'
 import Texts from '../Constants/Texts'
 import Log from './Log'
 import { getFastestRoute } from '../Services/MapsService'
-import { json } from 'body-parser'
+import { getPath, getCar, getPathWaypoints } from '../Services/CarSharingServices'
 
-const getPath = (groupId, pathId) => {
-  return axios
-    .get(`/api/groups/${groupId}/paths/${pathId}`)
-    .then((response) => {
-      return response.data
-    })
-    .catch((error) => {
-      Log.error(error)
-      return {
-        path_id: '',
-        car_owner_id: '',
-        car_id: '',
-        group_id: '',
-        departure_date: new Date(),
-        from: '',
-        to: '',
-        color: ''
-      }
-    })
-}
-
-const getCar = (userId, car_Id) => {
-  return axios
-    .get(`/api/users/${userId}/cars/${car_Id}`)
-    .then((response) => {
-      return response.data
-    })
-    .catch((error) => {
-      Log.error(error)
-      return {
-        car_id: 'err',
-        owner_id: 'err',
-        car_name: 'err',
-        num_seats: 2,
-        other_info: 'err'
-      }
-    })
-}
-
-const getWaypoints = (groupId, pathId) => {
-  return axios
-    .get(`/api/groups/${groupId}/paths/${pathId}/waypoints`)
-    .then((response) => {
-      return response.data
-    })
-    .catch((error) => {
-      Log.error(error)
-      return {}
-    })
-}
 
 const styles = (theme) => ({
   root: {
@@ -183,7 +133,6 @@ class PathInfoScreen extends React.Component {
   handleDelete = () => {
     const { match, history } = this.props
     const { groupId, path_id } = match.params
-    const userId = JSON.parse(localStorage.getItem('user')).id
     axios
       .delete(`/api/groups/${groupId}/paths/${path_id}`)
       .then((response) => {
@@ -216,7 +165,7 @@ class PathInfoScreen extends React.Component {
     const userId = JSON.parse(localStorage.getItem('user')).id
 
     const path = await getPath(groupId, path_id)
-    const waypoints = await getWaypoints(groupId, path_id)
+    const waypoints = await getPathWaypoints(groupId, path_id)
     const car = await getCar(userId, path.car_id)
     const color = path.color
     getFastestRoute(path.from, path.to, waypoints, this.directionsRenderer)
@@ -246,6 +195,8 @@ class PathInfoScreen extends React.Component {
       d.getDate() + '/' + (1 + d.getMonth()) + '/' + d.getFullYear()
     const path_time_format = d.getHours() + ':' + d.getMinutes()
 
+    const is_path_owner = path.car_owner_id === userId
+
     return (
       <React.Fragment>
         <div id="createActivityContainer">
@@ -266,7 +217,7 @@ class PathInfoScreen extends React.Component {
                 </button>
               </div>
               <div className="col-6-10" />
-              {userId === path.car_owner_id ? (
+              {is_path_owner ? (
                 <React.Fragment>
                   <div className="col-1-10" />
                   <div className="col-1-10">

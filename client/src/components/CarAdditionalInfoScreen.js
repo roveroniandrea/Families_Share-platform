@@ -2,10 +2,8 @@ import React from "react";
 import Checkbox from "@material-ui/core/Checkbox";
 import { withStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
-import axios from "axios";
 import withLanguage from "./LanguageContext";
 import Texts from "../Constants/Texts";
-import Log from "./Log";
 
 const styles = {
   checkbox: {

@@ -4,13 +4,12 @@ import autosize from 'autosize'
 import { CirclePicker } from 'react-color'
 import withLanguage from './LanguageContext'
 import Texts from '../Constants/Texts'
-import axios from 'axios'
-import Log from './Log'
 import {
   getFastestRoute,
   initAutocomplete,
   linkToOpenGMaps
 } from '../Services/MapsService'
+import { getUserCars } from '../Services/CarSharingServices';
 
 class CreatePathInformation extends React.Component {
   constructor(props) {
@@ -79,15 +78,7 @@ class CreatePathInformation extends React.Component {
   /**Returns all my cars */
   getMyCars = () => {
     const userId = JSON.parse(localStorage.getItem('user')).id
-    return axios
-      .get(`/api/users/${userId}/cars`)
-      .then((response) => {
-        return response.data
-      })
-      .catch((error) => {
-        Log.error(error)
-        return []
-      })
+    return getUserCars(userId)
   }
 
   componentDidMount() {
