@@ -470,10 +470,10 @@ class PathInfoScreen extends React.Component {
                         </tr>
                       </thead>
                       <tbody>
-                        {waypoints.map((w, i) => (
+                        {waypoints?.map((w, i) => (
                           <tr key={i}>
                             <td>
-                              {w.waypoint_id === myWaypoint.waypoint_id ? (
+                              {w?.waypoint_id === myWaypoint?.waypoint_id ? (
                                 <b>{texts.yourRequest}</b>
                               ) : (
                                 w.passenger_id
@@ -487,7 +487,7 @@ class PathInfoScreen extends React.Component {
                               {is_path_owner &&
                                 w.status === 'accepted' &&
                                 'TODO: elimina dal percorso'}
-                              {w.waypoint_id === myWaypoint.waypoint_id &&
+                              {w?.waypoint_id === myWaypoint?.waypoint_id &&
                                 (w.status === 'pending' || w.status === 'accepted') && (
                                   <button
                                     onClick={this.handleWithdrawPassageRequest}
