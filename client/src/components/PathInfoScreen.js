@@ -544,7 +544,7 @@ class PathInfoScreen extends React.Component {
                                       )
                                     }
                                   >
-                                    {texts.passengerRemoval}
+                                    {texts.acceptRequest}
                                   </button>
                                   <button className="joinGroupButton"
                                     onClick={() =>
@@ -562,9 +562,9 @@ class PathInfoScreen extends React.Component {
                               {is_path_owner &&
                                 w.status === 'accepted' && (
                                   <button className="joinGroupButton"
-                                    onClick={this.handleWithdrawPassageRequest}
+                                    onClick={() => this.handlePassengerRemoval(null,w.passenger_id)}
                                   >
-                                    {"TODO: elimiba"}
+                                     {texts.removePassenger}
                                   </button>
                                 )}
                               {w?.waypoint_id === myWaypoint?.waypoint_id &&
@@ -650,7 +650,7 @@ class PathInfoScreen extends React.Component {
           isOpen={this.state.acceptRequestStep === 1}
         />
         <ConfirmDialog
-          title={texts.confirmRemoval}
+          title={texts.passengerRemovalModal}
           handleClose={(ch) => {this.handlePassengerRemoval(ch,null)}}
           isOpen={this.state.passengerRemovalStep === 1}
         />
