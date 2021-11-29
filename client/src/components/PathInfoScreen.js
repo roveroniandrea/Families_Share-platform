@@ -123,7 +123,10 @@ class PathInfoScreen extends React.Component {
     waypoints: [],
     requestPassageAtAddress: '',
     displayedRequestPassageAtAddress: '',
-    withdrawRequestStep: 2
+    withdrawRequestStep: 2,
+    acceptRequestStep: 2,
+    rejectRequestStep: 2,
+    targetPassengerId: ''
   }
 
   constructor() {
@@ -182,6 +185,45 @@ class PathInfoScreen extends React.Component {
           ...this.state,
           withdrawRequestStep: this.state.withdrawRequestStep - 1
         })
+      }
+    }
+  }
+
+  handleAcceptRejectPassageRequest = (choice, accept, passenger_id) => {
+    if (choice === 'agree') {
+      const passengerWaypoint = this.state.waypoints.find(
+        (w) => w.passenger_id === this.state.targetPassengerId
+      )
+      if (passengerWaypoint) {
+        axios
+          .put(`/api/waypoints/${passengerWaypoint.waypoint_id}`, {
+            status: accept ? 'accepted' : 'rejected'
+          })
+          .then(() => {
+            window.location.reload()
+          })
+      }
+    } else {
+      if (choice === 'disagree') {
+        if (accept) {
+          this.setState({ ...this.state, acceptRequestStep: 2 })
+        } else {
+          this.setState({ ...this.state, rejectRequestStep: 2 })
+        }
+      } else {
+        if (accept) {
+          this.setState({
+            ...this.state,
+            acceptRequestStep: this.state.acceptRequestStep - 1,
+            targetPassengerId: passenger_id || this.state.targetPassengerId
+          })
+        } else {
+          this.setState({
+            ...this.state,
+            rejectRequestStep: this.state.rejectRequestStep - 1,
+            targetPassengerId: passenger_id || this.state.targetPassengerId
+          })
+        }
       }
     }
   }
@@ -481,14 +523,38 @@ class PathInfoScreen extends React.Component {
                             </td>
                             <td>{w.status}</td>
                             <td>
-                              {is_path_owner &&
-                                w.status === 'pending' &&
-                                'TODO: accetta/rifiuta'}
+                              {is_path_owner && w.status === 'pending' && (
+                                <>
+                                  <button
+                                    onClick={() =>
+                                      this.handleAcceptRejectPassageRequest(
+                                        null,
+                                        true,
+                                        w.passenger_id
+                                      )
+                                    }
+                                  >
+                                    {texts.acceptRequest}
+                                  </button>
+                                  <button
+                                    onClick={() =>
+                                      this.handleAcceptRejectPassageRequest(
+                                        null,
+                                        false,
+                                        w.passenger_id
+                                      )
+                                    }
+                                  >
+                                    {texts.rejectRequest}
+                                  </button>
+                                </>
+                              )}
                               {is_path_owner &&
                                 w.status === 'accepted' &&
                                 'TODO: elimina dal percorso'}
                               {w?.waypoint_id === myWaypoint?.waypoint_id &&
-                                (w.status === 'pending' || w.status === 'accepted') && (
+                                (w.status === 'pending' ||
+                                  w.status === 'accepted') && (
                                   <button
                                     onClick={this.handleWithdrawPassageRequest}
                                   >
@@ -550,6 +616,16 @@ class PathInfoScreen extends React.Component {
           title={texts.confirmWithdraw}
           handleClose={this.handleWithdrawPassageRequest}
           isOpen={this.state.withdrawRequestStep === 1}
+        />
+        <ConfirmDialog
+          title={texts.confirmReject}
+          handleClose={(ch) => {this.handleAcceptRejectPassageRequest(ch, false, null)}}
+          isOpen={this.state.rejectRequestStep === 1}
+        />
+        <ConfirmDialog
+          title={texts.confirmAccept}
+          handleClose={(ch) => {this.handleAcceptRejectPassageRequest(ch, true, null)}}
+          isOpen={this.state.acceptRequestStep === 1}
         />
       </React.Fragment>
     )
