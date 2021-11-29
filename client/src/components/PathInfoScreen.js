@@ -126,6 +126,7 @@ class PathInfoScreen extends React.Component {
     withdrawRequestStep: 2,
     acceptRequestStep: 2,
     rejectRequestStep: 2,
+    passengerRemovalStep: 2,
     targetPassengerId: ''
   }
 
@@ -154,6 +155,10 @@ class PathInfoScreen extends React.Component {
         history.goBack()
       })
   }
+
+  handleClose = () => {
+    this.setState({ optionsModalIsOpen: false });
+  };
 
   handleConfirmDialogOpen = () => {
     this.setState({ optionsModalIsOpen: false, confirmDialogIsOpen: true })
@@ -224,6 +229,30 @@ class PathInfoScreen extends React.Component {
             targetPassengerId: passenger_id || this.state.targetPassengerId
           })
         }
+      }
+    }
+  }
+
+  handlePassengerRemoval = (choice, passenger_id) => {
+    if (choice === 'agree') {
+      const passengerWaypoint = this.state.waypoints.find((w) => w.passenger_id === this.state.targetPassengerId)
+      if (passengerWaypoint) {
+        axios
+          .put(`/api/waypoints/${passengerWaypoint.waypoint_id}`, {
+            status: 'rejected'
+          }).then(() => {
+            window.location.reload()
+          })
+      }
+    } else {
+      if (choice === 'disagree') {
+        this.setState({ ...this.state, passengerRemovalStep: 2 })
+      } else {
+        this.setState({
+          ...this.state,
+          passengerRemovalStep: this.state.passengerRemovalStep - 1,
+          targetPassengerId: passenger_id || this.state.targetPassengerId
+        })
       }
     }
   }
@@ -312,7 +341,7 @@ class PathInfoScreen extends React.Component {
             isOpen={confirmDialogIsOpen}
           />
           <div id="pathHeaderContainer" style={{ backgroundColor: color }}>
-            <div className="row no-gutters" id="profileHeaderOptions">
+            <div className="row no-gutters" id="pathHeaderOptions">
               <div className="col-2-10">
                 <button
                   type="button"
@@ -523,35 +552,42 @@ class PathInfoScreen extends React.Component {
                             </td>
                             <td>{w.status}</td>
                             <td>
-                              {is_path_owner && w.status === 'pending' && (
-                                <>
-                                  <button
-                                    onClick={() =>
-                                      this.handleAcceptRejectPassageRequest(
-                                        null,
-                                        true,
-                                        w.passenger_id
-                                      )
-                                    }
-                                  >
-                                    {texts.acceptRequest}
-                                  </button>
-                                  <button
-                                    onClick={() =>
-                                      this.handleAcceptRejectPassageRequest(
-                                        null,
-                                        false,
-                                        w.passenger_id
-                                      )
-                                    }
-                                  >
-                                    {texts.rejectRequest}
-                                  </button>
-                                </>
-                              )}
                               {is_path_owner &&
-                                w.status === 'accepted' &&
-                                'TODO: elimina dal percorso'}
+                                w.status === 'pending' &&
+                                 (
+                                  <>
+                                    <button
+                                      onClick={() =>
+                                        this.handleAcceptRejectPassageRequest(
+                                          null,
+                                          true,
+                                          w.passenger_id
+                                        )
+                                      }
+                                    >
+                                      {texts.acceptRequest}
+                                    </button>
+                                    <button
+                                      onClick={() =>
+                                        this.handleAcceptRejectPassageRequest(
+                                          null,
+                                          false,
+                                          w.passenger_id
+                                        )
+                                      }
+                                    >
+                                      {texts.rejectRequest}
+                                    </button>
+                                  </>
+                                )}
+                              {is_path_owner &&
+                                w.status === 'accepted' && (
+                                  <button
+                                    onClick={() => this.handlePassengerRemoval(null,w.passenger_id)}
+                                  >
+                                    {texts.passengerRemoval}
+                                  </button>
+                                )}
                               {w?.waypoint_id === myWaypoint?.waypoint_id &&
                                 (w.status === 'pending' ||
                                   w.status === 'accepted') && (
@@ -626,6 +662,11 @@ class PathInfoScreen extends React.Component {
           title={texts.confirmAccept}
           handleClose={(ch) => {this.handleAcceptRejectPassageRequest(ch, true, null)}}
           isOpen={this.state.acceptRequestStep === 1}
+        />
+        <ConfirmDialog
+          title={texts.confirmRemoval}
+          handleClose={(ch) => {this.handlePassengerRemoval(ch,null)}}
+          isOpen={this.state.passengerRemovalStep === 1}
         />
       </React.Fragment>
     )

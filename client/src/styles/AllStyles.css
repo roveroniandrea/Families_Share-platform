@@ -3321,3 +3321,22 @@ a:active {
   position: relative;
   overflow: hidden;
 }
+
+#pathHeaderOptions {
+  width: 100%;
+  background-color: Transparent;
+  top: 0;
+}
+
+#pathHeaderOptions button {
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: #ffffff;
+  height: 5rem;
+  width: 5rem;
+  padding: 0 0;
+}
+#pathHeaderOptions i {
+  font-size: 2rem;
+  color: #ffffff;
+}
