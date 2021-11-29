@@ -32,7 +32,7 @@ router.put('/:id', (req, res, next) => {
               } else {
                 await Waypoint.updateOne(
                   { waypoint_id },
-                  { ...waypoint, status: newStatus }
+                  { status: newStatus }
                 )
                 return res.status(200).send('Waypoint updated')
               }
