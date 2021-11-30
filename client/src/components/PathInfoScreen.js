@@ -17,7 +17,8 @@ import { getFastestRoute, initAutocomplete } from '../Services/MapsService'
 import {
   getPath,
   getCar,
-  getPathWaypoints
+  getPathWaypoints,
+  getUser
 } from '../Services/CarSharingServices'
 
 const styles = (theme) => ({
@@ -237,7 +238,19 @@ class PathInfoScreen extends React.Component {
     const userId = JSON.parse(localStorage.getItem('user')).id
 
     const path = await getPath(groupId, path_id)
-    const waypoints = await getPathWaypoints(groupId, path_id)
+    const waypoints = await Promise.all(
+      await getPathWaypoints(groupId, path_id).then((wayp) =>
+        wayp.map(async (w) => {
+          const user = await getUser(w.passenger_id)
+          return {
+            ...w,
+            passenger: user
+          }
+        })
+      )
+    )
+    console.log(waypoints)
+
     const car = await getCar(userId, path.car_id)
     const color = path.color
     getFastestRoute(
@@ -518,7 +531,7 @@ class PathInfoScreen extends React.Component {
                               {w?.waypoint_id === myWaypoint?.waypoint_id ? (
                                 <b>{texts.yourRequest}</b>
                               ) : (
-                                w.passenger_id
+                                `${w.passenger.given_name} ${w.passenger.family_name}`
                               )}
                             </td>
                             <td>{w.status}</td>
@@ -619,12 +632,16 @@ class PathInfoScreen extends React.Component {
         />
         <ConfirmDialog
           title={texts.confirmReject}
-          handleClose={(ch) => {this.handleAcceptRejectPassageRequest(ch, false, null)}}
+          handleClose={(ch) => {
+            this.handleAcceptRejectPassageRequest(ch, false, null)
+          }}
           isOpen={this.state.rejectRequestStep === 1}
         />
         <ConfirmDialog
           title={texts.confirmAccept}
-          handleClose={(ch) => {this.handleAcceptRejectPassageRequest(ch, true, null)}}
+          handleClose={(ch) => {
+            this.handleAcceptRejectPassageRequest(ch, true, null)
+          }}
           isOpen={this.state.acceptRequestStep === 1}
         />
       </React.Fragment>
