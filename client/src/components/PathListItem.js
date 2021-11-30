@@ -13,7 +13,8 @@ import {
 } from '../Services/CarSharingServices.js'
 
 const getNumWaypoints = async (groupId, pathId) => {
-  const w = await getPathWaypoints(groupId, pathId)
+  const wTemp = await getPathWaypoints(groupId, pathId)
+  const w = wTemp.filter((wP)=>wP.status === 'accepted');
   return w.length
 }
 
