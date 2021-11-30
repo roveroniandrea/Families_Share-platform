@@ -18,8 +18,8 @@ router.put('/:id', (req, res, next) => {
       if (!waypoint) {
         return res.status(404).send('Not found')
       } else {
-        if (waypoint.status !== 'pending') {
-          return res.status(401).send('Waypoint not in pending status')
+        if (waypoint.status === 'reject') {
+          return res.status(401).send('Waypoint in reject status')
         } else {
           Path.findOne({ path_id: waypoint.path_id }).then(async (path) => {
             if (!path) {

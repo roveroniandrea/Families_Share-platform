@@ -55,7 +55,10 @@ class CarProfileInfo extends React.Component {
         <div className="childProfileInfoSection">
           <div className="row no-gutters">
             <div className="col-2-10">
-              <i className="fas fa-chair" />
+            <img
+                  src="/images/profiles/car-seat.png"
+                  style={{ height: '25px',marginBottom:'2px' }}
+                />
             </div>
             <div className="col-8-10">
               <div>

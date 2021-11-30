@@ -285,10 +285,12 @@ class PathInfoScreen extends React.Component {
 
     const car = await getCar(userId, path.car_id)
     const color = path.color
+    let accepted_waypoints = waypoints.filter((w) => w.status === 'accepted')
+    
     getFastestRoute(
       path.from,
       path.to,
-      waypoints.map((w) => w.address),
+      accepted_waypoints.map((w) => w.address),
       this.directionsRenderer
     )
 
@@ -299,7 +301,7 @@ class PathInfoScreen extends React.Component {
       getFastestRoute(
         path.from,
         path.to,
-        [...waypoints.map((w) => w.address), addr],
+        [...accepted_waypoints.map((w) => w.address), addr],
         this.directionsRenderer
       )
     })
@@ -562,6 +564,14 @@ class PathInfoScreen extends React.Component {
                                   {w.passenger.family_name}
                                 </h2>
                               )}
+                              <br></br>
+                              {w.status === 'accepted' && (
+                                <h6>{texts.labelWaypointAccepted}{w.address}</h6>
+                              )}
+                              {w.status === 'rejected' && (
+                                <h6>{texts.labelWaypointRejected}</h6>
+                              )}
+
                             </div>
                             <div className="col-3-10">
                               {is_path_owner && w.status === 'pending' && (

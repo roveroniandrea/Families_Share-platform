@@ -1254,7 +1254,9 @@ const en = {
     confirmReject: "Do you want to reject the passage request?",
     confirmAccept: "Do you want to accept the passage request?",
     passengerRemovalModal: "Do you want to ban passage requests from this user?",
-    removePassenger: "Remove passenger"
+    removePassenger: "Remove passenger",
+    labelWaypointAccepted: "With waypoint at: ",
+    labelWaypointRejected: "Blocked User"
   },
   createActivityInformation: {
     link: "Link (optional)",
@@ -3948,7 +3950,9 @@ const it = {
     confirmReject: "Vuoi rifiutare la richiesta di passaggio?",
     confirmAccept: "Vuoi accettare la richiesta di passaggio?",
     passengerRemovalModal: "Vuoi bloccare le richieste di passaggio da parte di questo utente?",
-    removePassenger: "Rimuovi passeggero"
+    removePassenger: "Rimuovi passeggero",
+    labelWaypointAccepted: "Con waypoint a: ",
+    labelWaypointRejected: "Utente Bloccato"
   },
   createActivityInformation: {
     link: "Collegamento (facoltativo)",
