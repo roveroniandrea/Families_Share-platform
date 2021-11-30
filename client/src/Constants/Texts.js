@@ -1252,7 +1252,9 @@ const en = {
     acceptRequest: "Accept request",
     rejectRequest: "Reject request",
     confirmReject: "Do you want to reject the passage request?",
-    confirmAccept: "Do you want to accept the passage request?"
+    confirmAccept: "Do you want to accept the passage request?",
+    passengerRemovalModal: "Do you want to ban passage requests from this user?",
+    removePassenger: "Remove passenger"
   },
   createActivityInformation: {
     link: "Link (optional)",
@@ -3944,7 +3946,9 @@ const it = {
     acceptRequest: "Accetta richiesta",
     rejectRequest: "Rifiuta richiesta",
     confirmReject: "Vuoi rifiutare la richiesta di passaggio?",
-    confirmAccept: "Vuoi accettare la richiesta di passaggio?"
+    confirmAccept: "Vuoi accettare la richiesta di passaggio?",
+    passengerRemovalModal: "Vuoi bloccare le richieste di passaggio da parte di questo utente?",
+    removePassenger: "Rimuovi passeggero"
   },
   createActivityInformation: {
     link: "Collegamento (facoltativo)",

@@ -127,6 +127,7 @@ class PathInfoScreen extends React.Component {
     withdrawRequestStep: 2,
     acceptRequestStep: 2,
     rejectRequestStep: 2,
+    passengerRemovalStep: 2,
     targetPassengerId: ''
   }
 
@@ -154,6 +155,10 @@ class PathInfoScreen extends React.Component {
         Log.error(error)
         history.goBack()
       })
+  }
+
+  handleClose = () => {
+    this.setState({ optionsModalIsOpen: false })
   }
 
   handleConfirmDialogOpen = () => {
@@ -225,6 +230,33 @@ class PathInfoScreen extends React.Component {
             targetPassengerId: passenger_id || this.state.targetPassengerId
           })
         }
+      }
+    }
+  }
+
+  handlePassengerRemoval = (choice, passenger_id) => {
+    if (choice === 'agree') {
+      const passengerWaypoint = this.state.waypoints.find(
+        (w) => w.passenger_id === this.state.targetPassengerId
+      )
+      if (passengerWaypoint) {
+        axios
+          .put(`/api/waypoints/${passengerWaypoint.waypoint_id}`, {
+            status: 'rejected'
+          })
+          .then(() => {
+            window.location.reload()
+          })
+      }
+    } else {
+      if (choice === 'disagree') {
+        this.setState({ ...this.state, passengerRemovalStep: 2 })
+      } else {
+        this.setState({
+          ...this.state,
+          passengerRemovalStep: this.state.passengerRemovalStep - 1,
+          targetPassengerId: passenger_id || this.state.targetPassengerId
+        })
       }
     }
   }
@@ -325,7 +357,7 @@ class PathInfoScreen extends React.Component {
             isOpen={confirmDialogIsOpen}
           />
           <div id="pathHeaderContainer" style={{ backgroundColor: color }}>
-            <div className="row no-gutters" id="profileHeaderOptions">
+            <div className="row no-gutters" id="pathHeaderOptions">
               <div className="col-2-10">
                 <button
                   type="button"
@@ -362,7 +394,11 @@ class PathInfoScreen extends React.Component {
 
           <div className={classes.root}>
             <MuiThemeProvider theme={muiTheme}>
-              <div id="createActivityInformationContainer">
+              <div
+                id="createActivityInformationContainer"
+                className="horizontalCenter"
+                style={{ width: '94%' }}
+              >
                 <br />
                 <br />
                 <div className="row no-gutters">
@@ -492,16 +528,10 @@ class PathInfoScreen extends React.Component {
                     <h2 className="center">{path_time_format}</h2>
                   </div>
                 </div>
+                <br></br>
                 <div className="row no-gutters" style={rowStyle}>
-                  <div
-                    className="col-2-10"
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'end',
-                      alignItems: 'center'
-                    }}
-                  >
-                    <img src="/images/profiles/car-seat.png" />
+                  <div className="col-2-10">
+                    <i className="fas fa-user-friends center" />
                   </div>
                   <div className="col-8-10">
                     <h2 className="center">{texts.otherPassengers}</h2>
@@ -510,35 +540,34 @@ class PathInfoScreen extends React.Component {
                 <div className="row no-gutters">
                   <div className="col-2-10"></div>
                   <div className="col-8-10">
-                    <table style={{ width: '100%', color: 'black' }}>
-                      <thead>
-                        <tr>
-                          <td style={{ border: '1px solid black' }}>
-                            {texts.passenger}
-                          </td>
-                          <td style={{ border: '1px solid black' }}>
-                            {texts.requestStatus}
-                          </td>
-                          <td style={{ border: '1px solid black' }}>
-                            {texts.action}
-                          </td>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {waypoints?.map((w, i) => (
-                          <tr key={i}>
-                            <td>
+                    <>
+                      {waypoints?.map((w, i) => (
+                        <>
+                          <div
+                            key={i}
+                            className="row no-gutters"
+                            style={rowStyle}
+                          >
+                            <div
+                              className="col-7-10"
+                              style={{
+                                borderBottom: '1px solid rgba(0,0,0,0.1)'
+                              }}
+                            >
                               {w?.waypoint_id === myWaypoint?.waypoint_id ? (
-                                <b>{texts.yourRequest}</b>
+                                <h2 className="center">{texts.yourRequest}</h2>
                               ) : (
-                                `${w.passenger.given_name} ${w.passenger.family_name}`
+                                <h2 className="center">
+                                  {w.passenger.given_name}{' '}
+                                  {w.passenger.family_name}
+                                </h2>
                               )}
-                            </td>
-                            <td>{w.status}</td>
-                            <td>
+                            </div>
+                            <div className="col-3-10">
                               {is_path_owner && w.status === 'pending' && (
                                 <>
                                   <button
+                                    className="joinGroupButton"
                                     onClick={() =>
                                       this.handleAcceptRejectPassageRequest(
                                         null,
@@ -550,6 +579,7 @@ class PathInfoScreen extends React.Component {
                                     {texts.acceptRequest}
                                   </button>
                                   <button
+                                    className="joinGroupButton"
                                     onClick={() =>
                                       this.handleAcceptRejectPassageRequest(
                                         null,
@@ -562,31 +592,46 @@ class PathInfoScreen extends React.Component {
                                   </button>
                                 </>
                               )}
-                              {is_path_owner &&
-                                w.status === 'accepted' &&
-                                'TODO: elimina dal percorso'}
+                              {is_path_owner && w.status === 'accepted' && (
+                                <button
+                                  className="joinGroupButton"
+                                  onClick={() =>
+                                    this.handlePassengerRemoval(
+                                      null,
+                                      w.passenger_id
+                                    )
+                                  }
+                                >
+                                  {texts.removePassenger}
+                                </button>
+                              )}
                               {w?.waypoint_id === myWaypoint?.waypoint_id &&
                                 (w.status === 'pending' ||
                                   w.status === 'accepted') && (
                                   <button
+                                    className="joinGroupButton"
                                     onClick={this.handleWithdrawPassageRequest}
                                   >
                                     {texts.withdrawRequest}
                                   </button>
                                 )}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                            </div>
+                          </div>
+                          <br></br>
+                        </>
+                      ))}
+                    </>
+
                     {waypoints.length === 0 && <p>{texts.noPassengers}</p>}
                   </div>
                 </div>
+                <br></br>
                 {!is_path_owner && selfPassengerRequestStatus === 'none' && (
                   <div className="row no-gutters">
                     <div className="col-2-10"></div>
-                    <div className="col-8-10">
+                    <div className="col-6-10">
                       <input
+                        style={{ paddingLeft: '0px' }}
                         type="text"
                         placeholder={texts.requestPassage}
                         onChange={(e) =>
@@ -597,7 +642,10 @@ class PathInfoScreen extends React.Component {
                         }
                         ref={this.requestPassageRef}
                       />
+                    </div>
+                    <div className="col-2-10">
                       <button
+                        className="joinGroupButton"
                         onClick={this.handleRequestPassage}
                         disabled={!Boolean(this.state.requestPassageAtAddress)}
                       >
@@ -616,8 +664,8 @@ class PathInfoScreen extends React.Component {
                     marginRight: '20px'
                   }}
                 >
-                  <div className="col-2-10"></div>
-                  <div ref={this.mapRef} className="col-8-10"></div>
+                  <div className="col-1-10"></div>
+                  <div ref={this.mapRef} className="col-9-10"></div>
                 </div>
                 <br />
                 <br />
@@ -643,6 +691,13 @@ class PathInfoScreen extends React.Component {
             this.handleAcceptRejectPassageRequest(ch, true, null)
           }}
           isOpen={this.state.acceptRequestStep === 1}
+        />
+        <ConfirmDialog
+          title={texts.passengerRemovalModal}
+          handleClose={(ch) => {
+            this.handlePassengerRemoval(ch, null)
+          }}
+          isOpen={this.state.passengerRemovalStep === 1}
         />
       </React.Fragment>
     )
