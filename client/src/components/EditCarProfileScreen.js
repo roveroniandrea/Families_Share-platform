@@ -43,7 +43,6 @@ class EditCarProfileScreen extends React.Component {
     } else {
       const { match } = this.props
       const { profileId: userId, carId } = match.params
-      console.log(match.params)
       getCar(userId, carId).then((car) => {
         if (car) {
           this.setState({ fetchedCarData: true, ...car })
@@ -145,7 +144,6 @@ class EditCarProfileScreen extends React.Component {
     bodyFormData.append('num_seats', num_seats)
     bodyFormData.append('other_info', other_info)
 
-    console.log(bodyFormData.get('car_name'))
     axios
       .patch(`/api/users/${userId}/cars/${carId}`, bodyFormData, {
         headers: {

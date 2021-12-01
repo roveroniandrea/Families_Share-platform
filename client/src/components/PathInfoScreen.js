@@ -281,11 +281,10 @@ class PathInfoScreen extends React.Component {
         })
       )
     )
-    console.log(waypoints)
-
+    
     const car = await getCar(userId, path.car_id)
     const color = path.color
-    let accepted_waypoints = waypoints.filter((w) => w.status === 'accepted')
+    let accepted_waypoints = waypoints.filter((w) => w.status !== 'rejected')
     
     getFastestRoute(
       path.from,
