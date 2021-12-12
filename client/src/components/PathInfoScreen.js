@@ -631,9 +631,7 @@ class PathInfoScreen extends React.Component {
                                     {texts.removePassenger}
                                   </button>
                                 )}
-                                {w?.waypoint_id === myWaypoint?.waypoint_id &&
-                                  (w.status === 'pending' ||
-                                    w.status === 'accepted') && (
+                                {w?.waypoint_id === myWaypoint?.waypoint_id && (
                                     <button
                                       className="joinGroupButton"
                                       onClick={this.handleWithdrawPassageRequest}
