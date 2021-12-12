@@ -4,7 +4,6 @@ import { withRouter } from 'react-router-dom'
 import moment from 'moment'
 import Texts from '../Constants/Texts'
 import withLanguage from './LanguageContext'
-import Log from './Log'
 import { Skeleton } from 'antd'
 import {
   getUser,
