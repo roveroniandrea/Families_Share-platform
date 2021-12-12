@@ -11,7 +11,6 @@ class CarProfileScreen extends React.Component {
   async componentDidMount() {
     const { match } = this.props
     const { profileId, carId } = match.params
-    const userId = JSON.parse(localStorage.getItem('user')).id
     const car = await getCar(profileId, carId)
     this.setState({ car, fetchedCarData: true })
   }

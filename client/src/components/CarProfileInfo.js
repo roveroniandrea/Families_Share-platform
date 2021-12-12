@@ -27,17 +27,11 @@ class CarProfileInfo extends React.Component {
 
   render() {
     const {
-      history,
-      car_name,
       num_seats,
       other_info,
-      match,
       language,
-      showAdditional,
     } = this.props;
-    const { profileId } = match.params;
     const { confirmDialogIsOpen, modalIsOpen } = this.state;
-    const isParent = JSON.parse(localStorage.getItem("user")).id === profileId;
     const texts = Texts[language].carProfileInfo;
     return (
       <React.Fragment>
@@ -57,6 +51,7 @@ class CarProfileInfo extends React.Component {
             <div className="col-2-10">
             <img
                   src="/images/profiles/car-seat.png"
+                  alt=""
                   style={{ height: '25px',marginBottom:'2px' }}
                 />
             </div>

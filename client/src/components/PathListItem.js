@@ -120,6 +120,7 @@ class PathListItem extends React.Component {
               <div className="row no-gutters">
                 <img
                   src="/images/profiles/car-seat.png"
+                  alt=""
                   style={{ marginRight: '1rem', height: '16px' }}
                 />
 

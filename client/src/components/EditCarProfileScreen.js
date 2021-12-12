@@ -1,7 +1,5 @@
 import React from 'react'
 import moment from 'moment'
-import * as path from 'lodash.get'
-import { HuePicker } from 'react-color'
 import axios from 'axios'
 import PropTypes from 'prop-types'
 import withLanguage from './LanguageContext'
@@ -173,7 +171,6 @@ class EditCarProfileScreen extends React.Component {
     const {
       car_name,
       num_seats,
-      other_info,
       formIsValidated,
       fetchedCarData
     } = this.state

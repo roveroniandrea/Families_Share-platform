@@ -2,28 +2,10 @@ import React from "react";
 import DayPicker from "react-day-picker";
 import PropTypes from "prop-types";
 import MomentLocaleUtils from "react-day-picker/moment";
-import moment from "moment";
 import "../styles/DayPicker.css";
-import Switch from "@material-ui/core/Switch";
-import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import { withSnackbar } from "notistack";
 import Texts from "../Constants/Texts";
 import withLanguage from "./LanguageContext";
-
-const muiTheme = createMuiTheme({
-  palette: {
-    primary: {
-      main: "#00838F"
-    }
-  },
-  overrides: {
-    MuiSwitch: {
-      root: {
-        transform: "scale(1.3)"
-      }
-    }
-  }
-});
 
 const modifiersStyles = {
   selected: {

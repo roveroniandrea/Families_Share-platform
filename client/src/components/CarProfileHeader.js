@@ -132,7 +132,7 @@ class CarProfileHeader extends React.Component {
           <img
             src="/images/profiles/child_default_photo.jpg"
             className="profilePhoto horizontalCenter"
-            alt="car image"
+            alt="car"
           />
           <h1 className="horizontalCenter">{name}</h1>
           <ExpandedImageModal

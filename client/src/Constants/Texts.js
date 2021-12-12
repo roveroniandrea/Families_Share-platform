@@ -1230,7 +1230,6 @@ const en = {
   },
   PathInfoScreen:{
     date: "Date",
-    time: "start time of the path",
     car: "Car",
     start: "Start",
     destination: "Destination",

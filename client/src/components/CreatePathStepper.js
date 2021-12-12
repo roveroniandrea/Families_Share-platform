@@ -182,8 +182,7 @@ class CreatePathStepper extends React.Component {
   }
 
   createPath = () => {
-    const { match, history, enqueueSnackbar, language } = this.props
-    const texts = Texts[language].createPathStepper
+    const { match, history } = this.props
     const { groupId } = match.params
     const { information, dates, date } = this.state
     const userId = JSON.parse(localStorage.getItem('user')).id

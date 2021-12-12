@@ -10,6 +10,9 @@ export function initAutocomplete(inputRef, onChange) {
       onChange(`${place.name}, ${place.formatted_address}`)
     }
   }
+  else{
+    console.error('Maps api not loaded or input is not defined')
+  }
 }
 
 /**

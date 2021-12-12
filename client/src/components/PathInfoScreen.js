@@ -114,11 +114,6 @@ const muiTheme = createMuiTheme({
   }
 })
 
-const getNumWaypoints = async (groupId, pathId) => {
-  const wTemp = await getPathWaypoints(groupId, pathId)
-  const w = wTemp.filter((wP) => wP.status === 'accepted');
-  return w.length
-}
 class PathInfoScreen extends React.Component {
   state = {
     fetchedPathData: false,
@@ -268,9 +263,6 @@ class PathInfoScreen extends React.Component {
   }
 
   async componentDidMount() {
-    this.directionsRenderer.setMap(
-      new window.google.maps.Map(this.mapRef.current)
-    )
     const { match } = this.props
     const { groupId, path_id } = match.params
     const userId = JSON.parse(localStorage.getItem('user')).id
@@ -288,37 +280,52 @@ class PathInfoScreen extends React.Component {
       )
     )
 
-
     const car = await getCar(userId, path.car_id)
     const color = path.color
-    let not_rejected_waypoints = waypoints.filter((w) => w.status !== 'rejected')
-    let accepted_waypoints = not_rejected_waypoints.filter((w) => w.status == 'accepted')
+    let not_rejected_waypoints = waypoints.filter(
+      (w) => w.status !== 'rejected'
+    )
+    let accepted_waypoints = not_rejected_waypoints.filter(
+      (w) => w.status === 'accepted'
+    )
 
-    console.log(car.num_seats + " - " + accepted_waypoints.length)
-    const available_seats = (car.num_seats - accepted_waypoints.length) > 0 ? true : false;
+    const available_seats =
+      car.num_seats - accepted_waypoints.length > 0 ? true : false
 
     this.setState({ ...this.state, available_seats })
 
-    getFastestRoute(
-      path.from,
-      path.to,
-      not_rejected_waypoints.map((w) => w.address),
-      this.directionsRenderer
-    )
+    this.setState({ path, car, fetchedPathData: true, color, waypoints })
+  }
 
+  componentDidUpdate(_, prevState) {
+    if (prevState.fetchedPathData !== this.state.fetchedPathData) {
+      const { path, waypoints } = this.state
+      this.directionsRenderer.setMap(
+        new window.google.maps.Map(this.mapRef.current)
+      )
+      let not_rejected_waypoints = waypoints.filter(
+        (w) => w.status !== 'rejected'
+      )
 
-
-    initAutocomplete(this.requestPassageRef, (addr) => {
-      this.setState({ ...this.state, displayedRequestPassageAtAddress: addr })
       getFastestRoute(
         path.from,
         path.to,
-        [...not_rejected_waypoints.map((w) => w.address), addr],
+        not_rejected_waypoints.map((w) => w.address),
         this.directionsRenderer
       )
-    })
 
-    this.setState({ path, car, fetchedPathData: true, color, waypoints })
+      if(this.requestPassageRef.current){
+        initAutocomplete(this.requestPassageRef, (addr) => {
+          this.setState({ ...this.state, displayedRequestPassageAtAddress: addr })
+          getFastestRoute(
+            path.from,
+            path.to,
+            [...not_rejected_waypoints.map((w) => w.address), addr],
+            this.directionsRenderer
+          )
+        })
+      }
+    }
   }
 
   handleRequestPassage = () => {
@@ -338,7 +345,14 @@ class PathInfoScreen extends React.Component {
 
   render() {
     const { history, language, classes } = this.props
-    const { path, car, fetchedPathData, color, waypoints, available_seats } = this.state
+    const {
+      path,
+      car,
+      fetchedPathData,
+      color,
+      waypoints,
+      available_seats
+    } = this.state
     const texts = Texts[language].PathInfoScreen
     const userId = JSON.parse(localStorage.getItem('user')).id
 
@@ -417,270 +431,284 @@ class PathInfoScreen extends React.Component {
               >
                 <br />
                 <br />
-                {fetchedPathData ? (<>
-                  <div className="row no-gutters">
-                    <div
-                      id="createActivityTimeslotsHeader"
-                      className="col-6-10 center"
-                    >
-                      <h1 className="center">{texts.car}</h1>
+                {fetchedPathData ? (
+                  <>
+                    <div className="row no-gutters">
+                      <div
+                        id="createActivityTimeslotsHeader"
+                        className="col-6-10 center"
+                      >
+                        <h1 className="center">{texts.car}</h1>
+                      </div>
+                      <div
+                        id="createActivityTimeslotsHeader"
+                        className="col-4-10"
+                      />
                     </div>
-                    <div
-                      id="createActivityTimeslotsHeader"
-                      className="col-4-10"
-                    />
-                  </div>
-                  <div className="row no-gutters" style={rowStyle}>
-                    <div className="col-2-10">
-                      <i className="fas fa-car center" />
+                    <div className="row no-gutters" style={rowStyle}>
+                      <div className="col-2-10">
+                        <i className="fas fa-car center" />
+                      </div>
+                      <div
+                        className="col-8-10"
+                        style={{ borderBottom: '1px solid rgba(0,0,0,0.1)' }}
+                      >
+                        <h2 className="center">{car.car_name}</h2>
+                      </div>
                     </div>
-                    <div
-                      className="col-8-10"
-                      style={{ borderBottom: '1px solid rgba(0,0,0,0.1)' }}
-                    >
-                      <h2 className="center">{car.car_name}</h2>
-                    </div>
-                  </div>
 
-                  <br />
-                  <br />
-                  <div className="row no-gutters">
-                    <div
-                      id="createActivityTimeslotsHeader"
-                      className="col-6-10 center"
-                    >
-                      <h1 className="center">{texts.start}</h1>
+                    <br />
+                    <br />
+                    <div className="row no-gutters">
+                      <div
+                        id="createActivityTimeslotsHeader"
+                        className="col-6-10 center"
+                      >
+                        <h1 className="center">{texts.start}</h1>
+                      </div>
+                      <div
+                        id="createActivityTimeslotsHeader"
+                        className="col-4-10"
+                      />
                     </div>
-                    <div
-                      id="createActivityTimeslotsHeader"
-                      className="col-4-10"
-                    />
-                  </div>
-                  <div className="row no-gutters" style={rowStyle}>
-                    <div className="col-2-10">
-                      <i className="fas fa-map-marker-alt center" />
+                    <div className="row no-gutters" style={rowStyle}>
+                      <div className="col-2-10">
+                        <i className="fas fa-map-marker-alt center" />
+                      </div>
+                      <div
+                        className="col-8-10"
+                        style={{ borderBottom: '1px solid rgba(0,0,0,0.1)' }}
+                      >
+                        <h2 className="center">{path.from}</h2>
+                      </div>
                     </div>
-                    <div
-                      className="col-8-10"
-                      style={{ borderBottom: '1px solid rgba(0,0,0,0.1)' }}
-                    >
-                      <h2 className="center">{path.from}</h2>
-                    </div>
-                  </div>
 
-                  <br />
-                  <br />
-                  <div className="row no-gutters">
-                    <div
-                      id="createActivityTimeslotsHeader"
-                      className="col-6-10 center"
-                    >
-                      <h1 className="center">{texts.destination}</h1>
+                    <br />
+                    <br />
+                    <div className="row no-gutters">
+                      <div
+                        id="createActivityTimeslotsHeader"
+                        className="col-6-10 center"
+                      >
+                        <h1 className="center">{texts.destination}</h1>
+                      </div>
+                      <div
+                        id="createActivityTimeslotsHeader"
+                        className="col-4-10"
+                      />
                     </div>
-                    <div
-                      id="createActivityTimeslotsHeader"
-                      className="col-4-10"
-                    />
-                  </div>
-                  <div className="row no-gutters" style={rowStyle}>
-                    <div className="col-2-10">
-                      <i className="fas fa-map-marker-alt center" />
+                    <div className="row no-gutters" style={rowStyle}>
+                      <div className="col-2-10">
+                        <i className="fas fa-map-marker-alt center" />
+                      </div>
+                      <div
+                        className="col-8-10"
+                        style={{ borderBottom: '1px solid rgba(0,0,0,0.1)' }}
+                      >
+                        <h2 className="center">{path.to}</h2>
+                      </div>
                     </div>
-                    <div
-                      className="col-8-10"
-                      style={{ borderBottom: '1px solid rgba(0,0,0,0.1)' }}
-                    >
-                      <h2 className="center">{path.to}</h2>
-                    </div>
-                  </div>
 
-                  <br />
-                  <br />
-                  <div className="row no-gutters">
-                    <div
-                      id="createActivityTimeslotsHeader"
-                      className="col-6-10 center"
-                    >
-                      <h1 className="center">{texts.date}</h1>
+                    <br />
+                    <br />
+                    <div className="row no-gutters">
+                      <div
+                        id="createActivityTimeslotsHeader"
+                        className="col-6-10 center"
+                      >
+                        <h1 className="center">{texts.date}</h1>
+                      </div>
+                      <div
+                        id="createActivityTimeslotsHeader"
+                        className="col-4-10"
+                      />
                     </div>
-                    <div
-                      id="createActivityTimeslotsHeader"
-                      className="col-4-10"
-                    />
-                  </div>
-                  <div className="row no-gutters" style={rowStyle}>
-                    <div className="col-2-10">
-                      <i className="fas fa-calendar-alt center" />
+                    <div className="row no-gutters" style={rowStyle}>
+                      <div className="col-2-10">
+                        <i className="fas fa-calendar-alt center" />
+                      </div>
+                      <div
+                        className="col-8-10"
+                        style={{ borderBottom: '1px solid rgba(0,0,0,0.1)' }}
+                      >
+                        <h2 className="center">{path_date_format}</h2>
+                      </div>
                     </div>
-                    <div
-                      className="col-8-10"
-                      style={{ borderBottom: '1px solid rgba(0,0,0,0.1)' }}
-                    >
-                      <h2 className="center">{path_date_format}</h2>
-                    </div>
-                  </div>
 
-                  <br />
-                  <br />
-                  <div className="row no-gutters">
-                    <div
-                      id="createActivityTimeslotsHeader"
-                      className="col-6-10 center"
-                    >
-                      <h1 className="center">{texts.time}</h1>
+                    <br />
+                    <br />
+                    <div className="row no-gutters">
+                      <div
+                        id="createActivityTimeslotsHeader"
+                        className="col-6-10 center"
+                      >
+                        <h1 className="center">{texts.time}</h1>
+                      </div>
+                      <div
+                        id="createActivityTimeslotsHeader"
+                        className="col-4-10"
+                      />
                     </div>
-                    <div
-                      id="createActivityTimeslotsHeader"
-                      className="col-4-10"
-                    />
-                  </div>
-                  <div className="row no-gutters" style={rowStyle}>
-                    <div className="col-2-10">
-                      <i className="fas fa-clock center" />
+                    <div className="row no-gutters" style={rowStyle}>
+                      <div className="col-2-10">
+                        <i className="fas fa-clock center" />
+                      </div>
+                      <div
+                        className="col-8-10"
+                        style={{ borderBottom: '1px solid rgba(0,0,0,0.1)' }}
+                      >
+                        <h2 className="center">{path_time_format}</h2>
+                      </div>
                     </div>
-                    <div
-                      className="col-8-10"
-                      style={{ borderBottom: '1px solid rgba(0,0,0,0.1)' }}
-                    >
-                      <h2 className="center">{path_time_format}</h2>
+                    <br></br>
+                    <div className="row no-gutters" style={rowStyle}>
+                      <div className="col-2-10">
+                        <i className="fas fa-user-friends center" />
+                      </div>
+                      <div className="col-8-10">
+                        <h2 className="center">{texts.otherPassengers}</h2>
+                      </div>
                     </div>
-                  </div>
-                  <br></br>
-                  <div className="row no-gutters" style={rowStyle}>
-                    <div className="col-2-10">
-                      <i className="fas fa-user-friends center" />
-                    </div>
-                    <div className="col-8-10">
-                      <h2 className="center">{texts.otherPassengers}</h2>
-                    </div>
-                  </div>
-                  <div className="row no-gutters">
-                    <div className="col-2-10"></div>
-                    <div className="col-8-10">
-                      <>
-                        {waypoints?.map((w, i) => (
-                          <>
-                            <div
-                              key={i}
-                              className="row no-gutters"
-                              style={rowStyle}
-                            >
+                    <div className="row no-gutters">
+                      <div className="col-2-10"></div>
+                      <div className="col-8-10">
+                        <>
+                          {waypoints?.map((w, i) => (
+                            <div key={i}>
                               <div
-                                className="col-7-10"
-                                style={{
-                                  borderBottom: '1px solid rgba(0,0,0,0.1)'
-                                }}
+                                key={i}
+                                className="row no-gutters"
+                                style={rowStyle}
                               >
-                                {w?.waypoint_id === myWaypoint?.waypoint_id ? (
-                                  <h2 className="center">{texts.yourRequest}</h2>
-                                ) : (
-                                  <h2 className="center">
-                                    {w.passenger.given_name}{' '}
-                                    {w.passenger.family_name}
-                                  </h2>
-                                )}
-                                <br></br>
-                                {w.status === 'accepted' && (
-                                  <h6>{texts.labelWaypointAccepted}{w.address}</h6>
-                                )}
-                                {w.status === 'rejected' && (
-                                  <h6>{texts.labelWaypointRejected}</h6>
-                                )}
-
-                              </div>
-                              <div className="col-3-10">
-                                {is_path_owner && w.status === 'pending' && (
-                                  <>
+                                <div
+                                  className="col-7-10"
+                                  style={{
+                                    borderBottom: '1px solid rgba(0,0,0,0.1)'
+                                  }}
+                                >
+                                  {w?.waypoint_id ===
+                                  myWaypoint?.waypoint_id ? (
+                                    <h2 className="center">
+                                      {texts.yourRequest}
+                                    </h2>
+                                  ) : (
+                                    <h2 className="center">
+                                      {w.passenger.given_name}{' '}
+                                      {w.passenger.family_name}
+                                    </h2>
+                                  )}
+                                  <br></br>
+                                  {w.status === 'accepted' && (
+                                    <h6>
+                                      {texts.labelWaypointAccepted}
+                                      {w.address}
+                                    </h6>
+                                  )}
+                                  {w.status === 'rejected' && (
+                                    <h6>{texts.labelWaypointRejected}</h6>
+                                  )}
+                                </div>
+                                <div className="col-3-10">
+                                  {is_path_owner && w.status === 'pending' && (
+                                    <>
+                                      <button
+                                        disabled={!available_seats}
+                                        className="joinGroupButton"
+                                        onClick={() =>
+                                          this.handleAcceptRejectPassageRequest(
+                                            null,
+                                            true,
+                                            w.passenger_id
+                                          )
+                                        }
+                                      >
+                                        {texts.acceptRequest}
+                                      </button>
+                                      <button
+                                        className="joinGroupButton"
+                                        onClick={() =>
+                                          this.handleAcceptRejectPassageRequest(
+                                            null,
+                                            false,
+                                            w.passenger_id
+                                          )
+                                        }
+                                      >
+                                        {texts.rejectRequest}
+                                      </button>
+                                    </>
+                                  )}
+                                  {is_path_owner && w.status === 'accepted' && (
                                     <button
-                                      disabled={!available_seats}
                                       className="joinGroupButton"
                                       onClick={() =>
-                                        this.handleAcceptRejectPassageRequest(
+                                        this.handlePassengerRemoval(
                                           null,
-                                          true,
                                           w.passenger_id
                                         )
                                       }
                                     >
-                                      {texts.acceptRequest}
+                                      {texts.removePassenger}
                                     </button>
+                                  )}
+                                  {w?.waypoint_id ===
+                                    myWaypoint?.waypoint_id && (
                                     <button
                                       className="joinGroupButton"
-                                      onClick={() =>
-                                        this.handleAcceptRejectPassageRequest(
-                                          null,
-                                          false,
-                                          w.passenger_id
-                                        )
+                                      onClick={
+                                        this.handleWithdrawPassageRequest
                                       }
-                                    >
-                                      {texts.rejectRequest}
-                                    </button>
-                                  </>
-                                )}
-                                {is_path_owner && w.status === 'accepted' && (
-                                  <button
-                                    className="joinGroupButton"
-                                    onClick={() =>
-                                      this.handlePassengerRemoval(
-                                        null,
-                                        w.passenger_id
-                                      )
-                                    }
-                                  >
-                                    {texts.removePassenger}
-                                  </button>
-                                )}
-                                {w?.waypoint_id === myWaypoint?.waypoint_id && (
-                                    <button
-                                      className="joinGroupButton"
-                                      onClick={this.handleWithdrawPassageRequest}
                                     >
                                       {texts.withdrawRequest}
                                     </button>
                                   )}
+                                </div>
                               </div>
+                              <br></br>
                             </div>
-                            <br></br>
-                          </>
-                        ))}
-                      </>
+                          ))}
+                        </>
 
-                      {waypoints.length === 0 && <p>{texts.noPassengers}</p>}
-                    </div>
-                  </div>
-                  <br></br>
-                  {!is_path_owner && available_seats && selfPassengerRequestStatus === 'none' && (
-                    <div className="row no-gutters">
-                      <div className="col-2-10"></div>
-                      <div className="col-6-10">
-                        <input
-                          style={{ paddingLeft: '0px' }}
-                          type="text"
-                          placeholder={texts.requestPassage}
-                          onChange={(e) =>
-                            this.setState({
-                              ...this.state,
-                              requestPassageAtAddress: e.target.value
-                            })
-                          }
-                          ref={this.requestPassageRef}
-                        />
-                      </div>
-                      <div className="col-2-10">
-                        <button
-                          className="joinGroupButton"
-                          onClick={this.handleRequestPassage}
-                          disabled={!Boolean(this.state.requestPassageAtAddress)}
-                        >
-                          {texts.requestPassage}
-                        </button>
+                        {waypoints.length === 0 && <p>{texts.noPassengers}</p>}
                       </div>
                     </div>
-                  )}
-                  <br />
-                  <br />
-                </>) : (
+                    <br></br>
+                    {!is_path_owner &&
+                      available_seats &&
+                      selfPassengerRequestStatus === 'none' && (
+                        <div className="row no-gutters">
+                          <div className="col-2-10"></div>
+                          <div className="col-6-10">
+                            <input
+                              style={{ paddingLeft: '0px' }}
+                              type="text"
+                              placeholder={texts.requestPassage}
+                              onChange={(e) =>
+                                this.setState({
+                                  ...this.state,
+                                  requestPassageAtAddress: e.target.value
+                                })
+                              }
+                              ref={this.requestPassageRef}
+                            />
+                          </div>
+                          <div className="col-2-10">
+                            <button
+                              className="joinGroupButton"
+                              onClick={this.handleRequestPassage}
+                              disabled={
+                                !Boolean(this.state.requestPassageAtAddress)
+                              }
+                            >
+                              {texts.requestPassage}
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    <br />
+                    <br />
+                  </>
+                ) : (
                   <>
                     <Skeleton avatar active paragraph={{ rows: 5 }} />
                     <br></br>

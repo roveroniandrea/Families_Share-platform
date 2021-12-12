@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { withRouter } from 'react-router-dom'
-import Texts from '../Constants/Texts'
 import withLanguage from './LanguageContext'
 import { Skeleton } from 'antd'
 import { getCar } from '../Services/CarSharingServices'
@@ -29,10 +28,9 @@ class CarListItem extends React.Component {
   }
 
   render() {
-    const { language, history, carId } = this.props
+    const { history, carId } = this.props
     const { pathname } = history.location
     const { car, fetchedCar } = this.state
-    const texts = Texts[language].carListItem
     const route = `${pathname}/${carId}`
     return (
       <div
