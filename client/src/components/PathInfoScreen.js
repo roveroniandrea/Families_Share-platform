@@ -598,7 +598,7 @@ class PathInfoScreen extends React.Component {
                                     </h2>
                                   )}
                                   <br></br>
-                                  {w.status === 'accepted' && (
+                                  {w.status !== 'rejected' && (
                                     <h6>
                                       {texts.labelWaypointAccepted}
                                       {w.address}
