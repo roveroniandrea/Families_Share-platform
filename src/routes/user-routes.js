@@ -844,22 +844,27 @@ router.delete('/:userId/groups/:groupId', async (req, res, next) => {
     )
     await Member.deleteOne({ user_id, group_id })
 
-    const userCars = await Car.find({ owner_id: user_id }).then((userCars) => {
-      userCars.forEach(car => {
-        const pathList = Path.find({ car_id: car.car_id, group_id: group_id }).then((pathList) => {
-          pathList.forEach((path) => {
-            Waypoint.deleteMany({ path_id: path.path_id })
-          })
-        })
-        Path.deleteMany({ group_id: group_id, car_id: car.car_id })
-      })
-    })
+    const userCars = await Car.find({ owner_id: user_id })
+    const ownedPaths = [].concat(...await Promise.all(
+      userCars.map((car) =>
+        Path.find({ car_id: car.car_id, group_id: group_id })
+      )
+    ))
+    await Promise.all(
+      ownedPaths.map((p) => Waypoint.deleteMany({ path_id: p.path_id }))
+    )
+    await Promise.all(userCars.map(car => Path.deleteMany({ group_id: group_id, car_id: car.car_id })))
 
-    const groupPathList = await Path.find({ group_id: group_id }).then((groupPathList) => {
-      groupPathList.forEach(path => {
-        Waypoint.deleteMany({ path_id: path.path_id, passenger_id: user_id })
-      })
-    })
+    const groupPathList = await Path.find({ group_id: group_id })
+
+    await Promise.all(
+      groupPathList.map((path) =>
+        Waypoint.deleteMany({
+          path_id: path.path_id,
+          passenger_id: user_id
+        })
+      )
+    )
 
     res.status(200).send('User left group')
   } catch (error) {
@@ -1523,26 +1528,18 @@ router.get('/:userId/cars/:carId', (req, res, next) => {
 
 /**Updating a car */
 router.patch(
-  '/:userId/cars/:carId', childProfileUpload.single('photo'), async (req, res, next) => {
+  '/:userId/cars/:carId',
+  childProfileUpload.single('photo'),
+  async (req, res, next) => {
     if (req.user_id !== req.params.userId) {
       return res.status(401).send('Unauthorized')
     }
     const car_id = req.params.carId
-    const {
-      car_name,
-      num_seats,
-      other_info
-    } = req.body
+    const { car_name, num_seats, other_info } = req.body
     const carPatch = {
       ...req.body
     }
-    if (
-      !(
-        car_name ||
-        num_seats ||
-        other_info
-      )
-    ) {
+    if (!(car_name || num_seats || other_info)) {
       return res.status(400).send('Bad Request')
     }
     try {
