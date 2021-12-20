@@ -1255,7 +1255,8 @@ const en = {
     passengerRemovalModal: "Do you want to ban passage requests from this user?",
     removePassenger: "Remove passenger",
     labelWaypointAccepted: "With waypoint at: ",
-    labelWaypointRejected: "Request rejected"
+    labelWaypointRejected: "Request rejected",
+    openGmaps: "See route on Google Maps"
   },
   createActivityInformation: {
     link: "Link (optional)",
@@ -3951,7 +3952,8 @@ const it = {
     passengerRemovalModal: "Vuoi bloccare le richieste di passaggio da parte di questo utente?",
     removePassenger: "Rimuovi passeggero",
     labelWaypointAccepted: "Con waypoint a: ",
-    labelWaypointRejected: "Richiesta rifiutata"
+    labelWaypointRejected: "Richiesta rifiutata",
+    openGmaps: "Visualizza percorso su Google Maps"
   },
   createActivityInformation: {
     link: "Collegamento (facoltativo)",
