@@ -13,7 +13,11 @@ import OptionsModal from './OptionsModal'
 import withLanguage from './LanguageContext'
 import Texts from '../Constants/Texts'
 import Log from './Log'
-import { getFastestRoute, initAutocomplete } from '../Services/MapsService'
+import {
+  getFastestRoute,
+  initAutocomplete,
+  linkToOpenGMaps
+} from '../Services/MapsService'
 import {
   getPath,
   getCar,
@@ -314,9 +318,12 @@ class PathInfoScreen extends React.Component {
         this.directionsRenderer
       )
 
-      if(this.requestPassageRef.current){
+      if (this.requestPassageRef.current) {
         initAutocomplete(this.requestPassageRef, (addr) => {
-          this.setState({ ...this.state, displayedRequestPassageAtAddress: addr })
+          this.setState({
+            ...this.state,
+            displayedRequestPassageAtAddress: addr
+          })
           getFastestRoute(
             path.from,
             path.to,
@@ -341,6 +348,14 @@ class PathInfoScreen extends React.Component {
           window.location.reload()
         })
     }
+  }
+
+  getLinkToGmaps = () => {
+    return linkToOpenGMaps(
+      this.state.path.from,
+      this.state.path.to,
+      this.state.waypoints.map(w => w.address) || []
+    )
   }
 
   render() {
@@ -716,6 +731,21 @@ class PathInfoScreen extends React.Component {
                     <br></br>
                   </>
                 )}
+                <div className="row no-gutters">
+                  <div className="col-2-10"></div>
+                  <div className="col-8-10">
+                    <a
+                      type="button"
+                      href={this.getLinkToGmaps()}
+                      className="joinGroupButton"
+                      style={{ color: 'white' }}
+                      target="blank"
+                    >
+                      {texts.openGmaps}
+                    </a>
+                  </div>
+                </div>
+                <br />
                 <div
                   className="row no-gutters"
                   style={{
