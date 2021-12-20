@@ -7,6 +7,7 @@ import OptionsModal from "./OptionsModal";
 import withLanguage from "./LanguageContext";
 import Texts from "../Constants/Texts";
 import ConfirmDialog from "./ConfirmDialog";
+import InfoDialog from "./InfoDialog";
 import ExpandedImageModal from "./ExpandedImageModal";
 import Log from "./Log";
 
@@ -14,7 +15,8 @@ class CarProfileHeader extends React.Component {
   state = {
     optionsModalIsOpen: false,
     confirmDialogIsOpen: false,
-    imageModalIsOpen: false
+    imageModalIsOpen: false,
+    InfoDialogModalIsOpen: false
   };
 
   handleImageModalOpen = () => {
@@ -43,6 +45,10 @@ class CarProfileHeader extends React.Component {
     this.setState({ optionsModalIsOpen: true });
   };
 
+  handleInfoDialogOpen = () => {
+    this.setState({ InfoDialogModalIsOpen: true });
+  };
+
   handleDelete = () => {
     const { match, history } = this.props;
     const { profileId: userId, carId } = match.params;
@@ -53,10 +59,19 @@ class CarProfileHeader extends React.Component {
         history.goBack();
       })
       .catch(error => {
+        this.handleInfoDialogOpen();
         Log.error(error);
-        history.goBack();
+        
       });
   };
+
+
+  handleInfoDialogClose = () => {
+    const { match, history } = this.props;
+    this.setState({ confirmDialogIsOpen: false });
+    history.goBack();
+  };
+
 
   handleConfirmDialogOpen = () => {
     this.setState({ optionsModalIsOpen: false, confirmDialogIsOpen: true });
@@ -75,7 +90,8 @@ class CarProfileHeader extends React.Component {
     const {
       imageModalIsOpen,
       confirmDialogIsOpen,
-      optionsModalIsOpen
+      optionsModalIsOpen,
+      InfoDialogModalIsOpen
     } = this.state;
     const texts = Texts[language].carProfileHeader;
     const options = [
@@ -91,6 +107,11 @@ class CarProfileHeader extends React.Component {
           title={texts.confirmDialogTitle}
           handleClose={this.handleConfirmDialogClose}
           isOpen={confirmDialogIsOpen}
+        />
+        <InfoDialog
+          title={texts.infoDialogTitle}
+          handleClose={this.handleInfoDialogClose}
+          isOpen={InfoDialogModalIsOpen}
         />
         <div id="profileHeaderContainer" style={{ background }}>
           <div className="row no-gutters" id="profileHeaderOptions">
