@@ -602,7 +602,7 @@ class PathInfoScreen extends React.Component {
                                   }}
                                 >
                                   {w?.waypoint_id ===
-                                  myWaypoint?.waypoint_id ? (
+                                    myWaypoint?.waypoint_id ? (
                                     <h2 className="center">
                                       {texts.yourRequest}
                                     </h2>
@@ -668,15 +668,15 @@ class PathInfoScreen extends React.Component {
                                   )}
                                   {w?.waypoint_id ===
                                     myWaypoint?.waypoint_id && (
-                                    <button
-                                      className="joinGroupButton"
-                                      onClick={
-                                        this.handleWithdrawPassageRequest
-                                      }
-                                    >
-                                      {texts.withdrawRequest}
-                                    </button>
-                                  )}
+                                      <button
+                                        className="joinGroupButton"
+                                        onClick={
+                                          this.handleWithdrawPassageRequest
+                                        }
+                                      >
+                                        {texts.withdrawRequest}
+                                      </button>
+                                    )}
                                 </div>
                               </div>
                               <br></br>
@@ -734,15 +734,15 @@ class PathInfoScreen extends React.Component {
                 <div className="row no-gutters">
                   <div className="col-2-10"></div>
                   <div className="col-8-10">
-                    <a
-                      type="button"
-                      href={this.getLinkToGmaps()}
-                      className="joinGroupButton"
-                      style={{ color: 'white' }}
-                      target="blank"
-                    >
-                      {texts.openGmaps}
-                    </a>
+                    <button className="joinGroupButton">
+                      <a
+                        type="button"
+                        href={this.getLinkToGmaps()}
+                        style={{ color: 'white' }}
+                        target="blank"
+                      >{texts.openGmaps}
+                      </a>
+                    </button>
                   </div>
                 </div>
                 <br />
