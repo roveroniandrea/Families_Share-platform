@@ -354,7 +354,7 @@ class PathInfoScreen extends React.Component {
     return linkToOpenGMaps(
       this.state.path.from,
       this.state.path.to,
-      this.state.waypoints.map(w => w.address) || []
+      this.state.waypoints.filter(w => w.status !== 'rejected').map(w => w.address) || []
     )
   }
 
