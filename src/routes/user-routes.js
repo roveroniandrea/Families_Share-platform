@@ -1519,7 +1519,7 @@ router.get('/:userId/cars/:carId', (req, res, next) => {
     .exec()
     .then((car) => {
       if (!car) {
-        return res.status(404).send('Child not found')
+        return res.status(404).send('Car not found')
       }
       res.json(car)
     })
@@ -1556,17 +1556,16 @@ router.delete('/:userId/cars/:carId', async (req, res, next) => {
   if (req.user_id !== req.params.userId) {
     return res.status(401).send('Unauthorized')
   }
-  const car_id = req.params.carId
+  const carId = req.params.carId
   try {
-    await Car.deleteOne({ car_id })
 
-    const pathList = await Path.find({ car_id: car_id }).then((pathList) => {
-      pathList.forEach((path) => {
-        Waypoint.deleteMany({ path_id: path.path_id })
-      })
-    })
-    Path.deleteMany({ car_id: car_id })
+    const pathInfo = await Path.findOne({ car_id: carId })
 
+    if (pathInfo !== null) {
+      return res.status(403).send('Forbidden')
+    }
+
+    await Car.deleteOne({ car_id: carId })
     res.status(200).send('Car deleted')
   } catch (error) {
     next(error)
