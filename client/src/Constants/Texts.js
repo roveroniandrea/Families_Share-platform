@@ -898,7 +898,8 @@ const en = {
 
   groupNewsNavbar: {
     parents: "PARENTS",
-    children: "CHILDREN"
+    children: "CHILDREN",
+    members: "MEMBERS"
   },
   cardWithLink: {
     learnMore: "LEARN MORE"
@@ -3603,7 +3604,8 @@ const it = {
   },
   groupNewsNavbar: {
     parents: "GENITORI",
-    children: "BAMBINI"
+    children: "BAMBINI",
+    members: "MEMBRI"
   },
   cardWithLink: { learnMore: "PER SAPERNE DI PIÙ" },
   memberContact: {

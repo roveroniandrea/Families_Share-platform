@@ -320,10 +320,15 @@ router.delete('/:id', async (req, res, next) => {
     await Member.deleteMany({ group_id: id })
     await Group_Settings.deleteOne({ group_id: id })
     await Image.deleteMany({ owner_type: 'group', owner_id: id })
-    let pathsList = await Path.find({ group_id: id })
-    pathsList.forEach((path) => {
-      Waypoint.deleteMany({ path_id: path.path_id })
-    })
+    const groupPathList = await Path.find({ group_id: id })
+    await Promise.all(
+      groupPathList.map((path) =>
+        Waypoint.deleteMany({
+          path_id: path.path_id,
+          passenger_id: user_id
+        })
+      )
+    )
     await Path.deleteMany({ group_id: id })
     res.status(200).send('Group was deleted')
   } catch (error) {
@@ -595,33 +600,28 @@ router.delete('/:groupId/members/:memberId', async (req, res, next) => {
 
     await Member.deleteOne({ group_id, user_id: member_id })
 
-    const userCars = await Car.find({ owner_id: member_id }).then(
-      (userCars) => {
-        userCars.forEach((car) => {
-          const pathList = Path.find({
-            car_id: car.car_id,
-            group_id: group_id
-          }).then((pathList) => {
-            pathList.forEach((path) => {
-              Waypoint.deleteMany({ path_id: path.path_id })
-            })
-          })
-          Path.deleteMany({ group_id: group_id, car_id: car.car_id })
-        })
-      }
-    )
 
-    const groupPathList = await Path.find({ group_id: group_id }).then(
-      (groupPathList) => {
-        groupPathList.forEach((path) => {
-          Waypoint.deleteMany({
-            path_id: path.path_id,
-            passenger_id: member_id
-          })
-        })
-      }
+    const userCars = await Car.find({ owner_id: member_id })
+    const ownedPaths = [].concat(...await Promise.all(
+      userCars.map((car) =>
+        Path.find({ car_id: car.car_id, group_id: group_id })
+      )
+    ))
+    await Promise.all(
+      ownedPaths.map((p) => Waypoint.deleteMany({ path_id: p.path_id }))
     )
+    await Promise.all(userCars.map(car => Path.deleteMany({ group_id: group_id, car_id: car.car_id })))
 
+    const groupPathList = await Path.find({ group_id: group_id })
+    await Promise.all(
+      groupPathList.map((path) =>
+        Waypoint.deleteMany({
+          path_id: path.path_id,
+          passenger_id: member_id
+        })
+      )
+    )
+    
     await nh.removeMemberNotification(member_id, group_id)
     res.status(200).send('User removed from group')
   } catch (error) {
