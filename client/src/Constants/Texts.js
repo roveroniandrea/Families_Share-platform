@@ -1259,7 +1259,8 @@ const en = {
     removePassenger: "Remove passenger",
     labelWaypointAccepted: "With waypoint at: ",
     labelWaypointRejected: "Request rejected",
-    openGmaps: "See route on Google Maps"
+    openGmaps: "See route on Google Maps",
+    pathNotExists: "Path does not exist",
   },
   createActivityInformation: {
     link: "Link (optional)",
@@ -3959,7 +3960,8 @@ const it = {
     removePassenger: "Rimuovi passeggero",
     labelWaypointAccepted: "Con waypoint a: ",
     labelWaypointRejected: "Richiesta rifiutata",
-    openGmaps: "Visualizza percorso su Google Maps"
+    openGmaps: "Visualizza percorso su Google Maps",
+    pathNotExists: "Il percorso non esiste",
   },
   createActivityInformation: {
     link: "Collegamento (facoltativo)",

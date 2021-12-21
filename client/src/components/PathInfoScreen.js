@@ -133,7 +133,8 @@ class PathInfoScreen extends React.Component {
     acceptRequestStep: 2,
     rejectRequestStep: 2,
     passengerRemovalStep: 2,
-    targetPassengerId: ''
+    targetPassengerId: '',
+    pathExists: true
   }
 
   constructor() {
@@ -329,7 +330,9 @@ class PathInfoScreen extends React.Component {
             path.to,
             [...not_rejected_waypoints.map((w) => w.address), addr],
             this.directionsRenderer
-          )
+          ).then((res) => {
+            this.setState({ ...this.state, pathExists: res.exists })
+          })
         })
       }
     }
@@ -354,7 +357,9 @@ class PathInfoScreen extends React.Component {
     return linkToOpenGMaps(
       this.state.path.from,
       this.state.path.to,
-      this.state.waypoints.filter(w => w.status !== 'rejected').map(w => w.address) || []
+      this.state.waypoints
+        .filter((w) => w.status !== 'rejected')
+        .map((w) => w.address) || []
     )
   }
 
@@ -366,7 +371,8 @@ class PathInfoScreen extends React.Component {
       fetchedPathData,
       color,
       waypoints,
-      available_seats
+      available_seats,
+      pathExists
     } = this.state
     const texts = Texts[language].PathInfoScreen
     const userId = JSON.parse(localStorage.getItem('user')).id
@@ -602,7 +608,7 @@ class PathInfoScreen extends React.Component {
                                   }}
                                 >
                                   {w?.waypoint_id ===
-                                    myWaypoint?.waypoint_id ? (
+                                  myWaypoint?.waypoint_id ? (
                                     <h2 className="center">
                                       {texts.yourRequest}
                                     </h2>
@@ -668,15 +674,15 @@ class PathInfoScreen extends React.Component {
                                   )}
                                   {w?.waypoint_id ===
                                     myWaypoint?.waypoint_id && (
-                                      <button
-                                        className="joinGroupButton"
-                                        onClick={
-                                          this.handleWithdrawPassageRequest
-                                        }
-                                      >
-                                        {texts.withdrawRequest}
-                                      </button>
-                                    )}
+                                    <button
+                                      className="joinGroupButton"
+                                      onClick={
+                                        this.handleWithdrawPassageRequest
+                                      }
+                                    >
+                                      {texts.withdrawRequest}
+                                    </button>
+                                  )}
                                 </div>
                               </div>
                               <br></br>
@@ -691,34 +697,46 @@ class PathInfoScreen extends React.Component {
                     {!is_path_owner &&
                       available_seats &&
                       selfPassengerRequestStatus === 'none' && (
-                        <div className="row no-gutters">
-                          <div className="col-2-10"></div>
-                          <div className="col-6-10">
-                            <input
-                              style={{ paddingLeft: '0px' }}
-                              type="text"
-                              placeholder={texts.requestPassage}
-                              onChange={(e) =>
-                                this.setState({
-                                  ...this.state,
-                                  requestPassageAtAddress: e.target.value
-                                })
-                              }
-                              ref={this.requestPassageRef}
-                            />
+                        <>
+                          <div className="row no-gutters">
+                            <div className="col-2-10"></div>
+                            <div className="col-6-10">
+                              <input
+                                style={{ paddingLeft: '0px' }}
+                                type="text"
+                                placeholder={texts.requestPassage}
+                                onChange={(e) =>
+                                  this.setState({
+                                    ...this.state,
+                                    requestPassageAtAddress: e.target.value
+                                  })
+                                }
+                                ref={this.requestPassageRef}
+                              />
+                            </div>
+                            <div className="col-2-10">
+                              <button
+                                className="joinGroupButton"
+                                onClick={this.handleRequestPassage}
+                                disabled={
+                                  !Boolean(this.state.requestPassageAtAddress) || !this.state.pathExists
+                                }
+                              >
+                                {texts.requestPassage}
+                              </button>
+                            </div>
                           </div>
-                          <div className="col-2-10">
-                            <button
-                              className="joinGroupButton"
-                              onClick={this.handleRequestPassage}
-                              disabled={
-                                !Boolean(this.state.requestPassageAtAddress)
-                              }
-                            >
-                              {texts.requestPassage}
-                            </button>
-                          </div>
-                        </div>
+                          {!pathExists && (
+                            <div className="row no-gutters" style={rowStyle}>
+                              <div className="col-2-10"></div>
+                              <div className="col-8-10">
+                                <h4 style={{ color: 'red' }}>
+                                  {texts.pathNotExists}
+                                </h4>
+                              </div>
+                            </div>
+                          )}
+                        </>
                       )}
                     <br />
                     <br />
@@ -734,13 +752,17 @@ class PathInfoScreen extends React.Component {
                 <div className="row no-gutters">
                   <div className="col-2-10"></div>
                   <div className="col-8-10">
-                    <button className="joinGroupButton" style={{ marginLeft: '0px' }}>
+                    <button
+                      className="joinGroupButton"
+                      style={{ marginLeft: '0px' }}
+                    >
                       <a
                         type="button"
                         href={this.getLinkToGmaps()}
                         style={{ color: 'white' }}
                         target="blank"
-                      >{texts.openGmaps}
+                      >
+                        {texts.openGmaps}
                       </a>
                     </button>
                   </div>
