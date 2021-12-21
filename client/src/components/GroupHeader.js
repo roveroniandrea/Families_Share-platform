@@ -86,14 +86,17 @@ class GroupHeader extends React.Component {
             <div className="col-5-10" />
             <div className="col-1-10">
               {userIsAdmin ? (
-                <button
-                  type="button"
-                  className="transparentButton center"
-                  onClick={this.handleConfirmDialogOpen}
-                >
-                  <i className="fas fa-trash-alt" />
-                </button>
-              ) : (
+                !is_car_sharing ? (
+                  <button
+                    type="button"
+                    className="transparentButton center"
+                    onClick={this.handleManagement}
+                  >
+                    <i className="fas fa-chart-bar" />
+                  </button>
+                ) : (
+                  <div />
+                )) : (
                 <div />
               )}
             </div>
@@ -102,9 +105,9 @@ class GroupHeader extends React.Component {
                 <button
                   type="button"
                   className="transparentButton center"
-                  onClick={this.handleManagement}
+                  onClick={this.handleConfirmDialogOpen}
                 >
-                  <i className="fas fa-chart-bar" />
+                  <i className="fas fa-trash-alt" />
                 </button>
               ) : (
                 <div />
@@ -124,7 +127,7 @@ class GroupHeader extends React.Component {
               )}
             </div>
           </div>
-          <h1>{groupName}{is_car_sharing? texts.car_sharing: ''}</h1>
+          <h1>{groupName}{is_car_sharing ? texts.car_sharing : ''}</h1>
           <img src={groupLogo} alt="Group Logo" className="groupImage" />
         </div>
       </React.Fragment>

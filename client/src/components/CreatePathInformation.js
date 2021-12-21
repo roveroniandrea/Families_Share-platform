@@ -186,7 +186,7 @@ class CreatePathInformation extends React.Component {
             <div className="row no-gutters">
               <div className="col-2-10"></div>
               <div className="col-8-10">
-                <button className="joinGroupButton">
+                <button className="joinGroupButton" style={{ marginLeft: '0px' }}>
                   <a
                     type="button"
                     href={this.getLinkToGmaps()}
