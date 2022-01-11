@@ -178,9 +178,41 @@ class GroupInfo extends React.Component {
       disabled = true;
     }
     return !disabled ? (
-      <button type="button" onClick={handleFunc} className="joinGroupButton">
-        {text}
-      </button>
+      <div>
+        <button type="button" onClick={handleFunc} className="joinGroupButton">
+          {text}
+        </button>
+      </div>
+    ) : null;
+  };
+
+  renderShareButton = () => {
+    const { language } = this.props;
+    const { groupAccepted, userAccepted } = this.state;
+    const texts = Texts[language].groupInfo;
+    let disabled = false;
+    let text = texts.shareGroup;
+    let handleFunc;
+    if (userAccepted) {
+      if (groupAccepted) {
+        handleFunc = () => {
+          navigator.clipboard.writeText(window.location.href);
+          let button = document.getElementById("shareGroup")
+          button.innerHTML = texts.linkCopied;
+          button.disabled = true
+        };
+      } else {
+        disabled = true;
+      }
+    } else {
+      disabled = true;
+    }
+    return !disabled ? (
+      <div>
+        <button type="button" id="shareGroup" onClick={handleFunc} className="joinGroupButton">
+          {text}
+        </button>
+      </div>
     ) : null;
   };
 
@@ -192,14 +224,15 @@ class GroupInfo extends React.Component {
       userIsAdmin,
       groupAccepted,
       userAccepted,
-      confirmIsOpen
+      confirmIsOpen,
     } = this.state;
     const {
       name: groupName,
       group_id: groupId,
       background: groupBackground,
       description: groupInfo,
-      contact_info: contactInfo
+      contact_info: contactInfo,
+      is_car_sharing
     } = group;
     const texts = Texts[language].groupInfo;
     return fetchedGroupInfo ? (
@@ -210,6 +243,7 @@ class GroupInfo extends React.Component {
           groupLogo={path(group, ["image", "path"])}
           groupBackground={groupBackground}
           userIsAdmin={userIsAdmin}
+          is_car_sharing={Boolean(is_car_sharing)}
         />
         <div id="groupInfoMainContainer">
           <GroupAbout
@@ -238,6 +272,7 @@ class GroupInfo extends React.Component {
             </CopyToClipboard>
           )}
           {this.renderJoinButton()}
+          {this.renderShareButton()}
           <ConfirmDialog
             isOpen={confirmIsOpen}
             title={texts.confirm}

@@ -47,6 +47,11 @@ const groupSchema = new mongoose.Schema({
   contact_type: {
     type: String,
     required: true
+  },
+  /** Boolean to make the group a car sharing group */
+  is_car_sharing: {
+    type: Boolean,
+    required: false
   }
 }, { timestamps: true, toJSON: { virtuals: true } })
 

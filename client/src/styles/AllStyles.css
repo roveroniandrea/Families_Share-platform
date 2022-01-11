@@ -541,7 +541,7 @@
 }
 /*CHILD PROFILE SCREEN END*/
 
-/*CREATE ACTIVITY SCREEN*/
+/*CREATE ACTIVITY SCREEN and PATH*/
 #createActivityInformationContainer img {
   width: 2rem;
   height: 2rem;
@@ -558,6 +558,22 @@
   color: rgba(0, 0, 0, 0.54);
 }
 #createActivityInformationContainer input {
+  width: 100%;
+  height: 5rem;
+  background-color: transparent;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: none;
+  outline: none;
+  padding-left: 1rem;
+  font-size: 1.6rem;
+
+  line-height: 5rem;
+  color: rgba(0, 0, 0, 0.9);
+}
+#createActivityInformationContainer select {
   width: 100%;
   height: 5rem;
   background-color: transparent;
@@ -1760,6 +1776,12 @@
   border-radius: 3px;
   border: none;
 }
+.joinGroupButton:disabled {
+  opacity: 0.6;
+  cursor:not-allowed;
+}
+
+
 #instructionContainer {
   min-height: 8.8rem;
 }
@@ -3281,4 +3303,40 @@ a:active {
 .ReactTable .rt-table .rt-thead .rt-tr .rt-th {
   height: 20;
   padding: 0;
+}
+
+/**Add car*/
+.addCarPrompt {
+  width: 100vw;
+  height: 8rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "Roboto", sans-serif;
+  font-size: 1.6rem;
+}
+
+#pathHeaderContainer {
+  height: 5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+#pathHeaderOptions {
+  width: 100%;
+  background-color: Transparent;
+  top: 0;
+}
+
+#pathHeaderOptions button {
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: #ffffff;
+  height: 5rem;
+  width: 5rem;
+  padding: 0 0;
+}
+#pathHeaderOptions i {
+  font-size: 2rem;
+  color: #ffffff;
 }

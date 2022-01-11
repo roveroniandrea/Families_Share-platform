@@ -183,6 +183,10 @@ const en = {
     addChildPrompt:
       "You haven't added any children yet. Click the child icon to add a new child"
   },
+  profileCars: {
+    addCarPrompt:
+      "You have't added any car yet. Click the car icon to add a new car"
+  },
   myCalendarScreen: {
     backNavTitle: "My Calendar"
   },
@@ -837,15 +841,23 @@ const en = {
     newPlan: "Advanced planning",
     newActivity: "New activity"
   },
+  groupSharedRoutesScreen: {
+    routesHeader: "Shared routes of the group",
+  },
   activityListItem: {
     every: "Every",
     of: "of"
+  },
+  pathListItem: {
+    at: "at",
+    destination: "Destination"
   },
   groupListItem: {
     open: "Participation to the group is open.",
     closed: "Participation to the group is closed.",
     members: "Members",
-    kids: "Kids"
+    kids: "Kids",
+    car_sharing: " (Car sharing group)"
   },
   groupInfo: {
     contact: "CONTACT GROUP",
@@ -854,12 +866,15 @@ const en = {
     startGuideInfo: "Look up the 7-step start-up guide",
     join: "JOIN GROUP",
     leave: "LEAVE GROUP",
+    shareGroup: "SHARE GROUP",
+    linkCopied: "LINK COPIED",
     pending: "CANCEL REQUEST",
     confirm: "Are you sure you want to leave the group?"
   },
   groupNavbar: {
     chatTab: "Chat",
     activitiesTab: "Activities",
+    routesTab: "Shared routes",
     membersTab: "Members",
     infoTab: "About",
     calendarTab: "Calendar"
@@ -883,7 +898,8 @@ const en = {
 
   groupNewsNavbar: {
     parents: "PARENTS",
-    children: "CHILDREN"
+    children: "CHILDREN",
+    members: "MEMBERS"
   },
   cardWithLink: {
     learnMore: "LEARN MORE"
@@ -968,6 +984,7 @@ const en = {
     },
     contactInfo: "Please fill your contact information",
     name: "Name",
+    is_car_sharing: "Is a car sharing group?",
     description: "Description",
     visibleGroup: "Others can find my group",
     invisibleGroup: "Others cannot find my group",
@@ -979,7 +996,8 @@ const en = {
   profileNavbar: {
     framily: "FRAMILY",
     info: "INFO",
-    children: "CHILDREN"
+    children: "CHILDREN",
+    cars: "CARS"
   },
   profileInfo: {
     adress: "Address",
@@ -1059,7 +1077,8 @@ const en = {
     confirmDialogTitle: "Are you sure you want to delete your reply?"
   },
   groupHeader: {
-    confirmDialogTitle: "Are you sure you want to delete the group?"
+    confirmDialogTitle: "Are you sure you want to delete the group?",
+    car_sharing: " (Car Sharing group)"
   },
   announcementHeader: {
     confirmDialogTitle: "Are you sure you want to delete this?"
@@ -1130,6 +1149,47 @@ const en = {
     unspecified: "Unspecified",
     requiredErr: "Please fill out this field."
   },
+  createCarScreen: {
+    backNavTitle: "Add car",
+    save: "SAVE",
+    car_name: "Car model",
+    num_seats: "Number of seats",
+    additional: "Add specific information",
+    add: "ADD",
+    edit: "EDIT",
+    example: "Some infos",
+    acceptTerms:
+      "I accept the Terms of Use and the Policy in regards to the treatment " +
+      "and use of my data.",
+    acceptTermsErr: "Please accept the terms",
+    unspecified: "Unspecified",
+    requiredErr: "Please fill out this field."
+  },
+  carProfileInfo: {
+    car_name: "Car Name",
+    num_seats: "Seats Number",
+    otherInfo: "Other info",
+    confirmDialogTitle: "Are you sure you want to delete this car?"
+  },
+  carProfileHeader: {
+    delete: "Delete car",
+    confirmDialogTitle:
+      "Are you sure you want to delete the car and remove all its data?",
+    infoDialogTitle:
+      "The car is in at least one route. It is not possible to delete it"
+  },
+  editCarProfileScreen: {
+    backNavTitle: "Edit car",
+    save: "SAVE",
+    name: "Name",
+    seats: "Seats",
+    additional: "Add specific information",
+    example: "e.g., more details about the vehicle",
+    add: "EDIT",
+    unspecified: "Unspecified",
+    requiredErrr: "Please fill out this field."
+  },
+
   additionalInfoScreen: {
     backNavTitle: "Information",
     save: "SAVE",
@@ -1140,8 +1200,21 @@ const en = {
       "I acknowledge that this information will be disclosed with the group members " +
       "directly involved in the childcare activities."
   },
+
+  CaradditionalInfoScreen: {
+    backNavTitle: "Information",
+    save: "SAVE",
+    others: "Others",
+    acceptTerms:
+      "I acknowledge that this information will be disclosed with the group members " +
+      "directly involved in the childcare activities."
+  },
+
   createActivityScreen: {
     backNavTitle: "New activity"
+  },
+  createPathScreen: {
+    backNavTitle: "New path"
   },
   createActivityStepper: {
     pendingMessage: "The activity is pending confirmation from an admin",
@@ -1151,12 +1224,64 @@ const en = {
     save: "Save",
     stepLabels: ["Information", "Dates", "Timeslots"]
   },
+  createPathStepper: {
+    continue: "Continue",
+    cancel: "Cancel",
+    finish: "Create",
+    save: "Save",
+    stepLabels: ["Information", "Date", "Timeslot"]
+  },
+  PathInfoScreen: {
+    date: "Date",
+    car: "Car",
+    start: "Start",
+    destination: "Destination",
+    color: "Color",
+    time: "Departure",
+    backNavTitle: "Path Info",
+    delete: "Delete Path",
+    confirmDialogTitle: "Are you sure you want to delete the car and remove all its data?",
+    stepLabels: ["Information", "Date", "Timeslot"],
+    otherPassengers: "Other passengers",
+    noPassengers: "No passengers",
+    requestPassage: "Request passage",
+    withdrawRequest: "Withdraw passage request",
+    yourRequest: "Yourself",
+    confirmWithdraw: "Do you want to withdraw your passage request?",
+    passenger: "Passenger",
+    requestStatus: "Request status",
+    action: "Action",
+    acceptRequest: "Accept request",
+    rejectRequest: "Reject request",
+    confirmReject: "Do you want to reject the passage request?",
+    confirmAccept: "Do you want to accept the passage request?",
+    passengerRemovalModal: "Do you want to ban passage requests from this user?",
+    removePassenger: "Remove passenger",
+    labelWaypointAccepted: "With waypoint at: ",
+    labelWaypointRejected: "Request rejected",
+    openGmaps: "See route on Google Maps",
+    pathNotExists: "Path does not exist",
+  },
   createActivityInformation: {
     link: "Link (optional)",
     color: "Color of the activity",
     description: "Description (optional)",
     name: "Name of the activity",
     location: "Location (optional)"
+  },
+  createPathInformation: {
+    color: "Color of the path",
+    from: "Start point of the path",
+    to: "End point of the path",
+    car: "Car to use",
+    pathNotExists: "Path does not exist",
+    openGmaps: "See route on Google Maps"
+  },
+  createPathDates: {
+    header: "Select one day",
+  },
+  createPathTimeslots: {
+    header: "Add the start time of the path",
   },
   createActivityDates: {
     header: "Select one or more days",
@@ -2783,6 +2908,10 @@ const it = {
     addChildPrompt:
       "Non hai ancora aggiunto figli. Fare clic sull'icona figlio per aggiungere un nuovo figlio"
   },
+  profileCars: {
+    addCarPrompt:
+      "Non hai ancora aggiunto macchine. Fare clic sull'icona macchina per aggiungere una nuova macchina"
+  },
   myCalendarScreen: {
     backNavTitle: "Il mio calendario"
   },
@@ -3420,14 +3549,22 @@ const it = {
     newPlan: "Pianificazione avanzata",
     newActivity: "Nuova attività"
   },
+  groupSharedRoutesScreen: {
+    routesHeader: "Percorsi condivisi del gruppo",
+  },
   activityListItem: {
     every: "Ogni",
     of: "di"
+  },
+  pathListItem: {
+    at: "alle",
+    destination: "Destinazione"
   },
   groupListItem: {
     open: "Gruppo aperto: tutti possono richiedere di partecipare al gruppo",
     closed: "Gruppo chiuso: si può partecipare solo su invito",
     members: "Membri",
+    car_sharing: " (Gruppo di car sharing)",
     kids: "Bambini"
   },
   groupInfo: {
@@ -3437,12 +3574,15 @@ const it = {
     startGuideInfo: "Segui i sette passi per avviare al meglio il gruppo",
     join: "UNISCITI AL GRUPPO",
     leave: "ABBANDONA IL GRUPPO",
+    shareGroup: "CONDIVIDI IL GRUPPO",
+    linkCopied: "LINK COPIATO",
     pending: "CANCELLA LA RICHIESTA",
     confirm: "Sei sicuro/a di voler abbandonare il gruppo?"
   },
   groupNavbar: {
     chatTab: "Messaggi",
     activitiesTab: "Attività  ",
+    routesTab: "Percorsi condivisi",
     membersTab: "Membri",
     infoTab: "Info",
     calendarTab: "Calendario"
@@ -3465,7 +3605,8 @@ const it = {
   },
   groupNewsNavbar: {
     parents: "GENITORI",
-    children: "BAMBINI"
+    children: "BAMBINI",
+    members: "MEMBRI"
   },
   cardWithLink: { learnMore: "PER SAPERNE DI PIÙ" },
   memberContact: {
@@ -3544,6 +3685,7 @@ const it = {
       "Invita persone"
     ],
     name: "Nome",
+    is_car_sharing: "E' un gruppo di car sharing?",
     description: "Descrizione",
     visibleGroup: "Altri utenti possono trovare il gruppo",
     invisibleGroup: "Altri utenti NON possono trovare il gruppo",
@@ -3555,7 +3697,8 @@ const it = {
   profileNavbar: {
     framily: "AMICI",
     info: "INFO",
-    children: "BAMBINI"
+    children: "BAMBINI",
+    cars: "MACCHINE"
   },
   profileInfo: {
     adress: "Indirizzo",
@@ -3635,7 +3778,8 @@ const it = {
     confirmDialogTitle: "Confermi di voler eliminare la tua risposta?"
   },
   groupHeader: {
-    confirmDialogTitle: "Confermi di voler eliminare il gruppo?"
+    confirmDialogTitle: "Confermi di voler eliminare il gruppo?",
+    car_sharing: " (Gruppo di car sharing)"
   },
   announcementHeader: {
     confirmDialogTitle: "Confermi l'eliminazione?"
@@ -3706,6 +3850,48 @@ const it = {
     unspecified: "Non specificato",
     requiredErr: "Perfavore compila questo campo."
   },
+  createCarScreen: {
+    backNavTitle: "Aggiungi macchina",
+    save: "SALVA",
+    car_name: "Modello auto",
+    num_seats: "Numero di posti",
+    additional: "Aggiungi informazioni",
+    add: "AGGIUNGI",
+    edit: "MODIFICA",
+    example: "Altre info",
+    acceptTerms:
+      "I accept the Terms of Use and the Policy in regards to the treatment " +
+      "and use of my data.",
+    acceptTermsErr: "Per favore accetta i termini",
+    unspecified: "Non specificato",
+    requiredErr: "Per favore compila il form."
+  },
+  carProfileInfo: {
+    car_name: "Nome Macchina",
+    num_seats: "Numbero di posti",
+    otherInfo: "Altre informazioni",
+    confirmDialogTitle: "Sei sicuro di voler eliminare questa macchina?"
+  },
+  carProfileHeader: {
+    delete: "Cancella macchina",
+    confirmDialogTitle:
+      "Sei sicuro di voler rimovere la macchina ?",
+    infoDialogTitle:
+      "La macchina è presente in almeno un percorso. Non è possibile eliminarla"
+  },
+
+  editCarProfileScreen: {
+    backNavTitle: "Modifica macchina",
+    save: "SALVA",
+    name: "Nome Auto",
+    seats: "Posti",
+    additional: "Aggiungi informazioni specifiche",
+    example: "e.g., Altri dettagli sul tuo veicolo",
+    add: "MODIFICA",
+    unspecified: "Non specificato",
+    requiredErrr: "Per favore compila questo campo."
+  },
+
   additionalInfoScreen: {
     backNavTitle: "Informazioni",
     save: "SALVA",
@@ -3715,8 +3901,19 @@ const it = {
     acceptTerms:
       'Acconsento che queste informazioni siano condivise con i membri del gruppo direttamente coinvolti nelle attività di cura dei figli ("childcare") '
   },
+
+  CaradditionalInfoScreen: {
+    backNavTitle: "Informazioni",
+    save: "SALVA",
+    others: "Altri",
+    acceptTerms:
+      'Acconsento che queste informazioni siano condivise con i membri del gruppo direttamente coinvolti nelle attività di cura dei figli ("childcare") '
+  },
   createActivityScreen: {
     backNavTitle: "Nuova attività"
+  },
+  createPathScreen: {
+    backNavTitle: "Nuovo percorso"
   },
   createPlanScreen: { backNavTitle: "Nuova Plan" },
   createActivityStepper: {
@@ -3728,12 +3925,64 @@ const it = {
     save: "Salva",
     stepLabels: ["Informazioni", "Date", "Orari"]
   },
+  createPathStepper: {
+    continue: "Continua",
+    cancel: "Cancella",
+    finish: "Crea",
+    save: "Salva",
+    stepLabels: ["Informazioni", "Data", "Orario"]
+  },
+  PathInfoScreen: {
+    backNavTitle: "Informazioni Percorso",
+    date: "Data",
+    car: "Macchina",
+    start: "Partenza",
+    destination: "Destinazione",
+    color: "Colore",
+    time: "Orario",
+    delete: "Cancella Percorso",
+    confirmDialogTitle: "Sei sicuro di voler cancellare il percorso ?",
+    stepLabels: ["Informazioni", "Data", "Orario"],
+    otherPassengers: "Altri passeggeri",
+    noPassengers: "Nessun passeggero",
+    requestPassage: "Richiedi passaggio",
+    withdrawRequest: "Ritira richiesta di passaggio",
+    yourRequest: "Te stesso",
+    confirmWithdraw: "Vuoi annullare la richiesta di passaggio?",
+    passenger: "Passeggero",
+    requestStatus: "Status richiesta",
+    action: "Azione",
+    acceptRequest: "Accetta richiesta",
+    rejectRequest: "Rifiuta richiesta",
+    confirmReject: "Vuoi rifiutare la richiesta di passaggio?",
+    confirmAccept: "Vuoi accettare la richiesta di passaggio?",
+    passengerRemovalModal: "Vuoi bloccare le richieste di passaggio da parte di questo utente?",
+    removePassenger: "Rimuovi passeggero",
+    labelWaypointAccepted: "Con waypoint a: ",
+    labelWaypointRejected: "Richiesta rifiutata",
+    openGmaps: "Visualizza percorso su Google Maps",
+    pathNotExists: "Il percorso non esiste",
+  },
   createActivityInformation: {
     link: "Collegamento (facoltativo)",
     color: "Colore dell'attività",
     description: "Descrizione (facoltativo)",
     name: "Titolo dell'attività",
     location: "Posizione (facoltativo)"
+  },
+  createPathInformation: {
+    color: "Colore del percorso",
+    from: "Inizio del percorso",
+    to: "Fine del percorso",
+    car: "Macchina da utilizzare",
+    pathNotExists: "Il percorso non esiste",
+    openGmaps: "Visualizza percorso su Google Maps"
+  },
+  createPathDates: {
+    header: "Seleziona un giorno",
+  },
+  createPathTimeslots: {
+    header: "Aggiungi l'orario di inizio del percorso",
   },
   createActivityDates: {
     header: "Seleziona uno o più giorni",
@@ -6866,31 +7115,31 @@ const fr = {
         <h1>Politique de confidentialité de Families_Share</h1>
         <p>
           Cette politique de confidentialité a pour but de vous aider à comprendre quelles informations nous recueillons, pourquoi nous les collectons et comment vous pouvez mettre à jour, gérer, exporter et supprimer vos informations.
-            </p>
+        </p>
         <ol type="i">
           <li>
             <h2>Politique de confidentialité de Families_Share</h2>
             <p>
               Bienvenue sur le site web (le « site ») de Families_Share. Ce Site a été développé pour fournir des informations sur les services de Families_Share. L'application Families_Share, avec le site web, sont les « services » pour les visiteurs et les utilisateurs (« vous » et/ou « votre »).
-                </p>
+            </p>
             <p>
               Cette politique de confidentialité définit la politique de Families_Share en ce qui concerne vos informations, y compris les informations qui vous identifient ou pourraient vous identifier personnellement (appelées « informations personnelles identifiables » aux États-Unis ou « données personnelles » dans l'Union européenne, que nous appellerons « données personnelles ») et d'autres informations collectées auprès des visiteurs et utilisateurs des Services.
               Veuillez lire attentivement cette politique de confidentialité afin que vous compreniez comment nous traiterons vos données.  En utilisant l'un de nos services, vous confirmez avoir lu, compris et accepté cette politique de confidentialité.  Si vous n'acceptez pas cette politique, veuillez ne pas utiliser les services.  Si vous avez des questions, veuillez nous envoyer un courriel à
-                  <bold> contact@families-share.eu </bold>
+              <bold> contact@families-share.eu </bold>
             </p>
           </li>
           <li>
             <h2>Qui sommes-nous ?</h2>
             <p>
               Nous sommes ViLabs, le partenaire du projet de l'UE, Families_Share, responsable pour le développement et la maintenance du site Web et des applications Families_Share et des services correspondants, et aussi responsable du traitement et du contrôle des données du dit projet.
-                  ViLabs CY (“Versatile Innovations”), ECASTICA Business centre 6, Vasili Vryonides str. Gala Court Chambers, Limassol, Chypre t. +30 2310 365 188, +35 725 760 967, <bold> info@vilabs.eu </bold>.Nous appelons cette équipe « ViLabs », « nous » et/ou « notre ».
-                </p>
+              ViLabs CY (“Versatile Innovations”), ECASTICA Business centre 6, Vasili Vryonides str. Gala Court Chambers, Limassol, Chypre t. +30 2310 365 188, +35 725 760 967, <bold> info@vilabs.eu </bold>.Nous appelons cette équipe « ViLabs », « nous » et/ou « notre ».
+            </p>
           </li>
           <li>
             <h2>Notre statut juridique et les lois applicables en matière de confidentialité des données</h2>
             <p>
               ViLabs assume le rôle de responsable du traitement et du contrôle des données en vertu de la législation de l'UE. Toutes les données à caractère personnel sont collectées, utilisées, stockées et traitées en pleine conformité avec le règlement général sur la protection des données (règlement (UE) 679/2016 également connu sous le nom de « RGPD ») et la directive 2002/58/CE du Parlement européen (directive sur la vie privée et les communications électroniques). Seuls les chercheurs Vilabs et les administrateurs système auront accès au répertoire de données. Les services Families_Share sont hébergés sur des serveurs situés dans l'Union européenne et fournis par Contabo (https://contabo.com/).
-                </p>
+            </p>
           </li>
           <li>
             <h2>Informations que nous recueillons</h2>
@@ -6899,61 +7148,61 @@ const fr = {
 
               Nous recueillons des données personnelles auprès de vous lorsque vous fournissez volontairement de telles informations, par exemple lorsque vous nous contactez pour des demandes de renseignements, vous vous inscrivez pour accéder aux services ou vous utilisez certains des services.
 
-                </p>
+            </p>
             <p>
               En particulier, dans la plate-forme Families_Share sont recueillies des informations sur les parents, les enfants et les groupes de garde d'enfants.
-                </p>
+            </p>
             <ul>
               <li>
                 <p>
                   &bull; Concernant les parents : prénom, nom de famille, numéro de téléphone, adresse, e-mail et photo/avatar.
-                    </p>
+                </p>
               </li>
               <li>
                 <p>
                   &bull; Concernant les enfants : les informations sont collectées uniquement par ceux qui exercent la responsabilité parentale, et ils ont le droit de fournir les informations pertinentes, conformément à la législation applicable. Ces informations sont : nom, date de naissance, sexe, photo/avatar et autres informations directement spécifiées par les parents (allergies, maladies, régime alimentaire spécifique, besoins spéciaux, etc.).
-                    </p>
+                </p>
               </li>
               <li>
                 <p>
                   &bull; Concernant les groupes de garde d'enfants : le nom du groupe, la biographie du groupe, l'emplacement de la garde d'enfants, les périodes de garde d'enfants et les messages du flux de groupe (texte et images).
-                    </p>
+                </p>
               </li>
               <li>
                 <p>
                   &bull; Détails techniques ou autres concernant tout appareil que vous utilisez pour accéder aux services, y compris l'identifiant unique de périphérique (UDID) ou équivalent de l'appareil ; votre système d'exploitation, type de navigateur ou autre logiciel ; les détails de votre matériel ou de votre appareil mobile (y compris le type et le numéro de votre appareil mobile et les informations de votre opérateur mobile), s'il y a lieu ; ou d'autres détails techniques.
-                    </p>
+                </p>
               </li>
               <li>
                 <p>
                   &bull; Détails de votre utilisation de nos services : informations statistiques sur le moment et la façon dont vous utilisez les services.
-                    </p>
+                </p>
               </li>
             </ul>
             <p>
               En nous fournissant volontairement des données personnelles, vous consentez à ce que nous les utilisions dans le cadre des services et conformément à la présente politique de confidentialité (art. 6, par. 1, let. a, RGPD). Accessoirement, le traitement des données personnelles doit également être conforme à la loi lorsqu'il est nécessaire à l'exécution des services (art. 6, par. 1, let. b, RGPD). En ce qui concerne les catégories particulières de données personnelles, vous donnez votre consentement explicite au traitement de ces données dès leur communication aux fins des services.
-                </p>
+            </p>
           </li>
           <li>
             <h2>Notre utilisation de vos données personnelles et autres informations</h2>
             <p>
               Toute information recueillie est immédiatement séparée en (i) une partie contenant des informations personnelles (non sensibles) (telles que le nom, l'adresse électronique, le numéro de téléphone, etc.) sur les participants concernés et (ii) une partie entièrement anonymisée (non identifiable) puis mise à la disposition de l'ensemble du consortium à des fins de recherche.
-                </p>
+            </p>
             <p>
               Les données personnelles des participants à chaque CityLab seront partagées via l'application aux autres membres du groupe pour la gestion des activités Families_Share, sous le contrôle de l'administrateur du groupe. Tout abus de la part d'un membre entraînera l'annulation de son compte. Notez que toute demande d'adhésion à un groupe est soumise à l'approbation de l'administrateur du groupe.
-                </p>
+            </p>
             <p>
               Des données personnelles supplémentaires des participants seront collectées si nécessaire et uniquement à des fins scientifiques (par exemple, pour élargir les contacts pour des études longitudinales) et seront supprimées immédiatement après l'achèvement du projet. Les données anonymisées sont stockées dans un dépôt partagé et seront conservées après l'achèvement du projet comme preuves pour les études et les publications.
-                </p>
+            </p>
             <p>
               En particulier, les services peuvent utiliser ces informations et les mettre en commun avec d'autres informations sur une base anonyme et généralisée pour suivre, par exemple, le nombre total d'utilisateurs de nos services, le nombre de visiteurs de chaque page de notre site et les noms de domaine des fournisseurs de services Internet de nos visiteurs (aucune donnée personnelle est concernée dans ce cas).
-                </p>
+            </p>
           </li>
           <li>
             <h2>Notre divulgation de vos données personnelles informations supplémentaires</h2>
             <p>
               Dans tous les cas, Families_Share (et donc le partenaire responsable ViLabs) ne peut divulguer vos données personnelles que si la loi l'exige ou en croyant de bonne foi qu'une telle action est nécessaire pour :
-                </p>
+            </p>
             <ul>
               <li>
                 <p> &bull; Respecter une obligation légale</p>
@@ -6961,7 +7210,7 @@ const fr = {
               <li>
                 <p>
                   &bull; Agir en cas d'urgence pour protéger la sécurité personnelle des utilisateurs des services ou du public
-                    </p>
+                </p>
               </li>
               <li>
                 <p> &bull; Protéger contre toute responsabilité juridique</p>
@@ -6972,114 +7221,114 @@ const fr = {
             <h2>Vos choix</h2>
             <p>
               Vous pouvez visiter les services sans fournir de données personnelles. Si vous choisissez de ne pas fournir de données Personnelles, il se peut que vous ne puissiez pas utiliser certains services de Families_Share.
-                </p>
+            </p>
           </li>
           <li>
             <h2>Recueil des données    </h2>
             <p>
               Toutes les données proviennent des utilisateurs qui s'inscrivent à la plate-forme Families_Share. La plupart du temps, les parents doivent donner leur consentement au traitement d'informations privées et « sensibles » sur leurs enfants. En particulier, les informations concernant les enfants sont fournies par les parents et les données sont recueillies es conformément au RGPD (article 8) :
-                </p>
+            </p>
             <ul>
               <li>
                 <p>
                   &bull; Lorsque l'article 6, paragraphe 1, point a, s'applique, en ce qui concerne l'offre de services de la société d'information directement à un enfant, le traitement des données à caractère personnel d'un enfant est légal lorsque l'enfant est âgé d'au moins 16 ans. Lorsque l'enfant est âgé de moins de 16 ans, ce traitement n'est légal que si et dans la mesure où le titulaire de la responsabilité parentale de l'enfant autorise ou donne son consentement.
-                    </p>
+                </p>
               </li>
               <li>
                 <p>
                   &bull; Dans de tels cas, le contrôleur doit faire des efforts raisonnables pour vérifier que le titulaire de la responsabilité parentale de l'enfant autorise ou donne son consentement, en tenant compte de la technologie disponible.
-                    </p>
+                </p>
               </li>
               <li>
                 <p>
                   &bull; Le paragraphe 1 n'affecte pas le droit général des contrats des États membres, notamment les règles relatives à la validité, à la formation ou à l'effet d'un contrat à l'égard d'un enfant
-                    </p>
+                </p>
               </li>
             </ul>
             <p>
               Rappelez-vous également le point 32 du RGPD : « Le consentement doit être donné par un acte affirmatif clair établissant une indication librement donnée, spécifique, éclairée et sans ambiguïté de l'accord de la personne concernée quant au traitement des données personnelles la concernant, par exemple par une déclaration écrite, y compris par des moyens électroniques, ou une déclaration orale. Cela pourrait inclure la coche d'une case lors de la visite d'un site Internet, le choix des paramètres techniques pour les services relatifs à la société de l'information ou une autre déclaration ou comportement indiquant clairement dans ce contexte l'acceptation par la personne concernée du traitement proposé de ses données personnelles [...] Si le consentement de la personne concernée doit être donné à la suite d'une demande par voie électronique, la demande doit être claire, concise et ne pas perturber inutilement l'utilisation du service pour lequel elle est fournie ».
-                </p>
+            </p>
           </li>
           <li>
             <h2>Enfants</h2>
             <p>
               Families_Share ne collecte pas sciemment les données personnelles fournies par les enfants de moins de 16 ans. Si vous avez moins de 16 ans, veuillez ne pas fournir de données personnelles par le biais des services. Nous encourageons les parents et les tuteurs légaux à surveiller l'utilisation d'Internet de leurs enfants et à contribuer à l'application de notre politique de confidentialité en demandant à leurs enfants de ne jamais fournir de données personnelles sur les services sans leur autorisation. Si vous avez des raisons de croire qu'un enfant de moins de 16 ans a fourni des données personnelles à Families_Share par le biais des services, veuillez nous contacter et nous nous efforcerons de supprimer ces informations de nos bases de données.
-                </p>
+            </p>
           </li>
           <li>
             <h2>Stratégie de stockage et de protection des données </h2>
             <p>
               L'ensemble des services Families_Share sont proposés via le cloud, et les parties frontale et dorsale de la plateforme ainsi que les données sont stockées sur des serveurs dédiés sécurisés et protégés par l'intermédiaire d'un fournisseur de cloud certifié, qui dispose de toutes les infrastructures et certifications requises par le RGPD.
-                </p>
+            </p>
             <p>
               Le fournisseur de services cloud est géré par une personne responsable de VILABS et un responsable de la protection des données (Prof. Agostino Cortesi, Universita Ca'Foscari Venezia, cortesi@unive.it), suivant les meilleures pratiques et normes disponibles.
-                </p>
+            </p>
             <p>
               Les données personnelles seront stockées tout au long du cycle de vie officiel du projet Families_Share financé par le programme de l'UE Horizon 2020 (jusqu'au 31/10/2020). Après la fin de la période officielle du projet, les données personnelles des utilisateurs qui ne se sont pas connectés à leur compte depuis un an (365 jours) seront entièrement supprimées.
-                </p>
+            </p>
             <p>
               L'installation de stockage protégé du fournisseur de services cloud sera basée sur des systèmes redondants et située dans l'UE. Les données sont sauvegardées quotidiennement et une copie de sauvegarde est également stockée dans les centres de données de l'UE
-                </p>
+            </p>
             <p>
               L'accès aux données sur le stockage est soumis à une authentification au moyen d'un nom d'utilisateur et d'un mot de passe gérés conformément à la directive 2002/58/CE du Parlement européen.
-                </p>
+            </p>
             <p>
               Seuls les chercheurs VILabs (à des fins de recherche) et les administrateurs système (à des fins de maintenance) auront accès au dossier de données.
-                </p>
+            </p>
           </li>
           <li>
             <h2>Partage de données avec des tiers</h2>
             <p>
               Aucun des renseignements personnels recueillis ne sera partagé avec des tiers. Les informations collectées ne seront utilisées que dans la plate-forme elle-même, comme décrit ci-dessus (V.)
-                </p>
+            </p>
             <p>
               L'application ne fait pas usage de l'utilisation d'« intentions » implicites. Cela empêche l'accès inapproprié aux données par d'autres applications installées sur le même appareil.
-                </p>
+            </p>
           </li>
           <li>
             <h2>Sécurité</h2>
             <p>
               ViLabs prend des mesures raisonnables pour protéger les données personnelles fournies via les services contre la perte, l'utilisation abusive et l'accès non autorisé, la divulgation, l'altération ou la destruction. La communication de données depuis/vers l'utilisateur sera gérée via le protocole SSL https.
-                </p>
+            </p>
             <p>
               Il est de votre responsabilité de protéger correctement l'accès à l'appareil sur lequel l'application est installée contre toute utilisation non autorisée.
-                </p>
+            </p>
             <p>
               Les utilisateurs enregistrés Families_Share disposent d'un nom d'utilisateur et d'un identifiant unique, ce qui vous permet d'accéder à certaines parties de nos services.  Vous êtes responsable de les garder confidentiels. Assurez-vous de ne pas les partager avec quelqu'un d'autre.
-                </p>
+            </p>
           </li>
           <li>
             <h2>Vos droits - Fermeture de votre compte </h2>
             <p>
               La législation de l'UE sur la protection des données donne aux citoyens de l'UE le droit d'accéder aux informations les concernant. Ces informations sont mentionnées ci-dessus et peuvent être modifiées par vous via les services, conformément au RGPD (art. 15-22). En outre, vous avez le droit de rectification, le droit de retirer le consentement donné (lorsque le consentement est la base légale du traitement des données à caractère personnel), le droit d'effacement (« droit à l'oubli »), le droit de restreindre le traitement, le droit à la portabilité des données, le droit de s'opposer au traitement, le droit de ne pas faire l'objet d'une décision fondée sur un traitement automatisé (y compris le profilage), le droit de déposer une plainte auprès d'une autorité de contrôle, le droit à un recours judiciaire effectif.
-                </p>
+            </p>
             <p>
               Vous pouvez nous envoyer un e-mail à contact@families-share.eu
-                </p>
+            </p>
             <p>
               Tous les utilisateurs peuvent modifier leurs informations personnelles comme ils le souhaitent, avoir accès et peuvent télécharger une copie de leurs informations et de leur participation à des activités via l'application Families_Share, tout en ayant le droit de supprimer complètement leur compte et toutes les informations relatives à leur compte.
-                </p>
+            </p>
             <p>
               À la suite de l'annulation du compte par l'utilisateur, sauf dans le cas de données anonymes, il y a une obligation de supprimer les données à caractère personnel dès que possible, puisque la base légale pour le traitement ultérieur doit avoir disparu.
-                </p>
+            </p>
             <p>
               Vous pouvez également nous envoyer un e-mail à contact@families-share.eu pour nous demander de supprimer vos informations personnelles de notre base de données.
-                </p>
+            </p>
           </li>
           <li>
             <h2>Modification de la politique de confidentialité</h2>
             <p>
               Cette politique de confidentialité peut changer de temps à autre. Lorsque des modifications sont apportées, la date d'entrée en vigueur indiquée ci-dessous changera également en conséquence, et la nouvelle politique de confidentialité sera publiée en ligne, tandis que toutes les parties concernées recevront une notification spécifique.
-                </p>
+            </p>
           </li>
           <li>
             <h2>Communication </h2>
             <p>
               Pour toute autre information à notre sujet, veuillez visiter notre site web : https://www.families-share.eu/
-                </p>
+            </p>
             <p>
               N'hésitez pas à nous contacter si vous avez des questions concernant la politique de confidentialité de Families_Share ou les pratiques en matière d'information des services. Vous pouvez nous contacter en envoyant un e-mail à l’adresse contact@families-share.eu
-                </p>
+            </p>
           </li>
           <li>
             <h2>Gestion des données</h2>
@@ -7092,13 +7341,13 @@ const fr = {
             </p>
             <p>
               Contrôleur des données : Apostolos Vontas, directeur de ViLabs,
-                  <bold>avontas@vilabs.eu</bold>
+              <bold>avontas@vilabs.eu</bold>
             </p>
           </li>
         </ol>
         <p>
           Je confirme que j'ai lu, compris et accepte la politique de confidentialité ci-dessus (veuillez cocher la case adjacente)
-            </p>
+        </p>
       </div>
     ),
     "accept": "ACCEPTER"

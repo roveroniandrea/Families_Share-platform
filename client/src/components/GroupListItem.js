@@ -66,7 +66,12 @@ class GroupListItem extends React.Component {
   handleNavigation = () => {
     const { history } = this.props;
     const { group } = this.state;
-    history.push(`/groups/${group.group_id}/activities`);
+    if(!group.is_car_sharing){
+      history.push(`/groups/${group.group_id}/activities`);
+    }
+    else{
+      history.push(`/groups/${group.group_id}/routes`);
+    }
   };
 
   render() {
@@ -90,7 +95,7 @@ class GroupListItem extends React.Component {
         </div>
         <div className="col-8-10">
           <div id="suggestionInfoContainer">
-            <h1>{group.name}</h1>
+            <h1>{group.name}{group.is_car_sharing? texts.car_sharing : ''}</h1>
             <h2>{`${texts.members}: ${group.members.length}`}</h2>
             <h3>{group.settings.open ? texts.open : texts.closed}</h3>
           </div>

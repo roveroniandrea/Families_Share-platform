@@ -77,6 +77,14 @@ const CreateChildScreen = Loadable({
   loader: () => import("./components/CreateChildScreen"),
   loading: () => Loading
 });
+const CreateCarScreen = Loadable({
+  loader: () => import("./components/CreateCarScreen"),
+  loading: () => Loading
+});
+const CarProfileScreen = Loadable({
+  loader: () => import("./components/CarProfileScreen"),
+  loading: () => Loading
+});
 const SearchGroupScreen = Loadable({
   loader: () => import("./components/SearchGroupScreen"),
   loading: () => Loading
@@ -85,12 +93,20 @@ const EditChildProfileScreen = Loadable({
   loader: () => import("./components/EditChildProfileScreen"),
   loading: () => Loading
 });
+const EditCarProfileScreen = Loadable({
+  loader: () => import("./components/EditCarProfileScreen"),
+  loading: () => Loading
+});
 const EditActivityScreen = Loadable({
   loader: () => import("./components/EditActivityScreen"),
   loading: () => Loading
 });
 const AdditionalInfoScreen = Loadable({
   loader: () => import("./components/AdditionalInfoScreen"),
+  loading: () => Loading
+});
+const CarAdditionalInfoScreen = Loadable({
+  loader: () => import("./components/CarAdditionalInfoScreen"),
   loading: () => Loading
 });
 const EditGroupScreen = Loadable({
@@ -107,6 +123,14 @@ const ActivityScreen = Loadable({
 });
 const CreateActivityScreen = Loadable({
   loader: () => import("./components/CreateActivityScreen"),
+  loading: () => Loading
+});
+const CreatePathScreen = Loadable({
+  loader: () => import("./components/CreatePathScreen"),
+  loading: () => Loading
+});
+const PathInfoScreen = Loadable({
+  loader: () => import("./components/PathInfoScreen"),
   loading: () => Loading
 });
 const CreatePlanScreen = Loadable({
@@ -259,8 +283,18 @@ class App extends React.Component {
               />
               <PrivateRoute
                 exact
+                path="/profiles/:profileId/cars/:carId/edit/additional"
+                component={CarAdditionalInfoScreen}
+              />
+              <PrivateRoute
+                exact
                 path="/profiles/:profileId/children/:childId/edit"
                 component={EditChildProfileScreen}
+              />
+              <PrivateRoute
+                exact
+                path="/profiles/:profileId/cars/:carId/edit"
+                component={EditCarProfileScreen}
               />
               <PrivateRoute
                 exact
@@ -273,10 +307,19 @@ class App extends React.Component {
                 component={CreateChildScreen}
               />
               <PrivateRoute
+                exact
+                path="/profiles/:profileId/cars/create"
+                component={CreateCarScreen}
+              />
+
+              <PrivateRoute
+                path="/profiles/:profileId/cars/:carId"
+                component={CarProfileScreen}
+              />
+              <PrivateRoute
                 path="/profiles/:profileId/children/:childId"
                 component={ChildProfileScreen}
               />
-
               <PrivateRoute
                 path="/profiles/:profileId/edit"
                 component={EditProfileScreen}
@@ -312,6 +355,16 @@ class App extends React.Component {
                 exact
                 path="/groups/:groupId/activities/create"
                 component={CreateActivityScreen}
+              />
+              <PrivateRoute
+                exact
+                path="/groups/:groupId/paths/create"
+                component={CreatePathScreen}
+              />
+              <PrivateRoute
+                exact
+                path="/groups/:groupId/routes/:path_id"
+                component={PathInfoScreen}
               />
               <PrivateRoute
                 exact

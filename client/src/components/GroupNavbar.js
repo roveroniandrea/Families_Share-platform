@@ -1,12 +1,12 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { withRouter } from "react-router-dom";
-import BottomNavigation from "@material-ui/core/BottomNavigation";
-import BottomNavigationAction from "@material-ui/core/BottomNavigationAction";
-import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
-import Texts from "../Constants/Texts";
-import withLanguage from "./LanguageContext";
-import Images from "../Constants/Images";
+import React from 'react'
+import PropTypes from 'prop-types'
+import { withRouter } from 'react-router-dom'
+import BottomNavigation from '@material-ui/core/BottomNavigation'
+import BottomNavigationAction from '@material-ui/core/BottomNavigationAction'
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
+import Texts from '../Constants/Texts'
+import withLanguage from './LanguageContext'
+import Images from '../Constants/Images'
 
 const muiTheme = createMuiTheme({
   typography: {
@@ -15,11 +15,11 @@ const muiTheme = createMuiTheme({
   overrides: {
     MuiBottomNavigation: {
       root: {
-        position: "fixed",
+        position: 'fixed',
         bottom: 0,
-        height: "5.6rem",
-        backgroundColor: "#00838F",
-        width: "100%",
+        height: '5.6rem',
+        backgroundColor: '#00838F',
+        width: '100%',
         zIndex: 100
       }
     },
@@ -29,10 +29,10 @@ const muiTheme = createMuiTheme({
         maxWidth: 100000
       },
       label: {
-        color: "white",
-        fontSize: "1.2rem",
-        "&$selected": {
-          fontSize: "1.2rem"
+        color: 'white',
+        fontSize: '1.2rem',
+        '&$selected': {
+          fontSize: '1.2rem'
         }
       }
     },
@@ -42,37 +42,40 @@ const muiTheme = createMuiTheme({
       }
     }
   }
-});
+})
 
-const GroupNavbar = ({ history, language, match, allowNavigation }) => {
+const GroupNavbar = ({
+  history,
+  language,
+  match,
+  allowNavigation,
+  is_car_sharing
+}) => {
   const handleChange = (event, value) => {
-    const { groupId } = match.params;
+    const { groupId } = match.params
     if (allowNavigation) {
-      if (value === "members") {
-        history.replace(`/groups/${match.params.groupId}/${value}/parents`);
+      if (value === 'members') {
+        history.replace(`/groups/${match.params.groupId}/${value}/parents`)
       } else {
-        history.replace(`/groups/${groupId}/${value}`);
+        history.replace(`/groups/${groupId}/${value}`)
       }
     }
-  };
-  const texts = Texts[language].groupNavbar;
-
-  const { pathname } = history.location;
-  let activeTab = pathname.slice(
-    pathname.lastIndexOf("/") + 1,
-    pathname.length
-  );
-  if (activeTab === "parents" || activeTab === "children") {
-    activeTab = "members";
   }
-  const disabled = !allowNavigation;
+  const texts = Texts[language].groupNavbar
+
+  const { pathname } = history.location
+  let activeTab = pathname.slice(pathname.lastIndexOf('/') + 1, pathname.length)
+  if (activeTab === 'parents' || activeTab === 'children') {
+    activeTab = 'members'
+  }
+  const disabled = !allowNavigation
   const flags = [
-    activeTab === "info",
-    activeTab === "calendar",
-    activeTab === "activities",
-    activeTab === "members",
-    activeTab === "chat"
-  ];
+    activeTab === 'info',
+    activeTab === 'calendar',
+    activeTab === 'activities' || activeTab === 'routes',
+    activeTab === 'members',
+    activeTab === 'chat'
+  ]
   return (
     <MuiThemeProvider theme={muiTheme}>
       <BottomNavigation value={activeTab} onChange={handleChange} showLabels>
@@ -91,22 +94,24 @@ const GroupNavbar = ({ history, language, match, allowNavigation }) => {
             )
           }
         />
+        {!is_car_sharing && (
+          <BottomNavigationAction
+            value="calendar"
+            disabled={disabled}
+            label={texts.calendarTab}
+            icon={
+              flags[1] ? (
+                <i className="fas fa-calendar groupNavbarIcon" />
+              ) : (
+                <i className="far fa-calendar groupNavbarIcon" />
+              )
+            }
+          />
+        )}
         <BottomNavigationAction
-          value="calendar"
+          value={is_car_sharing ? 'routes' : 'activities'}
           disabled={disabled}
-          label={texts.calendarTab}
-          icon={
-            flags[1] ? (
-              <i className="fas fa-calendar groupNavbarIcon" />
-            ) : (
-              <i className="far fa-calendar groupNavbarIcon" />
-            )
-          }
-        />
-        <BottomNavigationAction
-          value="activities"
-          disabled={disabled}
-          label={texts.activitiesTab}
+          label={is_car_sharing ? texts.routesTab : texts.activitiesTab}
           icon={
             flags[2] ? (
               <i className="fas fa-heart groupNavbarIcon" />
@@ -145,14 +150,14 @@ const GroupNavbar = ({ history, language, match, allowNavigation }) => {
         />
       </BottomNavigation>
     </MuiThemeProvider>
-  );
-};
+  )
+}
 
 GroupNavbar.propTypes = {
   allowNavigation: PropTypes.bool,
   history: PropTypes.object,
   language: PropTypes.string,
   match: PropTypes.object
-};
+}
 
-export default withRouter(withLanguage(GroupNavbar));
+export default withRouter(withLanguage(GroupNavbar))
